@@ -1,0 +1,145 @@
+/* -- general start -- */
+body {
+	position: absolute;
+	height: 0px;
+	width: 0px;
+
+	background-color: black;
+	margin: 0px;
+	overflow-x: hidden;
+}
+
+.hidden {
+	visibility: hidden;
+}
+
+.height {
+	transform: translate(0px, 0px);
+	transition: transform .2s;
+}
+
+.inner {
+	height: 100vh;
+	transform: translate(0px, -24px) !important;
+}
+
+.viewport {
+	height: 100vh;
+}
+/* -- general end -- */
+
+/* -- header start -- */
+.headerGrid {
+	position: fixed;
+	display: grid;
+	width: 100%;
+
+    grid-template-columns: 0px[preLogo] 100px[logo] auto[preScrollCounter] 100px[scrollCounter];
+    grid-template-rows: 100px;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    justify-items: center;
+    align-items: center;
+
+	z-index: 10;
+}
+
+.headerGrid > .logo {
+	height: 32px;
+	width: 32px;
+
+	grid-column-start: preLogo;
+  	grid-column-end: logo;
+}
+/* -- header end -- */
+
+/* -- lottie start -- */
+.__animate.containerWrapper {
+	position: fixed;
+	overflow: hidden;
+	display: grid;
+
+	height: 100vh;
+	width: 100vw;
+
+	z-index: 1;
+}
+
+.__animate.containerWrapper > .__animate.container {
+	position: absolute;
+
+	width: 100vw;
+
+	margin: 0;
+
+	opacity: 0;
+	transition: opacity .2s, transform .2s;
+
+	z-index: inherit;
+}
+
+.__animate.container.active {
+	opacity: 1 !important;
+}
+/* -- lottie end -- */
+
+/* -- invert start -- */
+.invert {
+	mix-blend-mode: difference;
+}
+/* -- invert end -- */
+
+/* -- overlay start -- */
+.overlay {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	height: 100vh;
+	width: 100vw;
+
+	background-color: #000;
+
+	opacity: 0;
+	transition: opacity .5s;
+
+	z-index: 0;
+}
+
+.overlay.active {
+	opacity: .5 !important;
+}
+/* -- overlay end -- */
+
+/* -- tv start -- */
+.tv {
+	position: fixed;
+	overflow: hidden;
+	display: grid;
+
+	z-index: -1;
+}
+
+.tv > .screen {
+	height: 100vh;
+	width: 100vw;
+
+	margin: 0;
+
+	opacity: 0;
+	transition: opacity .5s, width .5s, height .5s;
+
+	z-index: inherit;
+}
+
+.tv > .screen.active {
+	opacity: 1 !important;
+}
+/* -- tv end -- */
+
+.centered {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+  

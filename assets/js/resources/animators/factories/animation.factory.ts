@@ -1,0 +1,37 @@
+import { CoreAnimator } from '../core.animator.js';
+import { AnimationObject } from '../../animator.types.js';
+
+export class AnimationFactory {
+	create(options: AnimationObject, thisArg: CoreAnimator): AnimationObject {
+		const baseObject: AnimationObject = {
+			type: undefined,
+			index: undefined,
+			data: undefined,
+			...options,
+		};
+
+		const baseItemsObject = {
+			__caller: thisArg.constructor,
+			uid: Date.now().toString(),
+			domContent: null,
+			yOffset: 0,
+			lottieObject: null,
+			respectDevicePixelRatio: true,
+			totalFrames: null,
+			maximumHeight: 0,
+			maximumWidth: 0,
+			minimumHeight: 0,
+			minimumWidth: 0,
+			onFrame: (): void => {},
+			onVisible: (): void => {},
+			onHidden: (): void => {},
+			onRedraw: (): void => {},
+			...options.items,
+		};
+
+		return {
+			...baseObject,
+			items: baseItemsObject,
+		};
+	}
+}
