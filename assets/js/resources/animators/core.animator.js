@@ -41,12 +41,12 @@ export class CoreAnimator {
         this.rawAnimateInstance = null;
         this.createContainerWrapperDom();
         $(window).on('load resize', () => window.requestAnimationFrame(() => {
+            this.onWindowResize.call(this);
             if (this.visibleAnimations !== null) {
                 this.visibleAnimations.forEach((animation) => {
                     animation.items.onRedraw.call(this, animation);
                 });
             }
-            this.onWindowResize.call(this);
         }));
     }
     createContainerWrapperDom() {
