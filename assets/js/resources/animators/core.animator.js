@@ -21,6 +21,8 @@ var __rest = (this && this.__rest) || function (s, e) {
 import { $, WindowUtility, BezierUtility, } from '../utilities.js';
 import { lottie } from '../lottie.js';
 import { LottieFactory, AnimationFactory, } from '../animators.factories.js';
+// TODO:investigate issue of lottie disappearing when mobile scroll hits innerHeight,
+//		but reappears after viewport becomes innerHeight
 export class CoreAnimator {
     constructor() {
         this.lottie = lottie;

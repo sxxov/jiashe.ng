@@ -14,7 +14,7 @@ export class LottieFactory {
 	}
 
 	public async create(animationObject: AnimationObject): Promise<LottieObject> {
-		const className = `${this.ctx.animatorClassPrefix}${animationObject.items.uid}`;
+		const className = animationObject.items.uid;
 		const animation = this.ctx.lottie.loadAnimation({
 			container: this.createAndReturnNewContainerDom(animationObject),
 			renderer: 'canvas',
@@ -26,7 +26,7 @@ export class LottieFactory {
 					? 1
 					: this.ctx.dpr * this.ctx.dprMultiplier,
 				preserveAspectRatio: 'xMidYMid slice',
-				className: `${className} hidden`,
+				className: `${this.ctx.animatorClassPrefix} ${className} hidden`,
 			},
 		});
 		const totalFrames = (
