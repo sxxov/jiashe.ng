@@ -65,7 +65,7 @@ export class $Factory {
                 // handle when the options are passed into the value argument
                 if (value
                     && value.constructor === Object) {
-                    return this.css(property, undefined, options);
+                    return this.css(property, undefined, value);
                 }
                 let processedValue = null;
                 let returnedValues = null;

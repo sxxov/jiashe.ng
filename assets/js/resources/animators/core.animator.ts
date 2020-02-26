@@ -14,6 +14,9 @@ import {
 } from '../animator.types.js';
 import { $Object } from '../utilities.types.js';
 
+// TODO:investigate issue of lottie disappearing when mobile scroll hits innerHeight,
+//		but reappears after viewport becomes innerHeight
+
 export class CoreAnimator {
 	lottie: any;
 	mWindowUtility: WindowUtility;

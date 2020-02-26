@@ -66,7 +66,7 @@ export class $Factory {
 				// handle when the options are passed into the value argument
 				if (value
 					&& value.constructor === Object) {
-					return this.css(property, undefined, options);
+					return this.css(property, undefined, value);
 				}
 
 				let processedValue: string | Record<string, string> = null;
@@ -108,7 +108,7 @@ export class $Factory {
 						processedValue = this.style[property as string];
 
 						if (options.computed) {
-							processedValue = getValueWithoutUnit(getComputedStyle(this)[(property as string)]);
+							processedValue = getValueWithoutUnit(getComputedStyle(this)[property as string]);
 						}
 
 						if (stackable
