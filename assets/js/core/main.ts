@@ -77,6 +77,7 @@ class Main {
 			index: 0,
 			type: 'null',
 			items: {
+				totalFrames: 120,
 				onFrame: (animation, frame): void => {
 					$('.overlay').css({
 						opacity: Math.min((frame / mScrollAnimator.totalFrames) * 2, 0.5),
