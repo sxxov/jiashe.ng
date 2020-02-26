@@ -20,9 +20,9 @@ class Main {
     init() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.mTV.init();
-            yield this.addMiscellaneousScrollingAnimations();
             yield this.addScrollToContinueFrameAnimation();
             yield this.addHeaderFrameAnimation();
+            yield this.addMiscellaneousScrollingAnimations();
         });
     }
     addMiscellaneousScrollingAnimations() {
@@ -39,6 +39,13 @@ class Main {
                     onHidden: () => {
                         this.scrollToContinueFrameAnimator.animatorContainers.forEach((animatorContainer) => this.scrollToContinueFrameAnimator.deactivate(animatorContainer));
                     },
+                },
+            });
+            yield mScrollAnimator.add({
+                index: 0,
+                type: 'null',
+                items: {
+                    uid: 'afterpre',
                 },
             });
             yield mScrollAnimator.add({

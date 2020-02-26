@@ -360,49 +360,48 @@ export class CoreAnimator {
 			return;
 		}
 
-		let animationIndex: number = null;
-		let currentAnimationsTotalFrames: number = null;
+		let animationIndex = null;
+		let currentAnimationsTotalFrames = null;
+		let workingAnimations: AnimationObject[] = [];
 
 		// TODO: optimize below code, use caching or something
 
-		// get an array of the 'totalFrames' of every animation,
-		this.animations.map(
-			(animation) => Math.max(
-				...animation.map(
-					(workingAnimation) => (
-						workingAnimation
-							? workingAnimation.items.totalFrames
-							: 0
+		if (frame === 0) {
+			animationIndex = -1;
+			currentAnimationsTotalFrames = 0;
+			workingAnimations = this.animations[-1];
+		} else {
+			// get an array of the 'totalFrames' of every animation,
+			this.animations.map(
+				(animation) => Math.max(
+					...animation.map(
+						(workingAnimation) => (
+							workingAnimation
+								? workingAnimation.items.totalFrames
+								: 0
+						),
 					),
 				),
-			),
-		// and then find the total frames and the index of the current animation
-		).reduce(
-			(accumulator, currentValue, i) => {
+				// and then find the total frames and the index of the current animation
+			).reduce(
+				(accumulator, currentValue, i) => {
 				// if the current accumulated value is more than the frame,
 				// it means that we've overshot and the previous index is the current animation
-				if (currentValue + accumulator >= frame) {
-					if (animationIndex === null) {
-						animationIndex = i;
-						currentAnimationsTotalFrames = currentValue + accumulator;
+					if (currentValue + accumulator >= frame) {
+						if (animationIndex === null) {
+							animationIndex = i;
+							currentAnimationsTotalFrames = currentValue + accumulator;
+						}
+						return 0;
 					}
-					return 0;
-				}
 
-				// not there yet, continue accumulating
-				return currentValue + accumulator;
-			},
-			0,
-		);
-
-		animationIndex = (
-			animationIndex === null
-			|| frame <= 0
-				? -1
-				: animationIndex
-		);
-
-		const workingAnimations = this.animations[animationIndex];
+					// not there yet, continue accumulating
+					return currentValue + accumulator;
+				},
+				0,
+			);
+			workingAnimations = this.animations[animationIndex];
+		}
 
 		if (!workingAnimations) {
 			return;
@@ -431,6 +430,7 @@ export class CoreAnimator {
 
 			if (__caller.name !== 'FrameAnimator'
 				|| uid === 'logo') {
+				console.log('frame', frame);
 				console.log('workingAnimation', workingAnimation);
 				console.log('globalFrame', globalFrame);
 				console.log('animationIndex', animationIndex);

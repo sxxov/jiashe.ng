@@ -24,9 +24,9 @@ class Main {
 
 	async init(): Promise<void> {
 		await this.mTV.init();
-		await this.addMiscellaneousScrollingAnimations();
 		await this.addScrollToContinueFrameAnimation();
 		await this.addHeaderFrameAnimation();
+		await this.addMiscellaneousScrollingAnimations();
 	}
 
 	async addMiscellaneousScrollingAnimations(): Promise<void> {
