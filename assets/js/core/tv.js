@@ -11,7 +11,7 @@ import { $, WindowUtility, } from '../resources/utilities.js';
 export class TV {
     constructor() {
         this.api = null;
-        this.videoId = 'GDNDqVo9ltY';
+        this.videoId = 'vwKtPoE6Ppg';
         this.screenElementId = 'screen';
         this.screenElementSelector = `#${this.screenElementId}`;
         this.tvElementSelector = '.tv';
