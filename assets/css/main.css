@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Space+Mono&display=swap');
+
 /* -- general start -- */
 body {
 	position: absolute;
@@ -34,22 +36,49 @@ body {
 	display: grid;
 	width: 100%;
 
-    grid-template-columns: 0px[preLogo] 100px[logo] auto[preScrollCounter] 100px[scrollCounter];
-    grid-template-rows: 100px;
+    grid-template-columns: 0px[preLogo] 50px[logo] 0px[preScrollCounter] 50px[scrollCounter] auto[preHamburger] 50px[hamburger];
+    grid-template-rows: 50px;
     grid-column-gap: 0px;
     grid-row-gap: 0px;
     justify-items: center;
     align-items: center;
 
 	z-index: 10;
+
+	padding: 2.5vw 2.5vw 2.5vw 2.5vw;
+	box-sizing: border-box;
+
+	color: white;
+}
+
+.headerGrid > .scrollCounter {
+	grid-column-start: preScrollCounter;
+  	grid-column-end: scrollCounter;
+}
+
+.headerGrid > .scrollCounter > h1 {
+	font-family: 'Space Mono';
+	font-weight: 400;
+	font-size: 100%;
+	line-height: 100%;
+	
+	width: 100%;
+	margin: -2px 0px 0px 0px;
+}
+
+.headerGrid > .scrollCounter > h2 {
+	font-family: 'Space Mono';
+	font-weight: 400;
+	font-size: 100%;
+	line-height: 100%;
+	
+	width: 100%;
+	margin: 0px 0px 0px 0px;
 }
 
 .headerGrid > .logo {
-	height: 32px;
-	width: 32px;
-
 	grid-column-start: preLogo;
-  	grid-column-end: logo;
+	grid-column-end: logo;
 }
 /* -- header end -- */
 
@@ -100,7 +129,6 @@ body {
 	background-color: #000;
 
 	opacity: 0;
-	transition: opacity .5s;
 
 	z-index: 0;
 }

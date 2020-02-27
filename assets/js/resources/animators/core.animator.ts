@@ -19,7 +19,7 @@ import { $Object } from '../utilities.types.js';
 
 export class CoreAnimator {
 	lottie: any;
-	mWindowUtility: WindowUtility;
+	protected mWindowUtility: WindowUtility;
 	uid: string;
 
 	currentFrame: number;
@@ -27,6 +27,7 @@ export class CoreAnimator {
 	framesPerAnimation: number;
 
 	animations: AnimationObject[][];
+	metaAnimations: AnimationObject[];
 	animatorClassPrefix: string;
 	animatorContainers: $Object[];
 	animatorContainersWrapper: $Object;
@@ -47,6 +48,7 @@ export class CoreAnimator {
 		this.framesPerAnimation = 120;
 
 		this.animations = [];
+		this.metaAnimations = [];
 		this.animatorClassPrefix = '__animate';
 		this.animatorContainers = [];
 		this.animatorContainersWrapper = null;
@@ -134,6 +136,8 @@ export class CoreAnimator {
 		switch (type) {
 		case 'null':
 			break;
+		case 'meta':
+			break;
 		case 'lottie':
 			lottieObject = await this.createAndReturnLottieObject(animationObject);
 
@@ -168,8 +172,10 @@ export class CoreAnimator {
 		}
 
 		switch (true) {
-		case index === null
-			|| index.constructor !== Number:
+		case type === 'meta':
+			this.metaAnimations.push(animationObject);
+			break;
+		case index === null:
 			// add to the end of the array
 			this.animations.push([animationObject]);
 			break;
@@ -213,7 +219,7 @@ export class CoreAnimator {
 		return frame * this.totalFrames;
 	}
 
-	rawAnimate(items: {
+	async rawAnimate(items: {
 		from: number;
 		to: number;
 		options?: {
@@ -268,21 +274,37 @@ export class CoreAnimator {
 
 		return new Promise((resolve) => {
 			let i = from;
-
-			this.rawAnimateInstance = setInterval(() => {
+			const step = (): void => {
+				processedCallback(i);
 				if (i > to) {
-					clearInterval(this.rawAnimateInstance);
-					this.rawAnimateInstance = null;
-
 					resolve();
 					return;
 				}
 
-				window.requestAnimationFrame(() => processedCallback(i));
+				i += 1 * (fps / 60);
+				window.requestAnimationFrame(step);
+			};
 
-				++i;
-			}, 1000 / fps);
+			window.requestAnimationFrame(step);
 		});
+
+		// return new Promise((resolve) => {
+		// 	let i = from;
+
+		// 	this.rawAnimateInstance = setInterval(() => {
+		// 		if (i > to) {
+		// 			clearInterval(this.rawAnimateInstance);
+		// 			this.rawAnimateInstance = null;
+
+		// 			resolve();
+		// 			return;
+		// 		}
+
+		// 		window.requestAnimationFrame(() => processedCallback(i));
+
+		// 		++i;
+		// 	}, 1000 / fps);
+		// });
 	}
 
 	onNewAnimation(animation: AnimationObject): void {
@@ -371,6 +393,7 @@ export class CoreAnimator {
 		let animationIndex = null;
 		let currentAnimationsTotalFrames = null;
 		let workingAnimations: AnimationObject[] = [];
+		const uids: string[] = [];
 
 		// TODO: optimize below code, use caching or something
 
@@ -428,6 +451,8 @@ export class CoreAnimator {
 				return;
 			}
 
+			uids.push(uid);
+
 			const currentAnimationTotalFrames = (
 				workingAnimation
 					? totalFrames
@@ -460,6 +485,23 @@ export class CoreAnimator {
 			onFrame(
 				workingAnimation, localFrame,
 			);
+		});
+
+		this.metaAnimations.forEach((metaAnimation) => {
+			const {
+				onFrame,
+			} = metaAnimation.items;
+			const mAnimationFactory = new AnimationFactory();
+			const animation = mAnimationFactory.create({
+				type: 'meta',
+				index: animationIndex,
+				items: {
+					uid: uids.join(' '),
+					totalFrames: currentAnimationsTotalFrames,
+				},
+			}, this);
+
+			onFrame(animation, frame - ((animationIndex) * currentAnimationsTotalFrames));
 		});
 	}
 

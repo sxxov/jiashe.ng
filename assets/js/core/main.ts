@@ -33,10 +33,51 @@ class Main {
 		const mScrollAnimator = this.miscellaneousScrollingAnimator;
 
 		await mScrollAnimator.add({
+			type: 'meta',
+			items: {
+				onFrame: ((animation, frame): void => {
+					const {
+						uid,
+						totalFrames,
+					} = animation.items;
+
+					let scrollPercent = ((
+						frame / totalFrames
+					) * 100)
+						.toString();
+
+					switch (true) {
+					case scrollPercent === 'NaN':
+						scrollPercent = '.00';
+						break;
+					case scrollPercent.substr(0, 2) === '0.':
+						scrollPercent = scrollPercent
+							.substr(1)
+							.substring(0, 3);
+						break;
+					case scrollPercent.substring(1, 2) === '.':
+						scrollPercent = scrollPercent
+							.substring(0, 3);
+						break;
+					case scrollPercent === '100':
+						break;
+					default:
+						scrollPercent = scrollPercent
+							.substr(0, scrollPercent.indexOf('.'))
+							.padStart(3, '0');
+					}
+
+					($('.scrollCounter > h1') as HTMLElement).innerHTML = `${scrollPercent}%`;
+					[($('.scrollCounter > h2') as HTMLElement).innerHTML] = uid.split(' ');
+				}),
+			},
+		});
+
+		await mScrollAnimator.add({
 			index: -1,
 			type: 'null',
 			items: {
-				uid: 'pre',
+				uid: 'welcome',
 				onVisible: (): void => {
 					this.scrollToContinueFrameAnimator.animatorContainers.forEach(
 						(animatorContainer) => this.scrollToContinueFrameAnimator.activate(
@@ -51,6 +92,14 @@ class Main {
 						),
 					);
 				},
+			},
+		});
+		// custom uid for group
+		await mScrollAnimator.add({
+			type: null,
+			index: 0,
+			items: {
+				uid: 'intro',
 			},
 		});
 		await mScrollAnimator.add({
@@ -77,6 +126,7 @@ class Main {
 			index: 0,
 			type: 'null',
 			items: {
+				uid: 'overlayController',
 				totalFrames: 120,
 				onFrame: (animation, frame): void => {
 					$('.overlay').css({
@@ -147,7 +197,59 @@ class Main {
 						domContent,
 						totalFrames,
 					} = animation.items;
-					const finalPosition = 100;
+					const finalPosition = 120;
+
+					domContent.css({
+						transform: `translateY(${((frame / totalFrames) * finalPosition) - finalPosition}px)`,
+					});
+				},
+				onRedraw: (animation): void => {
+					const {
+						domContent,
+					} = animation.items;
+					const sizeAccordingToViewport = Math.min(
+						Math.max(
+							(this.mWindowUtility.viewport.width / 40) * window.devicePixelRatio,
+							25,
+						),
+						50,
+					);
+
+					domContent.css({
+						width: sizeAccordingToViewport,
+						height: sizeAccordingToViewport,
+					});
+				},
+			},
+		});
+
+		await mFrameAnimator.add({
+			index: 0,
+			type: 'null',
+			items: {
+				uid: 'scrollCounter',
+				totalFrames: 120,
+				offset: 60,
+				domContent: $('.scrollCounter'),
+				onVisible: (animation): void => {
+					const {
+						domContent,
+					} = animation.items;
+
+					domContent.removeClass('hidden');
+					$(domContent.childNodes[1]).css({
+						fill: 'white',
+					});
+					domContent.css({
+						transform: 'translateY(-10000px)',
+					});
+				},
+				onFrame: (animation, frame): void => {
+					const {
+						domContent,
+						totalFrames,
+					} = animation.items;
+					const finalPosition = 120;
 
 					domContent.css({
 						transform: `translateY(${((frame / totalFrames) * finalPosition) - finalPosition}px)`,
