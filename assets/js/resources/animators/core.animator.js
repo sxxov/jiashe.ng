@@ -131,9 +131,13 @@ export class CoreAnimator {
                 default:
             }
             // get an array of the 'totalFrames' of every animation,
-            this.totalFrames = this.animations.map((animationItem) => Math.max(...animationItem.map((workingAnimation) => (workingAnimation.items.lottieObject
-                ? workingAnimation.items.totalFrames
-                : 0)))).reduce((accumulator, currentValue) => currentValue + accumulator, 0);
+            this.totalFrames = this.animations.map((animationItem) => Math.max(...animationItem.map((workingAnimation) => {
+                const { totalFrames, offset, } = workingAnimation.items;
+                return (workingAnimation.items.lottieObject
+                    ? totalFrames
+                    : 0)
+                    + offset;
+            }))).reduce((accumulator, currentValue) => currentValue + accumulator, 0);
             this.onNewAnimation(animationObject);
         });
     }
@@ -268,18 +272,22 @@ export class CoreAnimator {
             return;
         }
         workingAnimations.forEach((workingAnimation) => {
-            const { __caller, uid, totalFrames, onFrame, } = workingAnimation.items;
-            const currentAnimationTotalFrames = workingAnimation
+            const { __caller, uid, totalFrames, onFrame, offset, } = workingAnimation.items;
+            if (frame < offset) {
+                return;
+            }
+            const currentAnimationTotalFrames = (workingAnimation
                 ? totalFrames
-                : 0;
-            const globalFrame = frame;
+                : 0);
+            const globalFrame = frame - offset;
             const localFrame = ((globalFrame - ((animationIndex) * currentAnimationsTotalFrames))
-                / currentAnimationsTotalFrames)
+                / (currentAnimationsTotalFrames - offset))
                 * currentAnimationTotalFrames;
             this.currentFrame = frame;
             this.onVisibleAnimationsChange(workingAnimations);
             if (__caller.name !== 'FrameAnimator'
-                || uid === 'logo') {
+                || uid === 'logo'
+                || uid === 'scrollCounter') {
                 console.log('frame', frame);
                 console.log('workingAnimation', workingAnimation);
                 console.log('globalFrame', globalFrame);

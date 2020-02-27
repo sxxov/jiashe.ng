@@ -188,11 +188,19 @@ export class CoreAnimator {
 		this.totalFrames = this.animations.map(
 			(animationItem) => Math.max(
 				...animationItem.map(
-					(workingAnimation) => (
-						workingAnimation.items.lottieObject
-							? workingAnimation.items.totalFrames
-							: 0
-					),
+					(workingAnimation): number => {
+						const {
+							totalFrames,
+							offset,
+						} = workingAnimation.items;
+
+						return (
+							workingAnimation.items.lottieObject
+								? totalFrames
+								: 0
+						)
+						+ offset;
+					},
 				),
 			),
 		// add them all up
@@ -413,15 +421,23 @@ export class CoreAnimator {
 				uid,
 				totalFrames,
 				onFrame,
+				offset,
 			} = workingAnimation.items;
 
-			const currentAnimationTotalFrames = workingAnimation
-				? totalFrames
-				: 0;
-			const globalFrame = frame;
+			if (frame < offset) {
+				return;
+			}
+
+			const currentAnimationTotalFrames = (
+				workingAnimation
+					? totalFrames
+					: 0
+			);
+
+			const globalFrame = frame - offset;
 			const localFrame = (
 				(globalFrame - ((animationIndex) * currentAnimationsTotalFrames))
-				/ currentAnimationsTotalFrames
+				/ (currentAnimationsTotalFrames - offset)
 			)
 			* currentAnimationTotalFrames;
 
@@ -429,7 +445,8 @@ export class CoreAnimator {
 			this.onVisibleAnimationsChange(workingAnimations);
 
 			if (__caller.name !== 'FrameAnimator'
-				|| uid === 'logo') {
+				|| uid === 'logo'
+				|| uid === 'scrollCounter') {
 				console.log('frame', frame);
 				console.log('workingAnimation', workingAnimation);
 				console.log('globalFrame', globalFrame);
@@ -470,6 +487,7 @@ export class CoreAnimator {
 
 		if (this.visibleAnimations === null) {
 			this.visibleAnimations = animations;
+
 			return;
 		}
 

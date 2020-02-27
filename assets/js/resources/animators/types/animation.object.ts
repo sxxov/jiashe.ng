@@ -9,7 +9,7 @@ export interface AnimationObject {
 		__caller?: any;
 		uid?: string;
 		domContent?: $Object;
-		yOffset?: number;
+		offset?: number;
 		lottieObject?: LottieObject;
 		respectDevicePixelRatio?: boolean;
 		totalFrames?: number;

@@ -10,11 +10,11 @@ export class AnimationFactory {
 			...options,
 		};
 
-		const baseItemsObject = {
+		const baseItemsObject: AnimationObject['items'] = {
 			__caller: thisArg.constructor,
 			uid: Date.now().toString(),
 			domContent: null,
-			yOffset: 0,
+			offset: 0,
 			lottieObject: null,
 			respectDevicePixelRatio: true,
 			totalFrames: null,
