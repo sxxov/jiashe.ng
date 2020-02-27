@@ -1,4 +1,8 @@
-import { ForUtility } from '../../utilities.js';
+import {
+	ForUtility,
+	$,
+	$$,
+} from '../../utilities.js';
 import { $Object } from '../../utilities.types.js';
 
 export class $Factory {
@@ -349,6 +353,8 @@ export class $Factory {
 
 				return callback ? callback(await response.json()) : response.json();
 			},
+			$,
+			$$,
 			// workaround to keep the type
 			...{} as any,
 		};

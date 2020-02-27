@@ -4,6 +4,11 @@ class NotJQuery {
     $(objectToCreateFrom = {}) {
         const m$Factory = new $Factory();
         switch (true) {
+            case this
+                && this.constructor === Object
+                && objectToCreateFrom.constructor === String:
+                return m$Factory.create(Object.values(this)
+                    .find((node) => node.matches && node.matches(objectToCreateFrom)));
             case objectToCreateFrom === undefined:
                 return m$Factory.create({});
             case objectToCreateFrom.constructor === String:
@@ -15,6 +20,11 @@ class NotJQuery {
     $$(objectToCreateFrom = {}) {
         const m$Factory = new $Factory();
         switch (true) {
+            case this
+                && this.constructor === Object
+                && objectToCreateFrom.constructor === String:
+                return m$Factory.create(Object.values(this)
+                    .find((node) => node.matches && node.matches(objectToCreateFrom)));
             case objectToCreateFrom === undefined:
                 return m$Factory.create({});
             case objectToCreateFrom.constructor === String:

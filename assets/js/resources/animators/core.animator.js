@@ -272,12 +272,11 @@ export class CoreAnimator {
         }
         else {
             // get an array of the 'totalFrames' of every animation,
-            this.animations.map((animation) => Math.max(...animation.map((workingAnimation) => (workingAnimation
-                ? workingAnimation.items.totalFrames
-                : 0)))).reduce((accumulator, currentValue, i) => {
+            // and then find the total frames and the index of the current animation
+            this.getAttributeFromAnimationsItems('totalFrames', this.animations).reduce((accumulator, currentValue, i) => {
                 // if the current accumulated value is more than the frame,
                 // it means that we've overshot and the previous index is the current animation
-                if (currentValue + accumulator >= frame) {
+                if (currentValue + accumulator >= frame - 1) {
                     if (animationIndex === null) {
                         animationIndex = i;
                         currentAnimationsTotalFrames = currentValue + accumulator;
@@ -298,15 +297,11 @@ export class CoreAnimator {
                 return;
             }
             uids.push(uid);
-            const currentAnimationTotalFrames = (workingAnimation
-                ? totalFrames
-                : 0);
             const globalFrame = frame - offset;
-            const localFrame = ((globalFrame - ((animationIndex) * currentAnimationsTotalFrames))
-                / (currentAnimationsTotalFrames - offset))
-                * currentAnimationTotalFrames;
-            this.currentFrame = frame;
-            this.onVisibleAnimationsChange(workingAnimations);
+            const localFrame = ((globalFrame - this.getTotalFramesBeforeIndex(animationIndex))
+                / ((currentAnimationsTotalFrames
+                    - this.getTotalFramesBeforeIndex(animationIndex)) - offset))
+                * totalFrames;
             if (__caller.name !== 'FrameAnimator'
                 || uid === 'logo'
                 || uid === 'scrollCounter') {
@@ -316,9 +311,11 @@ export class CoreAnimator {
                 console.log('animationIndex', animationIndex);
                 console.log('localFrame', localFrame);
                 console.log('currentAnimationsTotalFrames', currentAnimationsTotalFrames);
-                console.log('currentAnimationTotalFrames', currentAnimationTotalFrames);
+                console.log('this.visibleAnimations', this.visibleAnimations);
                 console.log('');
             }
+            this.currentFrame = frame;
+            this.onVisibleAnimationsChange(workingAnimations);
             onFrame(workingAnimation, localFrame);
         });
         this.metaAnimations.forEach((metaAnimation) => {
@@ -329,11 +326,30 @@ export class CoreAnimator {
                 index: animationIndex,
                 items: {
                     uid: uids.join(' '),
-                    totalFrames: currentAnimationsTotalFrames,
+                    totalFrames: currentAnimationsTotalFrames
+                        - this.getTotalFramesBeforeIndex(animationIndex),
                 },
             }, this);
-            onFrame(animation, frame - ((animationIndex) * currentAnimationsTotalFrames));
+            onFrame(animation, frame - this.getTotalFramesBeforeIndex(animationIndex));
         });
+    }
+    getAttributeFromAnimationsItems(attributeKey, animations) {
+        return animations.map((animation) => Math.max(...animation.map((workingAnimation) => (workingAnimation.items[attributeKey]))));
+    }
+    getTotalFramesBeforeIndex(index) {
+        const totalFrames = this.getAttributeFromAnimationsItems('totalFrames', this.animations);
+        let previousFrames = null;
+        totalFrames.reduce((accumulator, currentValue, i) => {
+            if (i >= index) {
+                if (previousFrames === null) {
+                    previousFrames = accumulator;
+                }
+                return 0;
+            }
+            // not there yet, continue accumulating
+            return currentValue + accumulator;
+        }, 0);
+        return previousFrames;
     }
     onVisibleAnimationsChange(animations) {
         if (this.visibleAnimations === animations) {

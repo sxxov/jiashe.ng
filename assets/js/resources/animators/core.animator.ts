@@ -390,8 +390,8 @@ export class CoreAnimator {
 			return;
 		}
 
-		let animationIndex = null;
-		let currentAnimationsTotalFrames = null;
+		let animationIndex: number = null;
+		let currentAnimationsTotalFrames: number = null;
 		let workingAnimations: AnimationObject[] = [];
 		const uids: string[] = [];
 
@@ -403,22 +403,12 @@ export class CoreAnimator {
 			workingAnimations = this.animations[-1];
 		} else {
 			// get an array of the 'totalFrames' of every animation,
-			this.animations.map(
-				(animation) => Math.max(
-					...animation.map(
-						(workingAnimation) => (
-							workingAnimation
-								? workingAnimation.items.totalFrames
-								: 0
-						),
-					),
-				),
-				// and then find the total frames and the index of the current animation
-			).reduce(
+			// and then find the total frames and the index of the current animation
+			this.getAttributeFromAnimationsItems('totalFrames', this.animations).reduce(
 				(accumulator, currentValue, i) => {
 				// if the current accumulated value is more than the frame,
 				// it means that we've overshot and the previous index is the current animation
-					if (currentValue + accumulator >= frame) {
+					if (currentValue + accumulator >= frame - 1) {
 						if (animationIndex === null) {
 							animationIndex = i;
 							currentAnimationsTotalFrames = currentValue + accumulator;
@@ -453,21 +443,15 @@ export class CoreAnimator {
 
 			uids.push(uid);
 
-			const currentAnimationTotalFrames = (
-				workingAnimation
-					? totalFrames
-					: 0
-			);
-
 			const globalFrame = frame - offset;
 			const localFrame = (
-				(globalFrame - ((animationIndex) * currentAnimationsTotalFrames))
-				/ (currentAnimationsTotalFrames - offset)
+				(globalFrame - this.getTotalFramesBeforeIndex(animationIndex))
+				/ ((
+					currentAnimationsTotalFrames
+					- this.getTotalFramesBeforeIndex(animationIndex)
+				) - offset)
 			)
-			* currentAnimationTotalFrames;
-
-			this.currentFrame = frame;
-			this.onVisibleAnimationsChange(workingAnimations);
+			* totalFrames;
 
 			if (__caller.name !== 'FrameAnimator'
 				|| uid === 'logo'
@@ -478,9 +462,12 @@ export class CoreAnimator {
 				console.log('animationIndex', animationIndex);
 				console.log('localFrame', localFrame);
 				console.log('currentAnimationsTotalFrames', currentAnimationsTotalFrames);
-				console.log('currentAnimationTotalFrames', currentAnimationTotalFrames);
+				console.log('this.visibleAnimations', this.visibleAnimations);
 				console.log('');
 			}
+
+			this.currentFrame = frame;
+			this.onVisibleAnimationsChange(workingAnimations);
 
 			onFrame(
 				workingAnimation, localFrame,
@@ -497,12 +484,50 @@ export class CoreAnimator {
 				index: animationIndex,
 				items: {
 					uid: uids.join(' '),
-					totalFrames: currentAnimationsTotalFrames,
+					totalFrames: currentAnimationsTotalFrames
+						- this.getTotalFramesBeforeIndex(animationIndex),
 				},
 			}, this);
 
-			onFrame(animation, frame - ((animationIndex) * currentAnimationsTotalFrames));
+			onFrame(animation, frame - this.getTotalFramesBeforeIndex(animationIndex));
 		});
+	}
+
+	private getAttributeFromAnimationsItems(
+		attributeKey: string,
+		animations: AnimationObject[][],
+	): any[] {
+		return animations.map(
+			(animation) => Math.max(
+				...animation.map(
+					(workingAnimation) => (
+						workingAnimation.items[attributeKey]
+					),
+				),
+			),
+		);
+	}
+
+	private getTotalFramesBeforeIndex(index: number): number {
+		const totalFrames: number[] = this.getAttributeFromAnimationsItems('totalFrames', this.animations);
+		let previousFrames: number = null;
+
+		totalFrames.reduce(
+			(accumulator, currentValue, i) => {
+				if (i >= index) {
+					if (previousFrames === null) {
+						previousFrames = accumulator;
+					}
+					return 0;
+				}
+
+				// not there yet, continue accumulating
+				return currentValue + accumulator;
+			},
+			0,
+		);
+
+		return previousFrames;
 	}
 
 	onVisibleAnimationsChange(animations: AnimationObject[]): void {

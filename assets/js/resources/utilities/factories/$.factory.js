@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { ForUtility } from '../../utilities.js';
+import { ForUtility, $, $$, } from '../../utilities.js';
 export class $Factory {
     create(objectToCreateFrom = {}) {
         const object = Object.assign({ evaluate(functionToEvaluate) {
@@ -272,7 +272,9 @@ export class $Factory {
                     const response = yield fetch(url);
                     return callback ? callback(yield response.json()) : response.json();
                 });
-            } }, {});
+            },
+            $,
+            $$ }, {});
         // ...spread doesn't work directly on dom objects apparently
         Object.assign(objectToCreateFrom, object);
         return objectToCreateFrom;

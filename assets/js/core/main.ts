@@ -47,7 +47,8 @@ class Main {
 						.toString();
 
 					switch (true) {
-					case scrollPercent === 'NaN':
+					case scrollPercent === 'NaN'
+						|| scrollPercent === '0':
 						scrollPercent = '.00';
 						break;
 					case scrollPercent.substr(0, 2) === '0.':
@@ -135,6 +136,16 @@ class Main {
 				},
 			},
 		});
+		await mScrollAnimator.add({
+			index: 1,
+			type: 'lottie',
+			data: await $().getJSON('/assets/js/raw/lottie/blocks.json'),
+			items: {
+				uid: 'blockso',
+				respectDevicePixelRatio: false,
+				totalFrames: 150,
+			},
+		});
 	}
 
 	async addScrollToContinueFrameAnimation(): Promise<void> {
@@ -203,23 +214,6 @@ class Main {
 						transform: `translateY(${((frame / totalFrames) * finalPosition) - finalPosition}px)`,
 					});
 				},
-				onRedraw: (animation): void => {
-					const {
-						domContent,
-					} = animation.items;
-					const sizeAccordingToViewport = Math.min(
-						Math.max(
-							(this.mWindowUtility.viewport.width / 40) * window.devicePixelRatio,
-							25,
-						),
-						50,
-					);
-
-					domContent.css({
-						width: sizeAccordingToViewport,
-						height: sizeAccordingToViewport,
-					});
-				},
 			},
 		});
 
@@ -240,6 +234,9 @@ class Main {
 					$(domContent.childNodes[1]).css({
 						fill: 'white',
 					});
+					$(domContent.childNodes[3]).css({
+						fill: 'white',
+					});
 					domContent.css({
 						transform: 'translateY(-10000px)',
 					});
@@ -249,27 +246,10 @@ class Main {
 						domContent,
 						totalFrames,
 					} = animation.items;
-					const finalPosition = 120;
+					const finalPosition = -120;
 
 					domContent.css({
-						transform: `translateY(${((frame / totalFrames) * finalPosition) - finalPosition}px)`,
-					});
-				},
-				onRedraw: (animation): void => {
-					const {
-						domContent,
-					} = animation.items;
-					const sizeAccordingToViewport = Math.min(
-						Math.max(
-							(this.mWindowUtility.viewport.width / 40) * window.devicePixelRatio,
-							25,
-						),
-						50,
-					);
-
-					domContent.css({
-						width: sizeAccordingToViewport,
-						height: sizeAccordingToViewport,
+						transform: `translateY(${(((frame / totalFrames)) * finalPosition) - finalPosition}px)`,
 					});
 				},
 			},
