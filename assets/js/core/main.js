@@ -43,13 +43,6 @@ class Main {
             });
             yield mScrollAnimator.add({
                 index: 0,
-                type: 'null',
-                items: {
-                    uid: 'afterpre',
-                },
-            });
-            yield mScrollAnimator.add({
-                index: 0,
                 type: 'lottie',
                 data: yield $().getJSON('/assets/js/raw/lottie/blocks.json'),
                 items: {
@@ -132,6 +125,14 @@ class Main {
                         const finalPosition = 100;
                         domContent.css({
                             transform: `translateY(${((frame / totalFrames) * finalPosition) - finalPosition}px)`,
+                        });
+                    },
+                    onRedraw: (animation) => {
+                        const { domContent, } = animation.items;
+                        const sizeAccordingToViewport = Math.min(Math.max((this.mWindowUtility.viewport.width / 40) * window.devicePixelRatio, 25), 50);
+                        domContent.css({
+                            width: sizeAccordingToViewport,
+                            height: sizeAccordingToViewport,
                         });
                     },
                 },

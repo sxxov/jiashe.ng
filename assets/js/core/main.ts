@@ -153,6 +153,23 @@ class Main {
 						transform: `translateY(${((frame / totalFrames) * finalPosition) - finalPosition}px)`,
 					});
 				},
+				onRedraw: (animation): void => {
+					const {
+						domContent,
+					} = animation.items;
+					const sizeAccordingToViewport = Math.min(
+						Math.max(
+							(this.mWindowUtility.viewport.width / 40) * window.devicePixelRatio,
+							25,
+						),
+						50,
+					);
+
+					domContent.css({
+						width: sizeAccordingToViewport,
+						height: sizeAccordingToViewport,
+					});
+				},
 			},
 		});
 
