@@ -1,5 +1,4 @@
 import {
-	ForUtility,
 	$,
 	$$,
 } from '../../utilities.js';
@@ -14,12 +13,12 @@ export class $Factory {
 			addClass(classNames): $Object {
 				switch (classNames.constructor) {
 				case String:
-					(classNames as string).split(' ').forEach((className) => {
+					(classNames as string).split(' ').fastEach((className: string) => {
 						this.classList.add(className);
 					});
 					break;
 				case Array:
-					(classNames as string[]).forEach((className) => {
+					(classNames as string[]).fastEach((className: string) => {
 						this.addClass(className);
 					});
 					break;
@@ -31,13 +30,13 @@ export class $Factory {
 			removeClass(classNames) {
 				switch (classNames.constructor) {
 				case String:
-					(classNames as string).split(' ').forEach((classNameStr) => {
-						this.classList.remove(classNameStr);
+					(classNames as string).split(' ').fastEach((className: string) => {
+						this.classList.remove(className);
 					});
 					break;
 				case Array:
-					(classNames as string[]).forEach((classNameStr) => {
-						this.removeClass(classNameStr);
+					(classNames as string[]).fastEach((className: string) => {
+						this.removeClass(className);
 					});
 					break;
 				default:
@@ -48,13 +47,13 @@ export class $Factory {
 			toggleClass(classNames) {
 				switch (classNames.constructor) {
 				case String:
-					(classNames as string).split(' ').forEach((classNameStr) => {
-						this.classList.toggle(classNameStr);
+					(classNames as string).split(' ').fastEach((className: string) => {
+						this.classList.toggle(className);
 					});
 					break;
 				case Array:
-					(classNames as string[]).forEach((classNameStr) => {
-						this.toggleClass(classNameStr);
+					(classNames as string[]).fastEach((className: string) => {
+						this.toggleClass(className);
 					});
 					break;
 				default:
@@ -93,7 +92,7 @@ export class $Factory {
 				switch (property.constructor) {
 				case String:
 					// determine if the property is a stackable one
-					stackableProperties.forEach(({
+					stackableProperties.fastEach(({
 						name,
 						hasParentheses,
 					}) => {
@@ -159,13 +158,13 @@ export class $Factory {
 					if (value === undefined) {
 						returnedValues = {};
 
-						(property as string[]).forEach((item) => {
+						(property as string[]).fastEach((item: string) => {
 							returnedValues[item] = this.css(item);
 						});
 
 						return returnedValues;
 					}
-					(property as string[]).forEach((item, i) => {
+					(property as string[]).fastEach((item: string, i: number) => {
 						this.css(item, value[i]);
 					});
 
@@ -173,7 +172,7 @@ export class $Factory {
 				case Object:
 					returnedValues = {};
 
-					Object.keys(property as Record<string, string | number>).forEach((key) => {
+					Object.keys(property as Record<string, string | number>).fastEach((key: string) => {
 						const returnedValue = this.css(key, property[key]);
 
 						if (returnedValue === this) {
@@ -256,7 +255,7 @@ export class $Factory {
 
 					const attributeObject: Record<string, string> = {};
 
-					attributeKeys.forEach((key, i) => {
+					attributeKeys.fastEach((key: string, i: number) => {
 						if (!key) {
 							return;
 						}
@@ -292,14 +291,12 @@ export class $Factory {
 				}
 			},
 			on(eventsStr: string, ...options) {
-				(new ForUtility()).addToArrayPrototype();
-
 				const events: string[] = eventsStr.split(' ');
 				let selector: string = null;
 				let data: unknown = null;
 				let handler: (event: Event) => unknown = null;
 
-				options.forEach((option: string | string[] | ((event: Event) => unknown), i) => {
+				options.fastEach((option: string | string[] | ((event: Event) => unknown), i) => {
 					switch (option.constructor) {
 					case String:
 						if (selector !== null) {
@@ -319,7 +316,7 @@ export class $Factory {
 					data = option;
 				});
 
-				events.forEach((eventStr) => {
+				events.fastEach((eventStr) => {
 					this.addEventListener(eventStr, (event: Event) => {
 						const processedEvent: Record<string, any> = event;
 

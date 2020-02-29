@@ -12,16 +12,18 @@ export class WindowUtility {
         const documentDom = $(document.documentElement);
         documentDom.css({
             perspective: '100vh',
-        }, {
-            computed: true,
         });
-        const height = parseFloat(getComputedStyle(documentDom).perspective);
+        const height = parseFloat(documentDom.css('perspective', {
+            computed: true,
+        }));
         documentDom.css({
             perspective: '100vw',
         }, {
             computed: true,
         });
-        const width = parseFloat(getComputedStyle(documentDom).perspective);
+        const width = parseFloat(documentDom.css('perspective', {
+            computed: true,
+        }));
         documentDom.css({
             perspective: '',
         });

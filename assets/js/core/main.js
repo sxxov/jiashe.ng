@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { TV } from './tv.js';
 import { ScrollAnimator, FrameAnimator, } from '../resources/animators.js';
-import { $, WindowUtility, } from '../resources/utilities.js';
+import { $, WindowUtility, ForUtility, } from '../resources/utilities.js';
 class Main {
     constructor() {
+        (new ForUtility()).addToArrayPrototype();
         this.mTV = new TV();
         this.miscellaneousScrollingAnimator = new ScrollAnimator();
         this.scrollToContinueFrameAnimator = new FrameAnimator();

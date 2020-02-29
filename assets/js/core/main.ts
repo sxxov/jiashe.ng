@@ -6,6 +6,7 @@ import {
 import {
 	$,
 	WindowUtility,
+	ForUtility,
 } from '../resources/utilities.js';
 
 
@@ -16,6 +17,7 @@ class Main {
 	mWindowUtility: WindowUtility;
 
 	constructor() {
+		(new ForUtility()).addToArrayPrototype();
 		this.mTV = new TV();
 		this.miscellaneousScrollingAnimator = new ScrollAnimator();
 		this.scrollToContinueFrameAnimator = new FrameAnimator();

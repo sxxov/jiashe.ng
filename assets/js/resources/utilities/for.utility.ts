@@ -1,4 +1,13 @@
 /* eslint-disable no-extend-native */
+declare global {
+	interface Array<T> {
+		fastEach: Function;
+		forAwait: Function;
+		getAll: Function;
+		getSome: Function;
+	}
+}
+
 export class ForUtility {
 	addToArrayPrototype(): void {
 		// non-standard, used by this to keep track of the singleton
@@ -6,17 +15,31 @@ export class ForUtility {
 			(Array.prototype as any).__forUtilitySingletonExecuted = true;
 
 			const methods = {
-				forAwait: async (callback, ctx = null): Promise<void> => {
+				fastEach(callback: Function, ctx = null): void {
+					const workingArray = (this as any);
+
+					if (ctx === null) {
+						for (let i = 0, l = workingArray.length; i < l; ++i) {
+							callback(workingArray[i], i);
+						}
+						return;
+					}
+
+					for (let i = 0, l = workingArray.length; i < l; ++i) {
+						callback.call(ctx || this, workingArray[i], i);
+					}
+				},
+				async forAwait(callback: Function, ctx = null): Promise<void> {
 					const workingArray = (this as any);
 
 					for (let i = 0, l = workingArray.length; i < l; ++i) {
 						await callback.call(ctx || this, workingArray[i], i);
 					}
 				},
-				getAll: (
+				getAll(
 					callback: (ctx: any[], item: any, i: number) => boolean,
 					ctx = null,
-				): any[] => {
+				): any[] {
 					const workingArray = (this as any);
 					const returnValues = [];
 
@@ -28,10 +51,10 @@ export class ForUtility {
 
 					return returnValues;
 				},
-				getSome: (
+				getSome(
 					callback: (ctx: any[], item: any, i: number) => boolean,
 					ctx = null,
-				): any => {
+				): any {
 					const workingArray = (this as any);
 
 					for (let i = 0, l = workingArray.length; i < l; ++i) {

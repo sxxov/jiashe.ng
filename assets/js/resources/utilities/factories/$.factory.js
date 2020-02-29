@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { ForUtility, $, $$, } from '../../utilities.js';
+import { $, $$, } from '../../utilities.js';
 export class $Factory {
     create(objectToCreateFrom = {}) {
         const object = Object.assign({ evaluate(functionToEvaluate) {
@@ -16,12 +16,12 @@ export class $Factory {
             addClass(classNames) {
                 switch (classNames.constructor) {
                     case String:
-                        classNames.split(' ').forEach((className) => {
+                        classNames.split(' ').fastEach((className) => {
                             this.classList.add(className);
                         });
                         break;
                     case Array:
-                        classNames.forEach((className) => {
+                        classNames.fastEach((className) => {
                             this.addClass(className);
                         });
                         break;
@@ -32,13 +32,13 @@ export class $Factory {
             removeClass(classNames) {
                 switch (classNames.constructor) {
                     case String:
-                        classNames.split(' ').forEach((classNameStr) => {
-                            this.classList.remove(classNameStr);
+                        classNames.split(' ').fastEach((className) => {
+                            this.classList.remove(className);
                         });
                         break;
                     case Array:
-                        classNames.forEach((classNameStr) => {
-                            this.removeClass(classNameStr);
+                        classNames.fastEach((className) => {
+                            this.removeClass(className);
                         });
                         break;
                     default:
@@ -48,13 +48,13 @@ export class $Factory {
             toggleClass(classNames) {
                 switch (classNames.constructor) {
                     case String:
-                        classNames.split(' ').forEach((classNameStr) => {
-                            this.classList.toggle(classNameStr);
+                        classNames.split(' ').fastEach((className) => {
+                            this.classList.toggle(className);
                         });
                         break;
                     case Array:
-                        classNames.forEach((classNameStr) => {
-                            this.toggleClass(classNameStr);
+                        classNames.fastEach((className) => {
+                            this.toggleClass(className);
                         });
                         break;
                     default:
@@ -84,7 +84,7 @@ export class $Factory {
                 switch (property.constructor) {
                     case String:
                         // determine if the property is a stackable one
-                        stackableProperties.forEach(({ name, hasParentheses, }) => {
+                        stackableProperties.fastEach(({ name, hasParentheses, }) => {
                             // return if the 'property' is not in 'stacakbleProperties'
                             if (name !== property) {
                                 return;
@@ -123,18 +123,18 @@ export class $Factory {
                     case Array:
                         if (value === undefined) {
                             returnedValues = {};
-                            property.forEach((item) => {
+                            property.fastEach((item) => {
                                 returnedValues[item] = this.css(item);
                             });
                             return returnedValues;
                         }
-                        property.forEach((item, i) => {
+                        property.fastEach((item, i) => {
                             this.css(item, value[i]);
                         });
                         return this;
                     case Object:
                         returnedValues = {};
-                        Object.keys(property).forEach((key) => {
+                        Object.keys(property).fastEach((key) => {
                             const returnedValue = this.css(key, property[key]);
                             if (returnedValue === this) {
                                 return;
@@ -197,7 +197,7 @@ export class $Factory {
                             .substr(attribute.search(/[^a-zA-Z]/)));
                     }
                     const attributeObject = {};
-                    attributeKeys.forEach((key, i) => {
+                    attributeKeys.fastEach((key, i) => {
                         if (!key) {
                             return;
                         }
@@ -220,12 +220,11 @@ export class $Factory {
                 }
             },
             on(eventsStr, ...options) {
-                (new ForUtility()).addToArrayPrototype();
                 const events = eventsStr.split(' ');
                 let selector = null;
                 let data = null;
                 let handler = null;
-                options.forEach((option, i) => {
+                options.fastEach((option, i) => {
                     switch (option.constructor) {
                         case String:
                             if (selector !== null) {
@@ -244,7 +243,7 @@ export class $Factory {
                     }
                     data = option;
                 });
-                events.forEach((eventStr) => {
+                events.fastEach((eventStr) => {
                     this.addEventListener(eventStr, (event) => {
                         const processedEvent = event;
                         if (!event) {
