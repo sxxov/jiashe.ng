@@ -15,7 +15,7 @@ export class AnimationFactory {
 			uid: Date.now().toString(),
 			domContent: null,
 			offset: 0,
-			lottieObject: null,
+			object: {},
 			respectDevicePixelRatio: true,
 			totalFrames: null,
 			maximumHeight: 0,

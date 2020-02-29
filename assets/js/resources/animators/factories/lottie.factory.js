@@ -29,29 +29,31 @@ export class LottieFactory {
                     className: `${this.ctx.animatorClassPrefix} ${className} hidden`,
                 },
             });
+            yield $(animation).on('DOMLoaded', () => new Promise((resolve) => resolve));
+            const domContent = $(`.${className}`);
             const totalFrames = (animationObject.items.totalFrames
                 || animation.getDuration(true));
             const onFrame = (animationItem, frame) => {
                 animationItem
                     .items
-                    .lottieObject
+                    .object
+                    .lottie
                     .animation
                     .goToAndStop(frame, true);
             };
             const lottieObject = {
-                className,
                 animation,
                 totalFrames,
+                domContent,
                 onFrame,
             };
             lottieObject.animation.goToAndStop(-1, true);
-            yield $(lottieObject.animation).on('DOMLoaded', () => new Promise((resolve) => resolve));
             this.onLottieObjectCreated(lottieObject);
             return lottieObject;
         });
     }
     onLottieObjectCreated(lottieObject) {
-        const lottieObjectDom = $(`.${lottieObject.className}`);
+        const lottieObjectDom = lottieObject.domContent;
         lottieObjectDom.css({
             width: '',
             height: '',

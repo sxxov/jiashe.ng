@@ -29,6 +29,10 @@ export class LottieFactory {
 				className: `${this.ctx.animatorClassPrefix} ${className} hidden`,
 			},
 		});
+
+		await $(animation).on('DOMLoaded', () => new Promise((resolve) => resolve));
+
+		const domContent = $(`.${className}`);
 		const totalFrames = (
 			animationObject.items.totalFrames
 			|| animation.getDuration(true)
@@ -36,7 +40,8 @@ export class LottieFactory {
 		const onFrame = (animationItem: AnimationObject, frame: number): void => {
 			animationItem
 				.items
-				.lottieObject
+				.object
+				.lottie
 				.animation
 				.goToAndStop(
 					frame,
@@ -45,15 +50,13 @@ export class LottieFactory {
 		};
 
 		const lottieObject: LottieObject = {
-			className,
 			animation,
 			totalFrames,
+			domContent,
 			onFrame,
 		};
 
 		lottieObject.animation.goToAndStop(-1, true);
-
-		await $(lottieObject.animation).on('DOMLoaded', () => new Promise((resolve) => resolve));
 
 		this.onLottieObjectCreated(lottieObject);
 
@@ -61,7 +64,7 @@ export class LottieFactory {
 	}
 
 	private onLottieObjectCreated(lottieObject: LottieObject): void {
-		const lottieObjectDom = $(`.${lottieObject.className}`);
+		const lottieObjectDom = lottieObject.domContent;
 
 		lottieObjectDom.css({
 			width: '',

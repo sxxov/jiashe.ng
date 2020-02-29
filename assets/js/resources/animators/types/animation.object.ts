@@ -1,5 +1,8 @@
 import { $Object } from '../../utilities.types.js';
-import { LottieObject } from '../../animator.types.js';
+import {
+	LottieObject,
+	SolidObject,
+} from '../../animator.types.js';
 
 export interface AnimationObject {
 	type: string;
@@ -10,7 +13,10 @@ export interface AnimationObject {
 		uid?: string;
 		domContent?: $Object;
 		offset?: number;
-		lottieObject?: LottieObject;
+		object?: {
+			lottie?: LottieObject;
+			solid?: SolidObject;
+		};
 		respectDevicePixelRatio?: boolean;
 		totalFrames?: number;
 		invert?: boolean;
