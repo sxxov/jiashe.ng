@@ -1,0 +1,44 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { $ } from '../../utilities.js';
+export class SolidFactory {
+    constructor(thisArg) {
+        this.ctx = thisArg;
+    }
+    create(animationObject) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const className = animationObject.items.uid;
+            const domContent = this.createAndReturnDomContent(className);
+            const solidObject = {
+                domContent,
+            };
+            return solidObject;
+        });
+    }
+    createAndReturnDomContent(className) {
+        const domContent = $(document.createElement('div'));
+        domContent.css({
+            width: '100vw',
+            height: '100vh',
+            background: 'white',
+            position: 'fixed',
+        });
+        domContent.addClass([
+            this.ctx.animatorClassPrefix,
+            'solid',
+            className,
+            'hidden',
+        ]);
+        this.ctx.animatorContainersWrapper
+            .appendChild(domContent);
+        return domContent;
+    }
+}
+//# sourceMappingURL=solid.factory.js.map
