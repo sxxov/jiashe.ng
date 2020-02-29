@@ -6,8 +6,6 @@ export class WindowUtility {
 		width: number;
 		} {
 		return {
-			// height: document.documentElement.clientHeight,
-			// width: document.documentElement.clientWidth,
 			height: window.innerHeight,
 			width: window.innerWidth,
 		};
@@ -17,37 +15,9 @@ export class WindowUtility {
 		height: number;
 		width: number;
 		} {
-		const documentDom = $(document.documentElement);
-
-		documentDom.css({
-			perspective: '100vh',
-		});
-		const height = parseFloat(
-			documentDom.css(
-				'perspective',
-				{
-					computed: true,
-				},
-			) as string,
-		);
-
-		documentDom.css({
-			perspective: '100vw',
-		}, {
-			computed: true,
-		});
-		const width = parseFloat(
-			documentDom.css(
-				'perspective',
-				{
-					computed: true,
-				},
-			) as string,
-		);
-
-		documentDom.css({
-			perspective: '',
-		});
+		const viewportCalibrator = $('.__windowUtility.viewportCalibrator');
+		const height = viewportCalibrator.offsetHeight;
+		const width = viewportCalibrator.offsetWidth;
 
 		return {
 			height,
