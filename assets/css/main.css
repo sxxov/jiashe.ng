@@ -20,9 +20,13 @@ body {
 	transition: transform .2s;
 }
 
-.inner {
+.innerCenter {
 	height: 100vh;
 	transform: translate(0px, -24px) !important;
+}
+
+.inner {
+	height: 100%;
 }
 
 .viewport {
@@ -30,12 +34,24 @@ body {
 }
 /* -- general end -- */
 
+/* -- windowUtility start -- */
+.__windowUtility.viewportCalibrator {
+	height: 100vh;
+	width: 100vw;
+
+	visibility: hidden;
+
+	position: fixed;
+}
+/* -- windowUtility end -- */
+
 /* -- header start -- */
 .headerGrid {
 	position: fixed;
 	display: grid;
 	width: 100%;
-	height: 100%;
+
+	transition: width .5s, height .5s;
 
     grid-template-columns: 0px[preLeftCorner] 50px[leftCorner]  auto[preRightCorner] 50px[rightCorner];
     grid-template-rows: 0px[preHeader] 50px[header] auto[preFooter] 50px[footer];

@@ -7,17 +7,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 import { $, WindowUtility, BezierUtility, } from '../utilities.js';
 import { lottie } from '../lottie.js';
 import { LottieFactory, SolidFactory, AnimationFactory, } from '../animators.factories.js';
@@ -27,7 +16,7 @@ export class CoreAnimator {
     constructor() {
         this.lottie = lottie;
         this.mWindowUtility = new WindowUtility();
-        this.uid = Date.now().toString();
+        this.uid = Math.round(performance.now()).toString();
         this.currentFrame = 0;
         this.totalFrames = 0;
         this.framesPerAnimation = 120;
@@ -61,29 +50,9 @@ export class CoreAnimator {
         this.activate(this.animatorContainersWrapper);
         document.body.appendChild(this.animatorContainersWrapper);
     }
-    createAndReturnNewContainerDom(_a) {
-        var { invert = false } = _a, options = __rest(_a, ["invert"]);
-        const animatorContainer = $(document.createElement('div'));
-        Object.keys(options).forEach((optionKey) => {
-            animatorContainer[optionKey] = options[optionKey];
-        });
-        animatorContainer.addClass([
-            this.animatorClassPrefix,
-            'container',
-            this.uid,
-            'height',
-        ]);
-        if (invert === true) {
-            animatorContainer.addClass('invert');
-        }
-        this.activate(animatorContainer);
-        this.animatorContainersWrapper.appendChild(animatorContainer);
-        this.animatorContainers.push(animatorContainer);
-        return animatorContainer;
-    }
     add(animationToBeConstructed) {
         return __awaiter(this, void 0, void 0, function* () {
-            const mAnimationFactory = new AnimationFactory();
+            const mAnimationFactory = new AnimationFactory(this);
             const animationObject = mAnimationFactory.create(animationToBeConstructed, this);
             const { type, index, items, } = animationObject;
             let lottieObject = null;
@@ -94,7 +63,6 @@ export class CoreAnimator {
                 case 'meta':
                     break;
                 case 'solid':
-                    // TODO: implement 'solid'
                     solidObject = yield (new SolidFactory(this)).create(animationObject);
                     animationObject.items = Object.assign(Object.assign({}, animationObject.items), { domContent: solidObject.domContent });
                     break;
@@ -197,24 +165,61 @@ export class CoreAnimator {
         }
         const viewportHeight = this.mWindowUtility.viewport.height;
         const innerHeight = this.mWindowUtility.inner.height;
-        this.animatorContainers.forEach((animatorContainer) => {
-            // TODO: implement { maximumWidth, minimumWidth, maximumHeight, minimumHeight }
-            // const containerHeight = animatorContainer.css('height', { computed: true });
-            // const containerWidth = animatorContainer.css('width', { computed: true });
-            // animatorContainer.css('height',
-            // 	containerHeight);
-            // animatorContainer.css('width',
-            // 	containerWidth);
+        this.animatorContainers.fastEach((animatorContainer, i) => {
             if (viewportHeight === innerHeight) {
                 animatorContainer.addClass('viewport');
-                animatorContainer.removeClass('inner');
+                animatorContainer.removeClass('innerCenter');
             }
             else {
-                animatorContainer.addClass('inner');
+                animatorContainer.addClass('innerCenter');
                 animatorContainer.removeClass('viewport');
             }
+            if (!(this.animations
+                && this.animations[i])) {
+                return;
+            }
+            this.animations.fastEach((workingAnimations) => {
+                workingAnimations.fastEach((workingAnimation) => {
+                    const { __container, width, height, } = workingAnimation.items;
+                    if (!__container) {
+                        return;
+                    }
+                    let workingWidth = null;
+                    let workingHeight = null;
+                    workingWidth = getValueWithinRange({
+                        minimum: width.minimum,
+                        maximum: width.maximum,
+                        value: this.mWindowUtility.inner.width,
+                    });
+                    workingHeight = getValueWithinRange({
+                        minimum: height.minimum,
+                        maximum: height.maximum,
+                        value: this.mWindowUtility.inner.height,
+                    });
+                    __container.css('width', workingWidth == null
+                        ? ''
+                        : workingWidth);
+                    __container.css('height', workingHeight === null
+                        ? ''
+                        : workingHeight);
+                });
+            });
         });
         this.lottie.resize();
+        function getValueWithinRange({ minimum, maximum, value, }) {
+            if (minimum === null
+                || maximum === null) {
+                return null;
+            }
+            let workingAttributeValue = null;
+            if (maximum) {
+                workingAttributeValue = Math.min(value, maximum);
+            }
+            if (minimum) {
+                workingAttributeValue = Math.max(value, minimum);
+            }
+            return workingAttributeValue;
+        }
     }
     onRedraw(animation) {
         const { respectDevicePixelRatio, object, domContent, } = animation.items;
@@ -299,7 +304,7 @@ export class CoreAnimator {
         });
         this.metaAnimations.forEach((metaAnimation) => {
             const { onFrame, } = metaAnimation.items;
-            const mAnimationFactory = new AnimationFactory();
+            const mAnimationFactory = new AnimationFactory(this);
             const animation = mAnimationFactory.create({
                 type: 'meta',
                 index: animationIndex,

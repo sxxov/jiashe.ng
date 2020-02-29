@@ -138,7 +138,9 @@ class Main {
                     uid: 'scrollToContinue',
                     respectDevicePixelRatio: true,
                     totalFrames: 180,
-                    maximumWidth: 1000,
+                    width: {
+                        maximum: 1300,
+                    },
                     onVisible: (animation) => {
                         const { onRedraw, } = animation.items;
                         onRedraw(animation);
@@ -208,6 +210,25 @@ class Main {
                         domContent.css({
                             transform: `translateY(${(((frame / totalFrames)) * finalPosition) - finalPosition}px)`,
                         });
+                    },
+                },
+            });
+            yield mFrameAnimator.add({
+                index: 0,
+                type: 'null',
+                items: {
+                    onRedraw: () => {
+                        const viewportHeight = this.mWindowUtility.viewport.height;
+                        const innerHeight = this.mWindowUtility.inner.height;
+                        const headerGrid = $('.headerGrid');
+                        if (viewportHeight === innerHeight) {
+                            headerGrid.addClass('viewport');
+                            headerGrid.removeClass('inner');
+                        }
+                        else {
+                            headerGrid.addClass('inner');
+                            headerGrid.removeClass('viewport');
+                        }
                     },
                 },
             });

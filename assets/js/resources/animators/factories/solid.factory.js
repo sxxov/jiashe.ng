@@ -14,8 +14,10 @@ export class SolidFactory {
     }
     create(animationObject) {
         return __awaiter(this, void 0, void 0, function* () {
-            const className = animationObject.items.uid;
+            const { uid, __container, } = animationObject.items;
+            const className = uid;
             const domContent = this.createAndReturnDomContent(className);
+            __container.appendChild(domContent);
             const solidObject = {
                 domContent,
             };
@@ -36,8 +38,6 @@ export class SolidFactory {
             className,
             'hidden',
         ]);
-        this.ctx.animatorContainersWrapper
-            .appendChild(domContent);
         return domContent;
     }
 }

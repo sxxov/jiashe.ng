@@ -16,7 +16,7 @@ export class LottieFactory {
         return __awaiter(this, void 0, void 0, function* () {
             const className = animationObject.items.uid;
             const animation = this.ctx.lottie.loadAnimation({
-                container: this.createAndReturnNewContainerDom(animationObject),
+                container: animationObject.items.__container,
                 renderer: 'canvas',
                 loop: true,
                 autoplay: true,
@@ -61,24 +61,6 @@ export class LottieFactory {
         });
         lottieObjectDom.width = 1;
         lottieObjectDom.height = 1;
-    }
-    createAndReturnNewContainerDom(animationObject) {
-        const animatorContainer = $(document.createElement('div'));
-        animatorContainer.addClass([
-            this.ctx.animatorClassPrefix,
-            'container',
-            this.ctx.uid,
-            'height',
-        ]);
-        if (animationObject
-            .items
-            .invert === true) {
-            animatorContainer.addClass('invert');
-        }
-        this.ctx.activate(animatorContainer);
-        this.ctx.animatorContainersWrapper.appendChild(animatorContainer);
-        this.ctx.animatorContainers.push(animatorContainer);
-        return animatorContainer;
     }
 }
 //# sourceMappingURL=lottie.factory.js.map

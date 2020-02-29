@@ -14,8 +14,15 @@ export class SolidFactory {
 	}
 
 	async create(animationObject: AnimationObject): Promise<SolidObject> {
-		const className = animationObject.items.uid;
+		const {
+			uid,
+			__container,
+		} = animationObject.items;
+
+		const className = uid;
 		const domContent = this.createAndReturnDomContent(className);
+
+		__container.appendChild(domContent);
 
 		const solidObject: SolidObject = {
 			domContent,
@@ -40,9 +47,6 @@ export class SolidFactory {
 			className,
 			'hidden',
 		]);
-
-		this.ctx.animatorContainersWrapper
-			.appendChild(domContent);
 
 		return domContent;
 	}

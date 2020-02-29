@@ -1,6 +1,5 @@
 import { CoreAnimator } from '../../animators.js';
 import { $ } from '../../utilities.js';
-import { $Object } from '../../utilities.types.js';
 import {
 	LottieObject,
 	AnimationObject,
@@ -16,7 +15,7 @@ export class LottieFactory {
 	public async create(animationObject: AnimationObject): Promise<LottieObject> {
 		const className = animationObject.items.uid;
 		const animation = this.ctx.lottie.loadAnimation({
-			container: this.createAndReturnNewContainerDom(animationObject),
+			container: animationObject.items.__container,
 			renderer: 'canvas',
 			loop: true,
 			autoplay: true,
@@ -74,30 +73,5 @@ export class LottieFactory {
 
 		(lottieObjectDom as unknown as HTMLCanvasElement).width = 1;
 		(lottieObjectDom as unknown as HTMLCanvasElement).height = 1;
-	}
-
-	private createAndReturnNewContainerDom(animationObject: AnimationObject): $Object {
-		const animatorContainer = $(document.createElement('div'));
-
-		animatorContainer.addClass([
-			this.ctx.animatorClassPrefix,
-			'container',
-			this.ctx.uid,
-			'height',
-		]);
-
-		if (animationObject
-			.items
-			.invert === true) {
-			animatorContainer.addClass('invert');
-		}
-
-		this.ctx.activate(animatorContainer);
-
-		this.ctx.animatorContainersWrapper.appendChild(animatorContainer);
-
-		this.ctx.animatorContainers.push(animatorContainer);
-
-		return animatorContainer;
 	}
 }

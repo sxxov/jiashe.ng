@@ -45,7 +45,7 @@ export class CoreAnimator {
 	constructor() {
 		this.lottie = lottie;
 		this.mWindowUtility = new WindowUtility();
-		this.uid = Date.now().toString();
+		this.uid = Math.round(performance.now()).toString();
 
 		this.currentFrame = 0;
 		this.totalFrames = 0;
@@ -78,7 +78,7 @@ export class CoreAnimator {
 		}));
 	}
 
-	createContainerWrapperDom(): void {
+	private createContainerWrapperDom(): void {
 		this.animatorContainersWrapper = $(document.createElement('div'));
 
 		this.animatorContainersWrapper.addClass([
@@ -92,38 +92,8 @@ export class CoreAnimator {
 		document.body.appendChild(this.animatorContainersWrapper);
 	}
 
-	createAndReturnNewContainerDom({
-		invert = false,
-		...options
-	}): $Object {
-		const animatorContainer = $(document.createElement('div'));
-
-		Object.keys(options).forEach((optionKey) => {
-			animatorContainer[optionKey] = options[optionKey];
-		});
-
-		animatorContainer.addClass([
-			this.animatorClassPrefix,
-			'container',
-			this.uid,
-			'height',
-		]);
-
-		if (invert === true) {
-			animatorContainer.addClass('invert');
-		}
-
-		this.activate(animatorContainer);
-
-		this.animatorContainersWrapper.appendChild(animatorContainer);
-
-		this.animatorContainers.push(animatorContainer);
-
-		return animatorContainer;
-	}
-
-	async add(animationToBeConstructed: AnimationObject): Promise<void> {
-		const mAnimationFactory = new AnimationFactory();
+	public async add(animationToBeConstructed: AnimationObject): Promise<void> {
+		const mAnimationFactory = new AnimationFactory(this);
 		const animationObject = mAnimationFactory.create(animationToBeConstructed, this);
 		const {
 			type,
@@ -140,7 +110,6 @@ export class CoreAnimator {
 		case 'meta':
 			break;
 		case 'solid':
-			// TODO: implement 'solid'
 			solidObject = await (new SolidFactory(this)).create(animationObject);
 
 			animationObject.items = {
@@ -300,28 +269,92 @@ export class CoreAnimator {
 		const viewportHeight = this.mWindowUtility.viewport.height;
 		const innerHeight = this.mWindowUtility.inner.height;
 
-		this.animatorContainers.forEach((animatorContainer) => {
-			// TODO: implement { maximumWidth, minimumWidth, maximumHeight, minimumHeight }
-
-			// const containerHeight = animatorContainer.css('height', { computed: true });
-			// const containerWidth = animatorContainer.css('width', { computed: true });
-
-			// animatorContainer.css('height',
-			// 	containerHeight);
-
-			// animatorContainer.css('width',
-			// 	containerWidth);
-
+		this.animatorContainers.fastEach((animatorContainer: $Object, i: number) => {
 			if (viewportHeight === innerHeight) {
 				animatorContainer.addClass('viewport');
-				animatorContainer.removeClass('inner');
+				animatorContainer.removeClass('innerCenter');
 			} else {
-				animatorContainer.addClass('inner');
+				animatorContainer.addClass('innerCenter');
 				animatorContainer.removeClass('viewport');
 			}
+
+			if (!(this.animations
+				&& this.animations[i])) {
+				return;
+			}
+
+			this.animations.fastEach((workingAnimations: AnimationObject[]) => {
+				workingAnimations.fastEach((workingAnimation: AnimationObject) => {
+					const {
+						__container,
+						width,
+						height,
+					} = workingAnimation.items;
+
+					if (!__container) {
+						return;
+					}
+
+					let workingWidth = null;
+					let workingHeight = null;
+
+					workingWidth = getValueWithinRange({
+						minimum: width.minimum,
+						maximum: width.maximum,
+						value: this.mWindowUtility.inner.width,
+					});
+
+					workingHeight = getValueWithinRange({
+						minimum: height.minimum,
+						maximum: height.maximum,
+						value: this.mWindowUtility.inner.height,
+					});
+
+					__container.css(
+						'width',
+						workingWidth == null
+							? ''
+							: workingWidth,
+					);
+
+					__container.css(
+						'height',
+						workingHeight === null
+							? ''
+							: workingHeight,
+					);
+				});
+			});
 		});
 
 		this.lottie.resize();
+
+		function getValueWithinRange({
+			minimum,
+			maximum,
+			value,
+		}: {
+			minimum: number;
+			maximum: number;
+			value: number;
+		}): number {
+			if (minimum === null
+				|| maximum === null) {
+				return null;
+			}
+
+			let workingAttributeValue = null;
+
+			if (maximum) {
+				workingAttributeValue = Math.min(value, maximum);
+			}
+
+			if (minimum) {
+				workingAttributeValue = Math.max(value, minimum);
+			}
+
+			return workingAttributeValue;
+		}
 	}
 
 	onRedraw(animation: AnimationObject): void {
@@ -447,7 +480,7 @@ export class CoreAnimator {
 			const {
 				onFrame,
 			} = metaAnimation.items;
-			const mAnimationFactory = new AnimationFactory();
+			const mAnimationFactory = new AnimationFactory(this);
 			const animation = mAnimationFactory.create({
 				type: 'meta',
 				index: animationIndex,

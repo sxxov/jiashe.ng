@@ -95,14 +95,14 @@ export class TV {
         const innerHeight = this.mWindowUtility.inner.height;
         if (viewportHeight === innerHeight) {
             screenDom.addClass('viewport');
-            screenDom.removeClass('inner');
+            screenDom.removeClass('innerCenter');
             tvDom.addClass('viewport');
-            tvDom.removeClass('inner');
+            tvDom.removeClass('innerCenter');
         }
         else {
-            screenDom.addClass('inner');
+            screenDom.addClass('innerCenter');
             screenDom.removeClass('viewport');
-            tvDom.addClass('inner');
+            tvDom.addClass('innerCenter');
             tvDom.removeClass('viewport');
         }
     }

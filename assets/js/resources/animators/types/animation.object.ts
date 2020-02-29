@@ -10,20 +10,25 @@ export interface AnimationObject {
 	data?: unknown;
 	items?: {
 		__caller?: any;
+		__container?: $Object | null;
 		uid?: string;
-		domContent?: $Object;
+		domContent?: $Object | null;
 		offset?: number;
 		object?: {
 			lottie?: LottieObject;
 			solid?: SolidObject;
 		};
 		respectDevicePixelRatio?: boolean;
-		totalFrames?: number;
+		totalFrames?: number | null;
 		invert?: boolean;
-		maximumHeight?: number;
-		maximumWidth?: number;
-		minimumHeight?: number;
-		minimumWidth?: number;
+		height?: {
+			maximum?: number | null;
+			minimum?: number | null;
+		};
+		width?: {
+			maximum?: number;
+			minimum?: number;
+		};
 		onFrame?: (animationObject: AnimationObject, frame: number) => void;
 		onVisible?: (animationObject: AnimationObject) => void;
 		onHidden?: (animationObject: AnimationObject) => void;
