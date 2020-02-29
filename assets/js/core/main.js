@@ -117,8 +117,7 @@ class Main {
             });
             yield mScrollAnimator.add({
                 index: 1,
-                type: 'lottie',
-                data: yield $().getJSON('/assets/js/raw/lottie/blocks.json'),
+                type: 'solid',
                 items: {
                     uid: 'blockso',
                     respectDevicePixelRatio: false,

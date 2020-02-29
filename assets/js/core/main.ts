@@ -138,8 +138,7 @@ class Main {
 		});
 		await mScrollAnimator.add({
 			index: 1,
-			type: 'lottie',
-			data: await $().getJSON('/assets/js/raw/lottie/blocks.json'),
+			type: 'solid',
 			items: {
 				uid: 'blockso',
 				respectDevicePixelRatio: false,

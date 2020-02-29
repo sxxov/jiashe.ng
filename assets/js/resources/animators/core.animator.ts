@@ -6,16 +6,18 @@ import {
 import { lottie } from '../lottie.js';
 import {
 	LottieFactory,
+	SolidFactory,
 	AnimationFactory,
 } from '../animators.factories.js';
 import {
 	LottieObject,
+	SolidObject,
 	AnimationObject,
 } from '../animator.types.js';
 import { $Object } from '../utilities.types.js';
 
-// TODO:investigate issue of lottie disappearing when mobile scroll hits innerHeight,
-//		but reappears after viewport becomes innerHeight
+// TODO: investigate issue of lottie disappearing when mobile scroll hits innerHeight,
+//		 but reappears after viewport becomes innerHeight
 
 export class CoreAnimator {
 	lottie: any;
@@ -38,6 +40,8 @@ export class CoreAnimator {
 
 	rawAnimateInstance: number;
 
+	attributeCache: Record<string, any[]>;
+
 	constructor() {
 		this.lottie = lottie;
 		this.mWindowUtility = new WindowUtility();
@@ -58,6 +62,8 @@ export class CoreAnimator {
 		this.dprMultiplier = this.dpr;
 
 		this.rawAnimateInstance = null;
+
+		this.attributeCache = {};
 
 		this.createContainerWrapperDom();
 
@@ -116,56 +122,52 @@ export class CoreAnimator {
 		return animatorContainer;
 	}
 
-	async createAndReturnLottieObject(animationObject: AnimationObject): Promise<LottieObject> {
-		const mLottieFactory = new LottieFactory(this);
-
-		return mLottieFactory.create(animationObject);
-	}
-
 	async add(animationToBeConstructed: AnimationObject): Promise<void> {
 		const mAnimationFactory = new AnimationFactory();
 		const animationObject = mAnimationFactory.create(animationToBeConstructed, this);
 		const {
 			type,
 			index,
-			items: options,
+			items,
 		} = animationObject;
 
 		let lottieObject: LottieObject = null;
+		let solidObject: SolidObject = null;
 
 		switch (type) {
 		case 'null':
 			break;
 		case 'meta':
 			break;
+		case 'solid':
+			// TODO: implement 'solid'
+			solidObject = await (new SolidFactory(this)).create(animationObject);
+
+			animationObject.items = {
+				...animationObject.items,
+				domContent: solidObject.domContent,
+			};
+			break;
 		case 'lottie':
-			lottieObject = await this.createAndReturnLottieObject(animationObject);
+			lottieObject = await (new LottieFactory(this)).create(animationObject);
 
 			animationObject.items = {
 				...animationObject.items,
 				totalFrames: lottieObject.totalFrames,
-				domContent: $(`.${lottieObject.className}`),
+				domContent: lottieObject.domContent,
 				onFrame: (animationItem: AnimationObject, frame: number): void => {
 					lottieObject.onFrame(animationItem, frame);
 
-					if (!options.onFrame
-						|| options.onFrame.constructor !== Function) {
-						return;
-					}
-
-					options.onFrame(animationItem, frame);
+					items.onFrame(animationItem, frame);
 				},
 				onRedraw: (animationItem: AnimationObject): void => {
 					this.onRedraw(animationItem);
 
-					if (options.onRedraw === undefined
-						|| options.onRedraw.constructor !== Function) {
-						return;
-					}
-
-					options.onRedraw(animationItem);
+					items.onRedraw(animationItem);
 				},
-				lottieObject,
+				object: {
+					lottie: lottieObject,
+				},
 			};
 			break;
 		default:
@@ -190,27 +192,11 @@ export class CoreAnimator {
 		default:
 		}
 
-		// get an array of the 'totalFrames' of every animation,
-		this.totalFrames = this.animations.map(
-			(animationItem) => Math.max(
-				...animationItem.map(
-					(workingAnimation): number => {
-						const {
-							totalFrames,
-							offset,
-						} = workingAnimation.items;
+		this.attributeCache = {};
 
-						return (
-							workingAnimation.items.lottieObject
-								? totalFrames
-								: 0
-						)
-						+ offset;
-					},
-				),
-			),
-		// add them all up
-		).reduce((accumulator, currentValue) => currentValue + accumulator, 0);
+		// add up the 'totalFrames' of every animation
+		this.totalFrames = this.getAttributeFromAnimationsItems('totalFrames', this.animations)
+			.reduce((accumulator, currentValue) => currentValue + accumulator, 0);
 
 		this.onNewAnimation(animationObject);
 	}
@@ -287,24 +273,6 @@ export class CoreAnimator {
 
 			window.requestAnimationFrame(step);
 		});
-
-		// return new Promise((resolve) => {
-		// 	let i = from;
-
-		// 	this.rawAnimateInstance = setInterval(() => {
-		// 		if (i > to) {
-		// 			clearInterval(this.rawAnimateInstance);
-		// 			this.rawAnimateInstance = null;
-
-		// 			resolve();
-		// 			return;
-		// 		}
-
-		// 		window.requestAnimationFrame(() => processedCallback(i));
-
-		// 		++i;
-		// 	}, 1000 / fps);
-		// });
 	}
 
 	onNewAnimation(animation: AnimationObject): void {
@@ -359,15 +327,15 @@ export class CoreAnimator {
 	onRedraw(animation: AnimationObject): void {
 		const {
 			respectDevicePixelRatio,
-			lottieObject,
+			object,
 			domContent,
 		} = animation.items;
 
-		if (!lottieObject) {
+		if (!object.lottie) {
 			return;
 		}
 
-		const lottieObjectDom = $(domContent);
+		const lottieObjectDom = domContent;
 
 		if (respectDevicePixelRatio !== false) {
 			const lottieObjectContainerWrapperWidth = this.animatorContainersWrapper.clientWidth;
@@ -453,18 +421,19 @@ export class CoreAnimator {
 			)
 			* totalFrames;
 
-			if (__caller.name !== 'FrameAnimator'
-				|| uid === 'logo'
-				|| uid === 'scrollCounter') {
-				console.log('frame', frame);
-				console.log('workingAnimation', workingAnimation);
-				console.log('globalFrame', globalFrame);
-				console.log('animationIndex', animationIndex);
-				console.log('localFrame', localFrame);
-				console.log('currentAnimationsTotalFrames', currentAnimationsTotalFrames);
-				console.log('this.visibleAnimations', this.visibleAnimations);
-				console.log('');
-			}
+			// if (__caller.name !== 'FrameAnimator'
+			// 	|| uid === 'logo'
+			// 	|| uid === 'scrollCounter') {
+			// 	console.log('frame', frame);
+			// 	console.log('workingAnimation', workingAnimation);
+			// 	console.log('globalFrame', globalFrame);
+			// 	console.log('animationIndex', animationIndex);
+			// 	console.log('localFrame', localFrame);
+			// 	console.log('currentAnimationsTotalFrames', currentAnimationsTotalFrames);
+			// 	console.log('this.visibleAnimations', this.visibleAnimations);
+			// 	console.log('this.animations', this.animations);
+			// 	console.log('');
+			// }
 
 			this.currentFrame = frame;
 			this.onVisibleAnimationsChange(workingAnimations);
@@ -497,6 +466,10 @@ export class CoreAnimator {
 		attributeKey: string,
 		animations: AnimationObject[][],
 	): any[] {
+		if (this.attributeCache[attributeKey]) {
+			return this.attributeCache[attributeKey];
+		}
+
 		return animations.map(
 			(animation) => Math.max(
 				...animation.map(
