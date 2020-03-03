@@ -20,6 +20,7 @@ export interface AnimationObject {
 		};
 		respectDevicePixelRatio?: boolean;
 		totalFrames?: number | null;
+		fps?: number;
 		invert?: boolean;
 		height?: {
 			maximum?: number | null;

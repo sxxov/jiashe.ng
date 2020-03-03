@@ -1,5 +1,6 @@
 import { CoreAnimator } from '../../animators.js';
 import { $ } from '../../utilities.js';
+import { lottie } from '../../lottie.js';
 import {
 	LottieObject,
 	AnimationObject,
@@ -14,7 +15,7 @@ export class LottieFactory {
 
 	public async create(animationObject: AnimationObject): Promise<LottieObject> {
 		const className = animationObject.items.uid;
-		const animation = this.ctx.lottie.loadAnimation({
+		const animation = lottie.loadAnimation({
 			container: animationObject.items.__container,
 			renderer: 'canvas',
 			loop: true,
@@ -68,7 +69,7 @@ export class LottieFactory {
 		lottieObjectDom.css({
 			width: '',
 			height: '',
-			position: 'fixed',
+			position: 'absolute',
 		});
 
 		(lottieObjectDom as unknown as HTMLCanvasElement).width = 1;

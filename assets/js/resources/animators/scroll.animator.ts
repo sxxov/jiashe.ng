@@ -1,48 +1,32 @@
 import { CoreAnimator } from './core.animator.js';
 import { $ } from '../utilities.js';
+import { AnimationObject } from '../animator.types.js';
 
 export class ScrollAnimator extends CoreAnimator {
-	private viewportCache: {
-		height: number;
-		width: number;
-	}
-
 	constructor() {
 		super();
-
-		this.viewportCache = {
-			height: null,
-			width: null,
-		};
 
 		$(window).on('scroll', () => window.requestAnimationFrame(() => this.onScroll.call(this)));
 	}
 
 	// @Override
-	onWindowResize(): void {
-		this.viewportCache = {
-			width: this.mWindowUtility.viewport.width,
-			height: this.mWindowUtility.viewport.height,
-		};
+	async add(animationToBeConstructed: AnimationObject): Promise<void> {
+		await super.add(animationToBeConstructed);
 
-		const windowWidth = this.viewportCache.width;
-		const windowHeight = this.viewportCache.height;
-
+		const windowHeight = this.mWindowUtility.viewport.height;
 		const documentHeight = windowHeight * (this.animations.length + 1);
-		const documentWidth = windowWidth;
 
 		$(document.body).css({
-			width: documentWidth,
 			height: documentHeight,
 		});
 
-		super.onWindowResize();
+		console.log(documentHeight);
 	}
 
 	onScroll(): void {
 		const { scrollY } = window;
 		const globalFrame = this.getRelativeFrame(
-			scrollY / (document.body.scrollHeight - this.viewportCache.height),
+			scrollY / (document.body.scrollHeight - this.mWindowUtility.viewport.height),
 		);
 
 		this.onFrame(globalFrame);

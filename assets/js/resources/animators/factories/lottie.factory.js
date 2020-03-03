@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { $ } from '../../utilities.js';
+import { lottie } from '../../lottie.js';
 export class LottieFactory {
     constructor(thisArg) {
         this.ctx = thisArg;
@@ -15,7 +16,7 @@ export class LottieFactory {
     create(animationObject) {
         return __awaiter(this, void 0, void 0, function* () {
             const className = animationObject.items.uid;
-            const animation = this.ctx.lottie.loadAnimation({
+            const animation = lottie.loadAnimation({
                 container: animationObject.items.__container,
                 renderer: 'canvas',
                 loop: true,
@@ -57,7 +58,7 @@ export class LottieFactory {
         lottieObjectDom.css({
             width: '',
             height: '',
-            position: 'fixed',
+            position: 'absolute',
         });
         lottieObjectDom.width = 1;
         lottieObjectDom.height = 1;

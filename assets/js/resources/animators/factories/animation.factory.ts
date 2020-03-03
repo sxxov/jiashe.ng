@@ -35,6 +35,7 @@ export class AnimationFactory {
 				maximum: null,
 				minimum: null,
 			},
+			fps: 120,
 			onFrame: (): void => {},
 			onVisible: (): void => {},
 			onHidden: (): void => {},
@@ -55,7 +56,6 @@ export class AnimationFactory {
 			this.ctx.animatorClassPrefix,
 			'container',
 			Math.round(performance.now()).toString(),
-			'height',
 		]);
 
 		if (animationObject

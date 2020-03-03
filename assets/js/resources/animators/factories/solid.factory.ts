@@ -38,7 +38,7 @@ export class SolidFactory {
 			width: '100vw',
 			height: '100vh',
 			background: 'white',
-			position: 'fixed',
+			position: 'absolute',
 		});
 
 		domContent.addClass([

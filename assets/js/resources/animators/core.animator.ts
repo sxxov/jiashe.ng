@@ -16,11 +16,7 @@ import {
 } from '../animator.types.js';
 import { $Object } from '../utilities.types.js';
 
-// TODO: investigate issue of lottie disappearing when mobile scroll hits innerHeight,
-//		 but reappears after viewport becomes innerHeight
-
 export class CoreAnimator {
-	lottie: any;
 	protected mWindowUtility: WindowUtility;
 	uid: string;
 
@@ -38,12 +34,11 @@ export class CoreAnimator {
 	dpr: number;
 	dprMultiplier: number;
 
-	rawAnimateInstance: number;
+	rafId: number;
 
 	attributeCache: Record<string, any[]>;
 
 	constructor() {
-		this.lottie = lottie;
 		this.mWindowUtility = new WindowUtility();
 		this.uid = Math.round(performance.now()).toString();
 
@@ -61,7 +56,7 @@ export class CoreAnimator {
 		this.dpr = Math.max(window.devicePixelRatio / 2, 1);
 		this.dprMultiplier = this.dpr;
 
-		this.rawAnimateInstance = null;
+		this.rafId = null;
 
 		this.attributeCache = {};
 
@@ -85,11 +80,12 @@ export class CoreAnimator {
 			this.animatorClassPrefix,
 			'containerWrapper',
 			this.uid,
+			'height',
 		]);
 
 		this.activate(this.animatorContainersWrapper);
 
-		document.body.appendChild(this.animatorContainersWrapper);
+		$('.organs').appendChild(this.animatorContainersWrapper);
 	}
 
 	public async add(animationToBeConstructed: AnimationObject): Promise<void> {
@@ -203,8 +199,8 @@ export class CoreAnimator {
 			return new Promise((resolve) => resolve());
 		}
 
-		if (this.rawAnimateInstance !== null) {
-			clearInterval(this.rawAnimateInstance);
+		if (this.rafId !== null) {
+			cancelAnimationFrame(this.rafId);
 		}
 
 		let processedCallback = callback;
@@ -237,10 +233,10 @@ export class CoreAnimator {
 				}
 
 				i += 1 * (fps / 60);
-				window.requestAnimationFrame(step);
+				this.rafId = window.requestAnimationFrame(step);
 			};
 
-			window.requestAnimationFrame(step);
+			this.rafId = window.requestAnimationFrame(step);
 		});
 	}
 
@@ -269,15 +265,22 @@ export class CoreAnimator {
 		const viewportHeight = this.mWindowUtility.viewport.height;
 		const innerHeight = this.mWindowUtility.inner.height;
 
-		this.animatorContainers.fastEach((animatorContainer: $Object, i: number) => {
-			if (viewportHeight === innerHeight) {
-				animatorContainer.addClass('viewport');
-				animatorContainer.removeClass('innerCenter');
-			} else {
-				animatorContainer.addClass('innerCenter');
-				animatorContainer.removeClass('viewport');
-			}
+		if (viewportHeight === innerHeight) {
+			// this.animatorContainersWrapper.addClass('viewport');
+			this.animatorContainersWrapper.removeClass('innerCenter');
+			// this.animatorContainersWrapper.css({
+			// 	height: viewportHeight,
+			// });
+			console.log('height', viewportHeight);
+		} else {
+			this.animatorContainersWrapper.addClass('innerCenter');
+			// this.animatorContainersWrapper.removeClass('viewport');
+			// this.animatorContainersWrapper.css({
+			// 	height: viewportHeight,
+			// });
+		}
 
+		this.animatorContainers.fastEach((animatorContainer: $Object, i: number) => {
 			if (!(this.animations
 				&& this.animations[i])) {
 				return;
@@ -327,7 +330,7 @@ export class CoreAnimator {
 			});
 		});
 
-		this.lottie.resize();
+		lottie.resize();
 
 		function getValueWithinRange({
 			minimum,
@@ -454,19 +457,19 @@ export class CoreAnimator {
 			)
 			* totalFrames;
 
-			// if (__caller.name !== 'FrameAnimator'
-			// 	|| uid === 'logo'
-			// 	|| uid === 'scrollCounter') {
-			// 	console.log('frame', frame);
-			// 	console.log('workingAnimation', workingAnimation);
-			// 	console.log('globalFrame', globalFrame);
-			// 	console.log('animationIndex', animationIndex);
-			// 	console.log('localFrame', localFrame);
-			// 	console.log('currentAnimationsTotalFrames', currentAnimationsTotalFrames);
-			// 	console.log('this.visibleAnimations', this.visibleAnimations);
-			// 	console.log('this.animations', this.animations);
-			// 	console.log('');
-			// }
+			if (__caller.name !== 'FrameAnimator'
+				|| uid === 'logo'
+				|| uid === 'scrollCounter') {
+				console.log('frame', frame);
+				console.log('workingAnimation', workingAnimation);
+				console.log('globalFrame', globalFrame);
+				console.log('animationIndex', animationIndex);
+				console.log('localFrame', localFrame);
+				console.log('currentAnimationsTotalFrames', currentAnimationsTotalFrames);
+				console.log('this.visibleAnimations', this.visibleAnimations);
+				console.log('this.animations', this.animations);
+				console.log('');
+			}
 
 			this.currentFrame = frame;
 			this.onVisibleAnimationsChange(workingAnimations);

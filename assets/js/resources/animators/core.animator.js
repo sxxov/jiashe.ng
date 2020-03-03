@@ -10,11 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { $, WindowUtility, BezierUtility, } from '../utilities.js';
 import { lottie } from '../lottie.js';
 import { LottieFactory, SolidFactory, AnimationFactory, } from '../animators.factories.js';
-// TODO: investigate issue of lottie disappearing when mobile scroll hits innerHeight,
-//		 but reappears after viewport becomes innerHeight
 export class CoreAnimator {
     constructor() {
-        this.lottie = lottie;
         this.mWindowUtility = new WindowUtility();
         this.uid = Math.round(performance.now()).toString();
         this.currentFrame = 0;
@@ -28,7 +25,7 @@ export class CoreAnimator {
         this.visibleAnimations = null;
         this.dpr = Math.max(window.devicePixelRatio / 2, 1);
         this.dprMultiplier = this.dpr;
-        this.rawAnimateInstance = null;
+        this.rafId = null;
         this.attributeCache = {};
         this.createContainerWrapperDom();
         $(window).on('load resize', () => window.requestAnimationFrame(() => {
@@ -46,9 +43,10 @@ export class CoreAnimator {
             this.animatorClassPrefix,
             'containerWrapper',
             this.uid,
+            'height',
         ]);
         this.activate(this.animatorContainersWrapper);
-        document.body.appendChild(this.animatorContainersWrapper);
+        $('.organs').appendChild(this.animatorContainersWrapper);
     }
     add(animationToBeConstructed) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -121,8 +119,8 @@ export class CoreAnimator {
             if (from === to) {
                 return new Promise((resolve) => resolve());
             }
-            if (this.rawAnimateInstance !== null) {
-                clearInterval(this.rawAnimateInstance);
+            if (this.rafId !== null) {
+                cancelAnimationFrame(this.rafId);
             }
             let processedCallback = callback;
             if (bezier !== []
@@ -143,9 +141,9 @@ export class CoreAnimator {
                         return;
                     }
                     i += 1 * (fps / 60);
-                    window.requestAnimationFrame(step);
+                    this.rafId = window.requestAnimationFrame(step);
                 };
-                window.requestAnimationFrame(step);
+                this.rafId = window.requestAnimationFrame(step);
             });
         });
     }
@@ -165,15 +163,22 @@ export class CoreAnimator {
         }
         const viewportHeight = this.mWindowUtility.viewport.height;
         const innerHeight = this.mWindowUtility.inner.height;
+        if (viewportHeight === innerHeight) {
+            // this.animatorContainersWrapper.addClass('viewport');
+            this.animatorContainersWrapper.removeClass('innerCenter');
+            // this.animatorContainersWrapper.css({
+            // 	height: viewportHeight,
+            // });
+            console.log('height', viewportHeight);
+        }
+        else {
+            this.animatorContainersWrapper.addClass('innerCenter');
+            // this.animatorContainersWrapper.removeClass('viewport');
+            // this.animatorContainersWrapper.css({
+            // 	height: viewportHeight,
+            // });
+        }
         this.animatorContainers.fastEach((animatorContainer, i) => {
-            if (viewportHeight === innerHeight) {
-                animatorContainer.addClass('viewport');
-                animatorContainer.removeClass('innerCenter');
-            }
-            else {
-                animatorContainer.addClass('innerCenter');
-                animatorContainer.removeClass('viewport');
-            }
             if (!(this.animations
                 && this.animations[i])) {
                 return;
@@ -205,7 +210,7 @@ export class CoreAnimator {
                 });
             });
         });
-        this.lottie.resize();
+        lottie.resize();
         function getValueWithinRange({ minimum, maximum, value, }) {
             if (minimum === null
                 || maximum === null) {
@@ -285,19 +290,19 @@ export class CoreAnimator {
                 / ((currentAnimationsTotalFrames
                     - this.getTotalFramesBeforeIndex(animationIndex)) - offset))
                 * totalFrames;
-            // if (__caller.name !== 'FrameAnimator'
-            // 	|| uid === 'logo'
-            // 	|| uid === 'scrollCounter') {
-            // 	console.log('frame', frame);
-            // 	console.log('workingAnimation', workingAnimation);
-            // 	console.log('globalFrame', globalFrame);
-            // 	console.log('animationIndex', animationIndex);
-            // 	console.log('localFrame', localFrame);
-            // 	console.log('currentAnimationsTotalFrames', currentAnimationsTotalFrames);
-            // 	console.log('this.visibleAnimations', this.visibleAnimations);
-            // 	console.log('this.animations', this.animations);
-            // 	console.log('');
-            // }
+            if (__caller.name !== 'FrameAnimator'
+                || uid === 'logo'
+                || uid === 'scrollCounter') {
+                console.log('frame', frame);
+                console.log('workingAnimation', workingAnimation);
+                console.log('globalFrame', globalFrame);
+                console.log('animationIndex', animationIndex);
+                console.log('localFrame', localFrame);
+                console.log('currentAnimationsTotalFrames', currentAnimationsTotalFrames);
+                console.log('this.visibleAnimations', this.visibleAnimations);
+                console.log('this.animations', this.animations);
+                console.log('');
+            }
             this.currentFrame = frame;
             this.onVisibleAnimationsChange(workingAnimations);
             onFrame(workingAnimation, localFrame);

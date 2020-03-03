@@ -11,7 +11,7 @@ export class AnimationFactory {
             }, width: {
                 maximum: null,
                 minimum: null,
-            }, onFrame: () => { }, onVisible: () => { }, onHidden: () => { }, onRedraw: () => { } }, options.items);
+            }, fps: 120, onFrame: () => { }, onVisible: () => { }, onHidden: () => { }, onRedraw: () => { } }, options.items);
         return Object.assign(Object.assign({}, baseObject), { items: baseItemsObject });
     }
     createAndReturnNewContainerDom(animationObject) {
@@ -20,7 +20,6 @@ export class AnimationFactory {
             this.ctx.animatorClassPrefix,
             'container',
             Math.round(performance.now()).toString(),
-            'height',
         ]);
         if (animationObject
             .items
