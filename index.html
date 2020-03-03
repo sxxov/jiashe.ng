@@ -45,13 +45,6 @@
 	<script async type="module" src="assets/js/core/main.js"></script>
 </head>
 <body>
-	<div class="tv height">
-		<!-- the element below will be replaced with the youtube iframe -->
-		<div class="screen height" id="screen"></div>
-	</div>
-    <div class="overlay"></div>
-
-    <div class="__windowUtility viewportCalibrator"></div>
     <div class="headerGrid invert">
         <div class="logo hidden">
             <svg xmlns="http://www.w3.org/2000/svg"
@@ -65,7 +58,20 @@
             <h1></h1>
             <h2></h2>
         </div>
-        <div class="hamburger hidden"></div>
+        <div class="hamburgerContainer hidden"></div>
+    </div>
+    <div class="skin">
+        <div class="organs">
+            <div class="shelf">
+                <div class="tv height">
+                    <!-- the element below will be replaced with the youtube iframe -->
+                    <div class="screen height" id="screen"></div>
+                </div>
+            </div>
+            <div class="overlay"></div>
+
+            <div class="__windowUtility viewportCalibrator"></div>
+        </div>
     </div>
 </body>
 </html>

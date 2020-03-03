@@ -1,4 +1,5 @@
 import { TV } from './tv.js';
+import { Hamburger } from './hamburger.js';
 import {
 	ScrollAnimator,
 	FrameAnimator,
@@ -12,6 +13,7 @@ import {
 
 class Main {
 	mTV: TV;
+	hamburger: Hamburger;
 	miscellaneousScrollingAnimator: ScrollAnimator;
 	scrollToContinueFrameAnimator: FrameAnimator;
 	mWindowUtility: WindowUtility;
@@ -19,6 +21,7 @@ class Main {
 	constructor() {
 		(new ForUtility()).addToArrayPrototype();
 		this.mTV = new TV();
+		this.hamburger = new Hamburger();
 		this.miscellaneousScrollingAnimator = new ScrollAnimator();
 		this.scrollToContinueFrameAnimator = new FrameAnimator();
 		this.mWindowUtility = new WindowUtility();
@@ -34,6 +37,7 @@ class Main {
 	async addMiscellaneousScrollingAnimations(): Promise<void> {
 		const mScrollAnimator = this.miscellaneousScrollingAnimator;
 
+		// meta
 		await mScrollAnimator.add({
 			type: 'meta',
 			items: {
@@ -76,6 +80,7 @@ class Main {
 			},
 		});
 
+		// pre
 		await mScrollAnimator.add({
 			index: -1,
 			type: 'null',
@@ -97,7 +102,8 @@ class Main {
 				},
 			},
 		});
-		// custom uid for group
+
+		// custom uid for index 0
 		await mScrollAnimator.add({
 			type: null,
 			index: 0,
@@ -105,6 +111,8 @@ class Main {
 				uid: 'intro',
 			},
 		});
+
+		// blocks
 		await mScrollAnimator.add({
 			index: 0,
 			type: 'lottie',
@@ -115,6 +123,8 @@ class Main {
 				totalFrames: 150,
 			},
 		});
+
+		// hello
 		await mScrollAnimator.add({
 			index: 0,
 			type: 'lottie',
@@ -125,6 +135,8 @@ class Main {
 				totalFrames: 120,
 			},
 		});
+
+		// overlayController
 		await mScrollAnimator.add({
 			index: 0,
 			type: 'null',
@@ -138,6 +150,8 @@ class Main {
 				},
 			},
 		});
+
+		// placeholder
 		await mScrollAnimator.add({
 			index: 1,
 			type: 'solid',
@@ -152,6 +166,7 @@ class Main {
 	async addScrollToContinueFrameAnimation(): Promise<void> {
 		const mFrameAnimator = this.scrollToContinueFrameAnimator;
 
+		// scrollToContinue
 		await mFrameAnimator.add({
 			index: 0,
 			type: 'lottie',
@@ -189,6 +204,7 @@ class Main {
 	async addHeaderFrameAnimation(): Promise<void> {
 		const mFrameAnimator = new FrameAnimator();
 
+		// logo
 		await mFrameAnimator.add({
 			index: 0,
 			type: 'null',
@@ -220,13 +236,14 @@ class Main {
 			},
 		});
 
+		// scrollCounter
 		await mFrameAnimator.add({
 			index: 0,
 			type: 'null',
 			items: {
 				uid: 'scrollCounter',
 				totalFrames: 120,
-				offset: 60,
+				offset: 40,
 				domContent: $('.scrollCounter'),
 				onVisible: (animation): void => {
 					const {
@@ -252,12 +269,54 @@ class Main {
 					const finalPosition = -120;
 
 					domContent.css({
-						transform: `translateY(${(((frame / totalFrames)) * finalPosition) - finalPosition}px)`,
+						transform: `translateY(${((frame / totalFrames) * finalPosition) - finalPosition}px)`,
 					});
 				},
 			},
 		});
 
+		// hamburger menu
+		await mFrameAnimator.add({
+			index: 0,
+			type: 'null',
+			data: await this.hamburger.getData(),
+			items: {
+				uid: 'hamburger',
+				totalFrames: 120,
+				offset: 80,
+				domContent: this.hamburger.containerDom,
+				onVisible: (animation): void => {
+					const {
+						items,
+						data,
+					} = animation;
+
+					const {
+						domContent,
+					} = items;
+
+					domContent.removeClass('hidden');
+					domContent.css({
+						transform: 'translateY(-10000px)',
+					});
+
+					this.hamburger.create(data);
+				},
+				onFrame: (animation, frame): void => {
+					const {
+						domContent,
+						totalFrames,
+					} = animation.items;
+					const finalPosition = 120;
+
+					domContent.css({
+						transform: `translateY(${((frame / totalFrames) * finalPosition) - finalPosition}px)`,
+					});
+				},
+			},
+		});
+
+		// to control the header grid size, for css animation on mobile when the url bar appears
 		await mFrameAnimator.add({
 			index: 0,
 			type: 'null',
@@ -269,11 +328,17 @@ class Main {
 					const headerGrid = $('.headerGrid');
 
 					if (viewportHeight === innerHeight) {
-						headerGrid.addClass('viewport');
-						headerGrid.removeClass('inner');
+						// headerGrid.addClass('viewport');
+						// headerGrid.removeClass('inner');
+						headerGrid.css({
+							height: viewportHeight,
+						});
 					} else {
-						headerGrid.addClass('inner');
-						headerGrid.removeClass('viewport');
+						// headerGrid.addClass('inner');
+						// headerGrid.removeClass('viewport');
+						headerGrid.css({
+							height: innerHeight,
+						});
 					}
 				},
 			},

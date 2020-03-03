@@ -4,11 +4,35 @@
 body {
 	position: absolute;
 	height: 0px;
-	width: 0px;
+	width: 100%;
 
 	background-color: black;
 	margin: 0px;
 	overflow-x: hidden;
+}
+
+.skin {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+
+	transition: 
+		height 1s cubic-bezier(0.075, 0.82, 0.165, 1), 
+		width 1s cubic-bezier(0.075, 0.82, 0.165, 1), 
+		top 1s cubic-bezier(0.075, 0.82, 0.165, 1), 
+		left 1s cubic-bezier(0.075, 0.82, 0.165, 1), 
+		filter 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+	overflow: hidden;
+}
+
+.organs {
+	position: absolute;
+
+	transition: inherit;
+
+	width: 100%;
+	height: 100%;
 }
 
 .hidden {
@@ -51,7 +75,7 @@ body {
 	display: grid;
 	width: 100%;
 
-	transition: width .5s, height .5s;
+	transition: width .2s, height .2s;
 
     grid-template-columns: 0px[preLeftCorner] 50px[leftCorner]  auto[preRightCorner] 50px[rightCorner];
     grid-template-rows: 0px[preHeader] 50px[header] auto[preFooter] 50px[footer];
@@ -101,17 +125,38 @@ body {
 .headerGrid > .logo {
 	width: 75%;
 
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+
 	grid-column-start: preLeftCorner;
 	grid-column-end: leftCorner;
+	grid-row-start: preHeader;
+	grid-row-end: header;
 
 	justify-self: left;
+	align-self: flex-start;
+}
+
+.headerGrid > .hamburgerContainer {
+	width: 75%;
+	height: 56.25%;
+
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+
+	grid-column-start: preRightCorner;
+	grid-column-end: rightCorner;
+	grid-row-start: preHeader;
+	grid-row-end: header;
+
+	justify-self: right;
 	align-self: flex-start;
 }
 /* -- header end -- */
 
 /* -- lottie start -- */
 .__animate.containerWrapper {
-	position: fixed;
+	position: absolute;
 	overflow: hidden;
 	display: grid;
 
@@ -124,12 +169,13 @@ body {
 .__animate.containerWrapper > .__animate.container {
 	position: absolute;
 
-	width: 100vw;
+	width: 100%;
+	height: 100%;
 
 	margin: 0;
 
 	opacity: 0;
-	transition: opacity .2s, transform .2s;
+	transition: opacity .2s;
 
 	z-index: inherit;
 }
@@ -150,8 +196,8 @@ body {
 	position: fixed;
 	top: 0px;
 	left: 0px;
-	height: 100vh;
-	width: 100vw;
+	height: 100%;
+	width: 100%;
 
 	background-color: #000;
 
@@ -166,22 +212,30 @@ body {
 /* -- overlay end -- */
 
 /* -- tv start -- */
-.tv {
-	position: fixed;
+.shelf {
+	height: 100vh;
+	width: 100vw;
+
+	position: absolute;
 	overflow: hidden;
+}
+
+.tv {
 	display: grid;
+
+	position: absolute;
 
 	z-index: -1;
 }
 
 .tv > .screen {
-	height: 100vh;
-	width: 100vw;
+	height: 100%;
+	width: 100%;
 
 	margin: 0;
 
 	opacity: 0;
-	transition: opacity .5s, width .5s, height .5s;
+	transition: opacity .5s;
 
 	z-index: inherit;
 }

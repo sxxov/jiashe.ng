@@ -8,12 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { TV } from './tv.js';
+import { Hamburger } from './hamburger.js';
 import { ScrollAnimator, FrameAnimator, } from '../resources/animators.js';
 import { $, WindowUtility, ForUtility, } from '../resources/utilities.js';
 class Main {
     constructor() {
         (new ForUtility()).addToArrayPrototype();
         this.mTV = new TV();
+        this.hamburger = new Hamburger();
         this.miscellaneousScrollingAnimator = new ScrollAnimator();
         this.scrollToContinueFrameAnimator = new FrameAnimator();
         this.mWindowUtility = new WindowUtility();
@@ -29,6 +31,7 @@ class Main {
     addMiscellaneousScrollingAnimations() {
         return __awaiter(this, void 0, void 0, function* () {
             const mScrollAnimator = this.miscellaneousScrollingAnimator;
+            // meta
             yield mScrollAnimator.add({
                 type: 'meta',
                 items: {
@@ -62,6 +65,7 @@ class Main {
                     }),
                 },
             });
+            // pre
             yield mScrollAnimator.add({
                 index: -1,
                 type: 'null',
@@ -75,7 +79,7 @@ class Main {
                     },
                 },
             });
-            // custom uid for group
+            // custom uid for index 0
             yield mScrollAnimator.add({
                 type: null,
                 index: 0,
@@ -83,6 +87,7 @@ class Main {
                     uid: 'intro',
                 },
             });
+            // blocks
             yield mScrollAnimator.add({
                 index: 0,
                 type: 'lottie',
@@ -93,6 +98,7 @@ class Main {
                     totalFrames: 150,
                 },
             });
+            // hello
             yield mScrollAnimator.add({
                 index: 0,
                 type: 'lottie',
@@ -103,6 +109,7 @@ class Main {
                     totalFrames: 120,
                 },
             });
+            // overlayController
             yield mScrollAnimator.add({
                 index: 0,
                 type: 'null',
@@ -116,6 +123,7 @@ class Main {
                     },
                 },
             });
+            // placeholder
             yield mScrollAnimator.add({
                 index: 1,
                 type: 'solid',
@@ -130,6 +138,7 @@ class Main {
     addScrollToContinueFrameAnimation() {
         return __awaiter(this, void 0, void 0, function* () {
             const mFrameAnimator = this.scrollToContinueFrameAnimator;
+            // scrollToContinue
             yield mFrameAnimator.add({
                 index: 0,
                 type: 'lottie',
@@ -160,6 +169,7 @@ class Main {
     addHeaderFrameAnimation() {
         return __awaiter(this, void 0, void 0, function* () {
             const mFrameAnimator = new FrameAnimator();
+            // logo
             yield mFrameAnimator.add({
                 index: 0,
                 type: 'null',
@@ -183,13 +193,14 @@ class Main {
                     },
                 },
             });
+            // scrollCounter
             yield mFrameAnimator.add({
                 index: 0,
                 type: 'null',
                 items: {
                     uid: 'scrollCounter',
                     totalFrames: 120,
-                    offset: 60,
+                    offset: 40,
                     domContent: $('.scrollCounter'),
                     onVisible: (animation) => {
                         const { domContent, } = animation.items;
@@ -208,11 +219,40 @@ class Main {
                         const { domContent, totalFrames, } = animation.items;
                         const finalPosition = -120;
                         domContent.css({
-                            transform: `translateY(${(((frame / totalFrames)) * finalPosition) - finalPosition}px)`,
+                            transform: `translateY(${((frame / totalFrames) * finalPosition) - finalPosition}px)`,
                         });
                     },
                 },
             });
+            // hamburger menu
+            yield mFrameAnimator.add({
+                index: 0,
+                type: 'null',
+                data: yield this.hamburger.getData(),
+                items: {
+                    uid: 'hamburger',
+                    totalFrames: 120,
+                    offset: 80,
+                    domContent: this.hamburger.containerDom,
+                    onVisible: (animation) => {
+                        const { items, data, } = animation;
+                        const { domContent, } = items;
+                        domContent.removeClass('hidden');
+                        domContent.css({
+                            transform: 'translateY(-10000px)',
+                        });
+                        this.hamburger.create(data);
+                    },
+                    onFrame: (animation, frame) => {
+                        const { domContent, totalFrames, } = animation.items;
+                        const finalPosition = 120;
+                        domContent.css({
+                            transform: `translateY(${((frame / totalFrames) * finalPosition) - finalPosition}px)`,
+                        });
+                    },
+                },
+            });
+            // to control the header grid size, for css animation on mobile when the url bar appears
             yield mFrameAnimator.add({
                 index: 0,
                 type: 'null',
@@ -222,12 +262,18 @@ class Main {
                         const innerHeight = this.mWindowUtility.inner.height;
                         const headerGrid = $('.headerGrid');
                         if (viewportHeight === innerHeight) {
-                            headerGrid.addClass('viewport');
-                            headerGrid.removeClass('inner');
+                            // headerGrid.addClass('viewport');
+                            // headerGrid.removeClass('inner');
+                            headerGrid.css({
+                                height: viewportHeight,
+                            });
                         }
                         else {
-                            headerGrid.addClass('inner');
-                            headerGrid.removeClass('viewport');
+                            // headerGrid.addClass('inner');
+                            // headerGrid.removeClass('viewport');
+                            headerGrid.css({
+                                height: innerHeight,
+                            });
                         }
                     },
                 },
