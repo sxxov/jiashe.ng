@@ -26,7 +26,7 @@ export class ScrollAnimator extends CoreAnimator {
             $(document.body).css({
                 height: documentHeight,
             });
-            console.log(documentHeight);
+            this.onScroll();
         });
     }
     onScroll() {

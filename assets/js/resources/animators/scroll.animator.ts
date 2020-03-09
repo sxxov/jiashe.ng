@@ -20,7 +20,7 @@ export class ScrollAnimator extends CoreAnimator {
 			height: documentHeight,
 		});
 
-		console.log(documentHeight);
+		this.onScroll();
 	}
 
 	onScroll(): void {
