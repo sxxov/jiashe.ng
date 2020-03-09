@@ -13,7 +13,6 @@ export class Hamburger {
 	private mWindowUtility: WindowUtility;
 	private skinDom: $Object;
 	private organsDom: $Object;
-	private amount: number;
 	transitionValue: string;
 
 	public constructor() {
@@ -23,9 +22,6 @@ export class Hamburger {
 		this.organsDom = $('.organs');
 		this.skinDom = $('.skin');
 		this.mWindowUtility = new WindowUtility();
-		this.amount = null;
-
-		this.setAmount();
 
 		$(window).on('resize', () => window.requestAnimationFrame(() => this.onWindowResize.call(this)));
 	}
@@ -38,7 +34,7 @@ export class Hamburger {
 		});
 
 		this.addLottie();
-		this.setCss();
+		this.animate();
 	}
 
 	private addLottie(): void {
@@ -67,14 +63,10 @@ export class Hamburger {
 		this.lottieAnim.setDirection(this.playDirection);
 		this.lottieAnim.play();
 
-		this.setCss();
+		this.animate();
 	}
 
-	private setAmount(): void {
-		this.amount = ((20 + this.mWindowUtility.vw(2)) * 2) + 100;
-	}
-
-	private setCss(): void {
+	private animate(): void {
 		const windowHeight = Math.min(
 			this.mWindowUtility.viewport.height,
 			this.mWindowUtility.inner.height,
@@ -130,7 +122,6 @@ export class Hamburger {
 	}
 
 	private onWindowResize(): void {
-		this.setAmount();
-		this.setCss();
+		this.animate();
 	}
 }
