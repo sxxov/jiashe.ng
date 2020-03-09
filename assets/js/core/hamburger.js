@@ -13,11 +13,12 @@ export class Hamburger {
     constructor() {
         this.lottieAnim = null;
         this.playDirection = -1;
-        this.amount = 240;
         this.containerDom = $('.hamburgerContainer');
         this.organsDom = $('.organs');
         this.skinDom = $('.skin');
         this.mWindowUtility = new WindowUtility();
+        this.amount = null;
+        this.setAmount();
         $(window).on('resize', () => window.requestAnimationFrame(() => this.onWindowResize.call(this)));
     }
     create(data) {
@@ -44,9 +45,11 @@ export class Hamburger {
     }
     getDimentions(amountLess) {
         const windowHeight = Math.min(this.mWindowUtility.viewport.height, this.mWindowUtility.inner.height);
-        const windowWidth = Math.min(this.mWindowUtility.viewport.width, this.mWindowUtility.inner.width, this.mWindowUtility.client.width);
-        const height = windowHeight - amountLess;
-        const width = windowWidth - amountLess;
+        const windowWidth = Math.min(this.mWindowUtility.viewport.width, this.mWindowUtility.inner.width);
+        // const height = windowHeight - amountLess;
+        // const width = windowWidth - amountLess;
+        const height = 0;
+        const width = windowWidth;
         const top = (windowHeight - height) / 2;
         const left = (windowWidth - width) / 2;
         return {
@@ -70,15 +73,22 @@ export class Hamburger {
         this.lottieAnim.play();
         this.setCss();
     }
+    setAmount() {
+        this.amount = ((20 + this.mWindowUtility.vw(2)) * 2) + 100;
+    }
     setCss() {
-        const { height, width, top, left, } = this.getDimentions(this.amount);
+        const windowHeight = Math.min(this.mWindowUtility.viewport.height, this.mWindowUtility.inner.height);
+        const windowWidth = Math.min(this.mWindowUtility.viewport.width, this.mWindowUtility.inner.width);
+        const height = 1;
+        const width = 0;
+        const top = (windowHeight - height) / 2;
+        const left = (windowWidth - width) / 2;
         if (this.isOpen) {
             this.skinDom.css({
                 height: '',
                 width: '',
                 top: 0,
                 left: 0,
-                filter: 'blur(0px)',
             });
             this.organsDom.css({
                 height: '',
@@ -96,7 +106,6 @@ export class Hamburger {
             width,
             top,
             left,
-            filter: `blur(${10}px)`,
         });
         this.organsDom.css({
             height: height + top,
@@ -109,6 +118,7 @@ export class Hamburger {
         });
     }
     onWindowResize() {
+        this.setAmount();
         this.setCss();
     }
 }

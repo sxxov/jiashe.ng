@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Space+Mono&display=swap');
 
+/* -- variables start -- */
+:root {
+	--easeFastSlow: cubic-bezier(0.075, 0.82, 0.165, 1);
+	--easeSlowSlow: cubic-bezier(0.77, 0, 0.175, 1);
+}
+/* -- variables end -- */
+
 /* -- general start -- */
 body {
 	position: absolute;
@@ -17,11 +24,13 @@ body {
 	height: 100%;
 
 	transition: 
-		height 1s cubic-bezier(0.075, 0.82, 0.165, 1), 
-		width 1s cubic-bezier(0.075, 0.82, 0.165, 1), 
-		top 1s cubic-bezier(0.075, 0.82, 0.165, 1), 
-		left 1s cubic-bezier(0.075, 0.82, 0.165, 1), 
-		filter 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+		height .5s var(--easeFastSlow), 
+		width 1s var(--easeSlowSlow), 
+		top .5s var(--easeFastSlow), 
+		left 1s var(--easeSlowSlow), 
+		filter 1s var(--easeFastSlow),
+		transform 1s var(--easeFastSlow),
+		opacity 1s var(--easeFastSlow);
 
 	overflow: hidden;
 }
