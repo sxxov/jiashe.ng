@@ -279,7 +279,7 @@ class Main {
 		await mFrameAnimator.add({
 			index: 0,
 			type: 'null',
-			data: await this.hamburger.getData(),
+			data: await this.hamburger.getLottieData(),
 			items: {
 				uid: 'hamburger',
 				totalFrames: 120,
