@@ -1,7 +1,7 @@
 import { $ } from '../utilities.js';
 
 export class WindowUtility {
-	cache: {
+	private cache: {
 		inner: {
 			height: number;
 			width: number;
@@ -15,6 +15,7 @@ export class WindowUtility {
 			width: number;
 		};
 	};
+
 	constructor() {
 		this.resetCache();
 
@@ -43,6 +44,14 @@ export class WindowUtility {
 				width: null,
 			},
 		};
+	}
+
+	public vh(amount: number): number {
+		return (this.viewport.height / 100) * amount;
+	}
+
+	public vw(amount: number): number {
+		return (this.viewport.width / 100) * amount;
 	}
 
 	get client(): {

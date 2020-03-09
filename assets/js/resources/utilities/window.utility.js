@@ -27,6 +27,12 @@ export class WindowUtility {
             },
         };
     }
+    vh(amount) {
+        return (this.viewport.height / 100) * amount;
+    }
+    vw(amount) {
+        return (this.viewport.width / 100) * amount;
+    }
     get client() {
         if (this.cache.client.height
             || this.cache.client.width) {
