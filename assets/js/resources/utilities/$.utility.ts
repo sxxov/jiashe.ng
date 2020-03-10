@@ -21,21 +21,26 @@ class NotJQuery {
 		}
 	}
 
-	$$(objectToCreateFrom: any = {}): $Object {
+	$$(objectToCreateFrom: any = {}): $Object[] {
 		const m$Factory = new $Factory();
 
 		switch (true) {
 		case this
 			&& this.constructor === Object
 			&& objectToCreateFrom.constructor === String:
-			return m$Factory.create(Object.values(this)
-				.find((node: HTMLElement) => node.matches && node.matches(objectToCreateFrom)));
+			return Object.values(this)
+				.getAll((node: HTMLElement) => node.matches && node.matches(objectToCreateFrom))
+				.map((elem: HTMLElement) => m$Factory.create(elem));
 		case objectToCreateFrom === undefined:
-			return m$Factory.create({});
+			return [m$Factory.create({})];
 		case objectToCreateFrom.constructor === String:
-			return m$Factory.create(document.querySelectorAll(objectToCreateFrom));
+			return Array.from(
+				document.querySelectorAll(objectToCreateFrom),
+			).map(
+				(elem) => m$Factory.create(elem),
+			);
 		default:
-			return m$Factory.create(objectToCreateFrom);
+			return [m$Factory.create(objectToCreateFrom)];
 		}
 	}
 }
