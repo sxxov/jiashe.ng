@@ -94,16 +94,12 @@ export class TV {
         const viewportHeight = this.mWindowUtility.viewport.height;
         const innerHeight = this.mWindowUtility.inner.height;
         if (viewportHeight === innerHeight) {
-            // screenDom.addClass('viewport');
             screenDom.removeClass('innerCenter');
-            // tvDom.addClass('viewport');
             tvDom.removeClass('innerCenter');
         }
         else {
             screenDom.addClass('innerCenter');
-            // screenDom.removeClass('viewport');
             tvDom.addClass('innerCenter');
-            // tvDom.removeClass('viewport');
         }
     }
     onPlayerStateChange(event) {
