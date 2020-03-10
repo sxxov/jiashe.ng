@@ -3,9 +3,11 @@ import { $ } from '../utilities.js';
 import { AnimationObject } from '../animator.types.js';
 
 export class ScrollAnimator extends CoreAnimator {
+	private nextOnScrollCancelled: boolean;
 	constructor() {
 		super();
 
+		this.nextOnScrollCancelled = false;
 		$(window).on('scroll', () => window.requestAnimationFrame(() => this.onScroll.call(this)));
 	}
 
@@ -23,7 +25,22 @@ export class ScrollAnimator extends CoreAnimator {
 		this.onScroll();
 	}
 
+	onSeek(frame: number): void {
+		this.nextOnScrollCancelled = true;
+
+		window.scrollTo(
+			0,
+			(frame / this.totalFrames)
+			* (document.body.scrollHeight - this.mWindowUtility.viewport.height),
+		);
+	}
+
 	onScroll(): void {
+		if (this.nextOnScrollCancelled) {
+			this.nextOnScrollCancelled = false;
+			return;
+		}
+
 		const { scrollY } = window;
 		const globalFrame = this.getRelativeFrame(
 			scrollY / (document.body.scrollHeight - this.mWindowUtility.viewport.height),

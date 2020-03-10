@@ -18,25 +18,24 @@ import { $Object } from '../utilities.types.js';
 
 export class CoreAnimator {
 	protected mWindowUtility: WindowUtility;
-	uid: string;
+	public uid: string;
 
-	currentFrame: number;
-	totalFrames: number;
-	framesPerAnimation: number;
+	public currentFrame: number;
+	public totalFrames: number;
 
-	animations: AnimationObject[][];
-	metaAnimations: AnimationObject[];
-	animatorClassPrefix: string;
-	animatorContainers: $Object[];
-	animatorContainersWrapper: $Object;
-	visibleAnimations: AnimationObject[];
+	public animations: AnimationObject[][];
+	public metaAnimations: AnimationObject[];
+	public animatorClassPrefix: string;
+	public animatorContainers: $Object[];
+	public animatorContainersWrapper: $Object;
+	public visibleAnimations: AnimationObject[];
 
-	dpr: number;
-	dprMultiplier: number;
+	public dpr: number;
+	public dprMultiplier: number;
 
-	rafId: number;
+	private rafId: number;
 
-	attributeCache: Record<string, any[]>;
+	private attributeCache: Record<string, any[]>;
 
 	constructor() {
 		this.mWindowUtility = new WindowUtility();
@@ -44,7 +43,6 @@ export class CoreAnimator {
 
 		this.currentFrame = 0;
 		this.totalFrames = 0;
-		this.framesPerAnimation = 120;
 
 		this.animations = [];
 		this.metaAnimations = [];
@@ -60,7 +58,7 @@ export class CoreAnimator {
 
 		this.attributeCache = {};
 
-		this.createContainerWrapperDom();
+		this.createContainersWrapperDom();
 
 		$(window).on('load resize', () => window.requestAnimationFrame(() => {
 			this.onWindowResize.call(this);
@@ -73,12 +71,12 @@ export class CoreAnimator {
 		}));
 	}
 
-	private createContainerWrapperDom(): void {
+	private createContainersWrapperDom(): void {
 		this.animatorContainersWrapper = $(document.createElement('div'));
 
 		this.animatorContainersWrapper.addClass([
 			this.animatorClassPrefix,
-			'containerWrapper',
+			'containersWrapper',
 			this.uid,
 			'height',
 		]);
@@ -109,7 +107,7 @@ export class CoreAnimator {
 			solidObject = await (new SolidFactory(this)).create(animationObject);
 
 			animationObject.items = {
-				...animationObject.items,
+				...items,
 				domContent: solidObject.domContent,
 			};
 			break;
@@ -117,7 +115,7 @@ export class CoreAnimator {
 			lottieObject = await (new LottieFactory(this)).create(animationObject);
 
 			animationObject.items = {
-				...animationObject.items,
+				...items,
 				totalFrames: lottieObject.totalFrames,
 				domContent: lottieObject.domContent,
 				onFrame: (animationItem: AnimationObject, frame: number): void => {
@@ -164,13 +162,19 @@ export class CoreAnimator {
 			.reduce((accumulator, currentValue) => currentValue + accumulator, 0);
 
 		this.onNewAnimation(animationObject);
+		this.onAdd(animationObject);
 	}
 
-	getRelativeFrame(frame: number): number {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public onAdd(animation: AnimationObject): void {
+		// to be overriden
+	}
+
+	public getRelativeFrame(frame: number): number {
 		return frame * this.totalFrames;
 	}
 
-	async rawAnimate(items: {
+	public async rawAnimate(items: {
 		from: number;
 		to: number;
 		options?: {
@@ -183,19 +187,23 @@ export class CoreAnimator {
 			to,
 			options: {
 				fps = 120,
-				bezier = [],
 			} = {},
 		} = items;
 
+		const inverted = to < from;
+		const processedFrom = inverted ? to : from;
+		const processedTo = inverted ? from : to;
+
 		if (items.options === undefined) {
 			return this.rawAnimate({
-				from,
-				to,
+				from: processedFrom,
+				to: processedTo,
 				options: {},
 			}, callback);
 		}
 
-		if (from === to) {
+		if (processedFrom === processedTo) {
+			callback(processedTo);
 			return new Promise((resolve) => resolve());
 		}
 
@@ -203,31 +211,32 @@ export class CoreAnimator {
 			cancelAnimationFrame(this.rafId);
 		}
 
-		let processedCallback = callback;
+		// let processedCallback = callback;
 
-		if (bezier !== []
-			&& bezier.length === 4) {
-			const mBezierUtility = new BezierUtility(
-				bezier[0], bezier[1], bezier[2], bezier[3],
-			);
+		// if (bezier !== []
+		// 	&& bezier.length === 4) {
+		// 	const mBezierUtility = new BezierUtility(
+		// 		bezier[0], bezier[1], bezier[2], bezier[3],
+		// 	);
 
-			processedCallback = (frame): void => callback(
-				mBezierUtility.getValue(
-					// offset frame so it starts from 'from'
-					(frame - from)
-					// divide by, the amount of frames in between 'to' & 'from'
-					/ (to - from),
-				// times it all back with, the amount of frames in between 'to' & 'from',
-				// after getting the bezier-altered value
-				) * (to - from),
-			);
-		}
+		// 	processedCallback = (frame): void => callback(
+		// 		mBezierUtility.getValue(
+		// 			// offset frame so it starts from 'from'
+		// 			(frame - processedFrom)
+		// 			// divide by, the amount of frames in between 'to' & 'from'
+		// 			/ (processedTo - processedFrom),
+		// 		// times it all back with, the amount of frames in between 'to' & 'from',
+		// 		// after getting the bezier-altered value
+		// 		) * (processedTo - processedFrom),
+		// 	);
+		// }
 
 		return new Promise((resolve) => {
-			let i = from;
+			let i = processedFrom;
 			const step = (): void => {
-				processedCallback(i);
-				if (i > to) {
+				// processedCallback(i);
+				callback(inverted ? processedTo - i : i);
+				if (i >= processedTo) {
 					resolve();
 					return;
 				}
@@ -240,7 +249,7 @@ export class CoreAnimator {
 		});
 	}
 
-	onNewAnimation(animation: AnimationObject): void {
+	private onNewAnimation(animation: AnimationObject): void {
 		const {
 			onRedraw,
 			domContent,
@@ -257,7 +266,7 @@ export class CoreAnimator {
 		this.onFrame(this.currentFrame);
 	}
 
-	onWindowResize(): void {
+	private onWindowResize(): void {
 		if (!this.animatorContainers) {
 			return;
 		}
@@ -266,18 +275,9 @@ export class CoreAnimator {
 		const innerHeight = this.mWindowUtility.inner.height;
 
 		if (viewportHeight === innerHeight) {
-			// this.animatorContainersWrapper.addClass('viewport');
 			this.animatorContainersWrapper.removeClass('innerCenter');
-			// this.animatorContainersWrapper.css({
-			// 	height: viewportHeight,
-			// });
-			console.log('height', viewportHeight);
 		} else {
 			this.animatorContainersWrapper.addClass('innerCenter');
-			// this.animatorContainersWrapper.removeClass('viewport');
-			// this.animatorContainersWrapper.css({
-			// 	height: viewportHeight,
-			// });
 		}
 
 		this.animatorContainers.fastEach((animatorContainer: $Object, i: number) => {
@@ -360,7 +360,7 @@ export class CoreAnimator {
 		}
 	}
 
-	onRedraw(animation: AnimationObject): void {
+	private onRedraw(animation: AnimationObject): void {
 		const {
 			respectDevicePixelRatio,
 			object,
@@ -374,14 +374,14 @@ export class CoreAnimator {
 		const lottieObjectDom = domContent;
 
 		if (respectDevicePixelRatio !== false) {
-			const lottieObjectContainerWrapperWidth = this.animatorContainersWrapper.clientWidth;
-			const lottieObjectContainerWrapperHeight = this.animatorContainersWrapper.clientHeight;
+			const lottieObjectContainersWrapperWidth = this.animatorContainersWrapper.clientWidth;
+			const lottieObjectContainersWrapperHeight = this.animatorContainersWrapper.clientHeight;
 
 			const lottieObjectWidth = parseFloat(lottieObjectDom.css('width', { computed: true }) as string) / this.dprMultiplier;
 			const lottieObjectHeight = parseFloat(lottieObjectDom.css('height', { computed: true }) as string) / this.dprMultiplier;
 
-			const offsetWidth = -(lottieObjectWidth - lottieObjectContainerWrapperWidth) / 2;
-			const offsetHeight = -(lottieObjectHeight - lottieObjectContainerWrapperHeight) / 2;
+			const offsetWidth = -(lottieObjectWidth - lottieObjectContainersWrapperWidth) / 2;
+			const offsetHeight = -(lottieObjectHeight - lottieObjectContainersWrapperHeight) / 2;
 
 			lottieObjectDom.css({
 				transform: `translate(${offsetWidth}px, ${offsetHeight}px) scale(${1 / this.dprMultiplier})`,
@@ -389,7 +389,7 @@ export class CoreAnimator {
 		}
 	}
 
-	onFrame(frame: number): void {
+	protected onFrame(frame: number): void {
 		if (!(this.animations.length > 0)) {
 			return;
 		}
@@ -412,7 +412,7 @@ export class CoreAnimator {
 				(accumulator, currentValue, i) => {
 				// if the current accumulated value is more than the frame,
 				// it means that we've overshot and the previous index is the current animation
-					if (currentValue + accumulator >= frame - 1) {
+					if (currentValue + accumulator > frame - 1) {
 						if (animationIndex === null) {
 							animationIndex = i;
 							currentAnimationsTotalFrames = currentValue + accumulator;
@@ -432,6 +432,8 @@ export class CoreAnimator {
 			return;
 		}
 
+		const maxOffset = Math.max(...this.getAttributeFromAnimationsItems('offset', this.animations));
+
 		workingAnimations.forEach((workingAnimation: AnimationObject) => {
 			const {
 				__caller,
@@ -439,27 +441,36 @@ export class CoreAnimator {
 				totalFrames,
 				onFrame,
 				offset,
+				bezier,
 			} = workingAnimation.items;
 
-			if (frame < offset) {
-				return;
-			}
+			// if (frame < offset) {
+			// 	return;
+			// }
 
 			uids.push(uid);
 
-			const globalFrame = frame - offset;
-			const localFrame = (
-				(globalFrame - this.getTotalFramesBeforeIndex(animationIndex))
-				/ ((
-					currentAnimationsTotalFrames
-					- this.getTotalFramesBeforeIndex(animationIndex)
-				) - offset)
-			)
-			* totalFrames;
+			const mBezierUtility = new BezierUtility(
+				bezier[0], bezier[1], bezier[2], bezier[3],
+			);
+
+			const globalFrame = frame;
+			const localFrame = mBezierUtility.getValue(Math.min(
+				((
+					(globalFrame - this.getTotalFramesBeforeIndex(animationIndex))
+					/ ((
+						currentAnimationsTotalFrames
+						- this.getTotalFramesBeforeIndex(animationIndex)
+					) - maxOffset + offset)
+				)
+				* (totalFrames)),
+				totalFrames,
+			) / totalFrames) * totalFrames || totalFrames;
 
 			if (__caller.name !== 'FrameAnimator'
 				|| uid === 'logo'
-				|| uid === 'scrollCounter') {
+				|| uid === 'scrollCounter'
+				|| uid.indexOf('char') !== -1) {
 				console.log('frame', frame);
 				console.log('workingAnimation', workingAnimation);
 				console.log('globalFrame', globalFrame);
@@ -468,6 +479,7 @@ export class CoreAnimator {
 				console.log('currentAnimationsTotalFrames', currentAnimationsTotalFrames);
 				console.log('this.visibleAnimations', this.visibleAnimations);
 				console.log('this.animations', this.animations);
+				console.log('this.totalFrames', this.totalFrames);
 				console.log('');
 			}
 
@@ -517,7 +529,7 @@ export class CoreAnimator {
 		);
 	}
 
-	private getTotalFramesBeforeIndex(index: number): number {
+	protected getTotalFramesBeforeIndex(index: number): number {
 		const totalFrames: number[] = this.getAttributeFromAnimationsItems('totalFrames', this.animations);
 		let previousFrames: number = null;
 
@@ -588,19 +600,43 @@ export class CoreAnimator {
 		this.visibleAnimations = animations;
 	}
 
-	hide(domElement: HTMLUnknownElement): $Object {
+	public seekToUid(targetUid: string): void {
+		this.animations.fastEach((workingAnimations: AnimationObject[], i: number) => {
+			workingAnimations.fastEach((workingAnimation: AnimationObject) => {
+				const {
+					uid,
+				} = workingAnimation.items;
+
+				if (uid !== targetUid) {
+					return;
+				}
+
+				const frame = this.getTotalFramesBeforeIndex(i) + 1;
+
+				this.onFrame(frame);
+				this.onSeek(frame);
+			});
+		});
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public onSeek(frame: number): void {
+		// to be overriden
+	}
+
+	public hide(domElement: HTMLUnknownElement): $Object {
 		return $(domElement).addClass('hidden');
 	}
 
-	unhide(domElement: HTMLUnknownElement): $Object {
+	public unhide(domElement: HTMLUnknownElement): $Object {
 		return $(domElement).removeClass('hidden');
 	}
 
-	activate(domElement: HTMLUnknownElement): $Object {
+	public activate(domElement: HTMLUnknownElement): $Object {
 		return $(domElement).addClass('active');
 	}
 
-	deactivate(domElement: HTMLUnknownElement): $Object {
+	public deactivate(domElement: HTMLUnknownElement): $Object {
 		return $(domElement).removeClass('active');
 	}
 }

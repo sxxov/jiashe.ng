@@ -5,7 +5,7 @@ export class AnimationFactory {
     }
     create(options, thisArg) {
         const baseObject = Object.assign({ type: undefined, index: undefined, data: undefined }, options);
-        const baseItemsObject = Object.assign({ __caller: thisArg.constructor, __container: options.type === 'null' || options.type === 'meta' ? null : this.createAndReturnNewContainerDom(options), uid: Math.round(performance.now()).toString(), domContent: null, offset: 0, object: {}, respectDevicePixelRatio: true, totalFrames: null, height: {
+        const baseItemsObject = Object.assign({ __caller: thisArg.constructor, __container: options.type === 'null' || options.type === 'meta' ? null : this.createAndReturnNewContainerDom(options), uid: Math.round(performance.now()).toString(), domContent: null, offset: 0, object: {}, respectDevicePixelRatio: true, totalFrames: null, bezier: [0, 0, 1, 1], height: {
                 maximum: null,
                 minimum: null,
             }, width: {

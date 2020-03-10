@@ -22,6 +22,7 @@ export interface AnimationObject {
 		totalFrames?: number | null;
 		fps?: number;
 		invert?: boolean;
+		bezier?: [number, number, number, number];
 		height?: {
 			maximum?: number | null;
 			minimum?: number | null;

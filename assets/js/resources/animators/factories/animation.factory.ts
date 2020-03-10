@@ -27,6 +27,7 @@ export class AnimationFactory {
 			object: {},
 			respectDevicePixelRatio: true,
 			totalFrames: null,
+			bezier: [0, 0, 1, 1],
 			height: {
 				maximum: null,
 				minimum: null,

@@ -12,6 +12,7 @@ import { $ } from '../utilities.js';
 export class ScrollAnimator extends CoreAnimator {
     constructor() {
         super();
+        this.nextOnScrollCancelled = false;
         $(window).on('scroll', () => window.requestAnimationFrame(() => this.onScroll.call(this)));
     }
     // @Override
@@ -29,7 +30,16 @@ export class ScrollAnimator extends CoreAnimator {
             this.onScroll();
         });
     }
+    onSeek(frame) {
+        this.nextOnScrollCancelled = true;
+        window.scrollTo(0, (frame / this.totalFrames)
+            * (document.body.scrollHeight - this.mWindowUtility.viewport.height));
+    }
     onScroll() {
+        if (this.nextOnScrollCancelled) {
+            this.nextOnScrollCancelled = false;
+            return;
+        }
         const { scrollY } = window;
         const globalFrame = this.getRelativeFrame(scrollY / (document.body.scrollHeight - this.mWindowUtility.viewport.height));
         this.onFrame(globalFrame);
