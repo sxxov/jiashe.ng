@@ -5,13 +5,13 @@
  */
 
 export class BezierUtility {
-	NEWTON_ITERATIONS: number;
-	NEWTON_MIN_SLOPE: number;
-	SUBDIVISION_PRECISION: number;
-	SUBDIVISION_MAX_ITERATIONS: number;
-	kSplineTableSize: number;
-	kSampleStepSize: number;
-	sampleValues: Float32Array | number[];
+	private NEWTON_ITERATIONS: number;
+	private NEWTON_MIN_SLOPE: number;
+	private SUBDIVISION_PRECISION: number;
+	private SUBDIVISION_MAX_ITERATIONS: number;
+	private kSplineTableSize: number;
+	private kSampleStepSize: number;
+	private sampleValues: Float32Array | number[];
 
 	constructor(
 		private mX1: number,
@@ -59,6 +59,11 @@ export class BezierUtility {
 
 		// Because JavaScript number are imprecise, we should guarantee the extremes are right.
 		if (value === 0 || value === 1) {
+			return value;
+		}
+
+		// LinearEasing
+		if (this.mX1 === this.mY1 && this.mX2 === this.mY2) {
 			return value;
 		}
 

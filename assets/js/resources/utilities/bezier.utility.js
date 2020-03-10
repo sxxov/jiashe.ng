@@ -42,6 +42,10 @@ export class BezierUtility {
         if (value === 0 || value === 1) {
             return value;
         }
+        // LinearEasing
+        if (this.mX1 === this.mY1 && this.mX2 === this.mY2) {
+            return value;
+        }
         return this.calcBezier(this.getTForX(value, this.mX1, this.mX2), this.mY1, this.mY2);
     }
     getTForX(aX, mX1, mX2) {
