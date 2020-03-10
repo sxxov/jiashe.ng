@@ -65,7 +65,64 @@ body {
 .viewport {
 	height: 100vh;
 }
+
+.white {
+	fill: white;
+}
 /* -- general end -- */
+
+/* -- hamburgerMenu start -- */
+.__hamburgerMenu.containersWrapper {
+	height: 100%;
+	width: 100vw;
+
+	/* padding: calc(80px + 12vw) 30vw; */
+	box-sizing: border-box;
+	
+	display: grid;
+	grid-template-columns: auto min-content auto;
+	grid-column-gap: 0px;
+    grid-row-gap: 3%;
+    justify-items: left;
+    align-items: center;
+
+	z-index: 0;
+
+	transition: height .5s var(--easeFastSlow);
+
+	position: fixed;
+}
+
+.__hamburgerMenu.containersWrapper > .container {
+	/* position: absolute; */
+	position: relative;
+}
+
+.__hamburgerMenu.containersWrapper > .container > .title {
+	font-family: 'Space Mono';
+	font-weight: 400;
+	font-size: calc(10px + 1vmax);
+	line-height: 100%;
+
+	color: white;
+	
+	width: 100%;
+	margin: 0px 0px 0px 0px;
+
+	display: flex;
+}
+
+.__hamburgerMenu.containersWrapper > .container > .title > span {
+	display: inline-block;
+	
+	cursor: pointer;
+}
+
+.__hamburgerMenu.containersWrapper > .container > .title > .char {
+	padding-bottom: 5px;
+	border-bottom: .5px solid grey;
+}
+/* -- hamburgerMenu end -- */
 
 /* -- windowUtility start -- */
 .__windowUtility.viewportCalibrator {
@@ -82,9 +139,12 @@ body {
 .headerGrid {
 	position: fixed;
 	display: grid;
-	width: 100%;
+	width: 100vw;
 
-	transition: width .2s, height .2s;
+	transition: 
+		width 1s var(--easeFastSlow), 
+		height 1s var(--easeFastSlow),
+		padding 1s var(--easeFastSlow);
 
     grid-template-columns: 0px[preLeftCorner] 50px[leftCorner]  auto[preRightCorner] 50px[rightCorner];
     grid-template-rows: 0px[preHeader] 50px[header] auto[preFooter] 50px[footer];
@@ -95,8 +155,10 @@ body {
 
 	z-index: 10;
 
-	padding: calc(20px + 2 * 1vw);
+	padding: calc(20px + 2vw);
 	box-sizing: border-box;
+
+	pointer-events: none;
 
 	color: white;
 }
@@ -144,6 +206,8 @@ body {
 
 	justify-self: left;
 	align-self: flex-start;
+
+	pointer-events: visible;
 }
 
 .headerGrid > .hamburgerContainer {
@@ -160,11 +224,13 @@ body {
 
 	justify-self: right;
 	align-self: flex-start;
+
+	pointer-events: visible;
 }
 /* -- header end -- */
 
 /* -- lottie start -- */
-.__animate.containerWrapper {
+.__animate.containersWrapper {
 	position: absolute;
 	overflow: hidden;
 	display: grid;
@@ -175,7 +241,7 @@ body {
 	z-index: 1;
 }
 
-.__animate.containerWrapper > .__animate.container {
+.__animate.containersWrapper > .__animate.container {
 	position: absolute;
 
 	width: 100%;
@@ -202,7 +268,7 @@ body {
 
 /* -- overlay start -- */
 .overlay {
-	position: fixed;
+	position: absolute;
 	top: 0px;
 	left: 0px;
 	height: 100%;
@@ -212,7 +278,7 @@ body {
 
 	opacity: 0;
 
-	z-index: 0;
+	z-index: -1;
 }
 
 .overlay.active {
@@ -227,14 +293,14 @@ body {
 
 	position: absolute;
 	overflow: hidden;
+	
+	z-index: -2;
 }
 
 .tv {
 	display: grid;
 
 	position: absolute;
-
-	z-index: -1;
 }
 
 .tv > .screen {
@@ -243,14 +309,14 @@ body {
 
 	margin: 0;
 
-	opacity: 0;
-	transition: opacity .5s;
+	filter: brightness(0);
+	transition: filter .5s;
 
 	z-index: inherit;
 }
 
 .tv > .screen.active {
-	opacity: 1 !important;
+	filter: brightness(1);
 }
 /* -- tv end -- */
 

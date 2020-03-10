@@ -21,9 +21,9 @@ class Main {
 	constructor() {
 		(new ForUtility()).addToArrayPrototype();
 		this.mTV = new TV();
-		this.hamburger = new Hamburger();
 		this.miscellaneousScrollingAnimator = new ScrollAnimator();
 		this.scrollToContinueFrameAnimator = new FrameAnimator();
+		this.hamburger = new Hamburger(this.miscellaneousScrollingAnimator);
 		this.mWindowUtility = new WindowUtility();
 	}
 
@@ -40,6 +40,7 @@ class Main {
 		// meta
 		await mScrollAnimator.add({
 			type: 'meta',
+			index: -2,
 			items: {
 				onFrame: ((animation, frame): void => {
 					const {
@@ -108,7 +109,7 @@ class Main {
 			type: null,
 			index: 0,
 			items: {
-				uid: 'intro',
+				uid: 'introduction',
 			},
 		});
 
@@ -210,17 +211,15 @@ class Main {
 			type: 'null',
 			items: {
 				uid: 'logo',
-				totalFrames: 120,
+				totalFrames: 240,
 				domContent: $('.logo'),
+				bezier: [0.77, 0, 0.175, 1],
 				onVisible: (animation): void => {
 					const {
 						domContent,
 					} = animation.items;
 
 					domContent.removeClass('hidden');
-					$(domContent.childNodes[1]).css({
-						fill: 'white',
-					});
 				},
 				onFrame: (animation, frame): void => {
 					const {
@@ -242,21 +241,16 @@ class Main {
 			type: 'null',
 			items: {
 				uid: 'scrollCounter',
-				totalFrames: 120,
+				totalFrames: 240,
 				offset: 40,
 				domContent: $('.scrollCounter'),
+				bezier: [0.77, 0, 0.175, 1],
 				onVisible: (animation): void => {
 					const {
 						domContent,
 					} = animation.items;
 
 					domContent.removeClass('hidden');
-					$(domContent.childNodes[1]).css({
-						fill: 'white',
-					});
-					$(domContent.childNodes[3]).css({
-						fill: 'white',
-					});
 					domContent.css({
 						transform: 'translateY(-10000px)',
 					});
@@ -282,9 +276,10 @@ class Main {
 			data: await this.hamburger.getLottieData(),
 			items: {
 				uid: 'hamburger',
-				totalFrames: 120,
+				totalFrames: 240,
 				offset: 80,
 				domContent: this.hamburger.containerDom,
+				bezier: [0.77, 0, 0.175, 1],
 				onVisible: (animation): void => {
 					const {
 						items,
@@ -316,37 +311,34 @@ class Main {
 			},
 		});
 
-		// to control the header grid size, for css animation on mobile when the url bar appears
-		await mFrameAnimator.add({
-			index: 0,
-			type: 'null',
-			items: {
-				onRedraw: (): void => {
-					const viewportHeight = this.mWindowUtility.viewport.height;
-					const innerHeight = this.mWindowUtility.inner.height;
+		// to control the various elements size, for css animation on mobile when the url bar appears
+		const sizeController = (): void => {
+			const viewportHeight = this.mWindowUtility.viewport.height;
+			const innerHeight = this.mWindowUtility.inner.height;
 
-					const headerGrid = $('.headerGrid');
+			const headerGrid = $('.headerGrid');
+			const hamburgerMenu = $('.__hamburgerMenu.containersWrapper');
 
-					if (viewportHeight === innerHeight) {
-						// headerGrid.addClass('viewport');
-						// headerGrid.removeClass('inner');
-						headerGrid.css({
-							height: viewportHeight,
-						});
-					} else {
-						// headerGrid.addClass('inner');
-						// headerGrid.removeClass('viewport');
-						headerGrid.css({
-							height: innerHeight,
-						});
-					}
-				},
-			},
-		});
+			if (viewportHeight === innerHeight) {
+				headerGrid.css({
+					height: viewportHeight,
+				});
+				hamburgerMenu.css({
+					height: viewportHeight,
+				});
+			} else {
+				headerGrid.css({
+					height: innerHeight,
+				});
+				hamburgerMenu.css({
+					height: innerHeight,
+				});
+			}
+		};
+		sizeController();
+		$(window).on('resize', sizeController);
 
-		mFrameAnimator.animate(0, 120, {
-			bezier: [0.77, 0, 0.175, 1],
-		});
+		mFrameAnimator.animate(0, 240);
 	}
 }
 

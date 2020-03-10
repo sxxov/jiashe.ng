@@ -15,9 +15,9 @@ class Main {
     constructor() {
         (new ForUtility()).addToArrayPrototype();
         this.mTV = new TV();
-        this.hamburger = new Hamburger();
         this.miscellaneousScrollingAnimator = new ScrollAnimator();
         this.scrollToContinueFrameAnimator = new FrameAnimator();
+        this.hamburger = new Hamburger(this.miscellaneousScrollingAnimator);
         this.mWindowUtility = new WindowUtility();
     }
     init() {
@@ -34,6 +34,7 @@ class Main {
             // meta
             yield mScrollAnimator.add({
                 type: 'meta',
+                index: -2,
                 items: {
                     onFrame: ((animation, frame) => {
                         const { uid, totalFrames, } = animation.items;
@@ -84,7 +85,7 @@ class Main {
                 type: null,
                 index: 0,
                 items: {
-                    uid: 'intro',
+                    uid: 'introduction',
                 },
             });
             // blocks
@@ -175,14 +176,12 @@ class Main {
                 type: 'null',
                 items: {
                     uid: 'logo',
-                    totalFrames: 120,
+                    totalFrames: 240,
                     domContent: $('.logo'),
+                    bezier: [0.77, 0, 0.175, 1],
                     onVisible: (animation) => {
                         const { domContent, } = animation.items;
                         domContent.removeClass('hidden');
-                        $(domContent.childNodes[1]).css({
-                            fill: 'white',
-                        });
                     },
                     onFrame: (animation, frame) => {
                         const { domContent, totalFrames, } = animation.items;
@@ -199,18 +198,13 @@ class Main {
                 type: 'null',
                 items: {
                     uid: 'scrollCounter',
-                    totalFrames: 120,
+                    totalFrames: 240,
                     offset: 40,
                     domContent: $('.scrollCounter'),
+                    bezier: [0.77, 0, 0.175, 1],
                     onVisible: (animation) => {
                         const { domContent, } = animation.items;
                         domContent.removeClass('hidden');
-                        $(domContent.childNodes[1]).css({
-                            fill: 'white',
-                        });
-                        $(domContent.childNodes[3]).css({
-                            fill: 'white',
-                        });
                         domContent.css({
                             transform: 'translateY(-10000px)',
                         });
@@ -228,12 +222,13 @@ class Main {
             yield mFrameAnimator.add({
                 index: 0,
                 type: 'null',
-                data: yield this.hamburger.getData(),
+                data: yield this.hamburger.getLottieData(),
                 items: {
                     uid: 'hamburger',
-                    totalFrames: 120,
+                    totalFrames: 240,
                     offset: 80,
                     domContent: this.hamburger.containerDom,
+                    bezier: [0.77, 0, 0.175, 1],
                     onVisible: (animation) => {
                         const { items, data, } = animation;
                         const { domContent, } = items;
@@ -252,35 +247,32 @@ class Main {
                     },
                 },
             });
-            // to control the header grid size, for css animation on mobile when the url bar appears
-            yield mFrameAnimator.add({
-                index: 0,
-                type: 'null',
-                items: {
-                    onRedraw: () => {
-                        const viewportHeight = this.mWindowUtility.viewport.height;
-                        const innerHeight = this.mWindowUtility.inner.height;
-                        const headerGrid = $('.headerGrid');
-                        if (viewportHeight === innerHeight) {
-                            // headerGrid.addClass('viewport');
-                            // headerGrid.removeClass('inner');
-                            headerGrid.css({
-                                height: viewportHeight,
-                            });
-                        }
-                        else {
-                            // headerGrid.addClass('inner');
-                            // headerGrid.removeClass('viewport');
-                            headerGrid.css({
-                                height: innerHeight,
-                            });
-                        }
-                    },
-                },
-            });
-            mFrameAnimator.animate(0, 120, {
-                bezier: [0.77, 0, 0.175, 1],
-            });
+            // to control the various elements size, for css animation on mobile when the url bar appears
+            const sizeController = () => {
+                const viewportHeight = this.mWindowUtility.viewport.height;
+                const innerHeight = this.mWindowUtility.inner.height;
+                const headerGrid = $('.headerGrid');
+                const hamburgerMenu = $('.__hamburgerMenu.containersWrapper');
+                if (viewportHeight === innerHeight) {
+                    headerGrid.css({
+                        height: viewportHeight,
+                    });
+                    hamburgerMenu.css({
+                        height: viewportHeight,
+                    });
+                }
+                else {
+                    headerGrid.css({
+                        height: innerHeight,
+                    });
+                    hamburgerMenu.css({
+                        height: innerHeight,
+                    });
+                }
+            };
+            sizeController();
+            $(window).on('resize', sizeController);
+            mFrameAnimator.animate(0, 240);
         });
     }
 }
