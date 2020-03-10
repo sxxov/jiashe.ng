@@ -73,6 +73,8 @@ export class $Factory {
                 let stackable = null;
                 const unitlessProperties = [
                     'opacity',
+                    'grid-row-start',
+                    'grid-row-end',
                 ];
                 const stackableProperties = [{
                         name: 'transition',
