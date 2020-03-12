@@ -30,10 +30,48 @@ export class ScrollAnimator extends CoreAnimator {
             this.onScroll();
         });
     }
+    // @Override
     onSeek(frame) {
-        this.nextOnScrollCancelled = true;
-        window.scrollTo(0, (frame / this.totalFrames)
-            * (document.body.scrollHeight - this.mWindowUtility.viewport.height));
+        const yOffset = Math.max(Math.ceil((frame / this.totalFrames)
+            * (document.body.scrollHeight - this.mWindowUtility.viewport.height)) - 7, 0);
+        this.scrollTo({
+            left: 0,
+            top: yOffset,
+            behavior: 'smooth',
+        }, () => {
+            this.onFrame(frame);
+        });
+    }
+    // @Override
+    seekTo(scrollPosition) {
+        this.scrollTo({
+            left: 0,
+            top: scrollPosition,
+            behavior: 'smooth',
+        }, () => {
+            this.onFrame(scrollPosition);
+        });
+    }
+    scrollTo(scrollOptions, callback) {
+        const { top = 0, left = 0, behavior, } = scrollOptions;
+        const onScroll = () => {
+            // floor both values as some browsers support decimals while some don't
+            if (Math.floor(window.pageYOffset) === Math.floor(top)
+                && Math.floor(window.pageXOffset) === Math.floor(left)) {
+                this.nextOnScrollCancelled = true;
+                window.removeEventListener('scroll', onScroll);
+                if (!callback) {
+                    return;
+                }
+                callback();
+            }
+        };
+        window.addEventListener('scroll', onScroll);
+        onScroll();
+        window.scrollTo({
+            top,
+            behavior,
+        });
     }
     onScroll() {
         if (this.nextOnScrollCancelled) {

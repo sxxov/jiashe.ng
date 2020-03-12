@@ -25,17 +25,71 @@ export class ScrollAnimator extends CoreAnimator {
 		this.onScroll();
 	}
 
-	onSeek(frame: number): void {
-		this.nextOnScrollCancelled = true;
-
-		window.scrollTo(
+	// @Override
+	public onSeek(frame: number): void {
+		const yOffset = Math.max(
+			Math.ceil(
+				(frame / this.totalFrames)
+				* (document.body.scrollHeight - this.mWindowUtility.viewport.height),
+			) - 7,
 			0,
-			(frame / this.totalFrames)
-			* (document.body.scrollHeight - this.mWindowUtility.viewport.height),
 		);
+
+		this.scrollTo({
+			left: 0,
+			top: yOffset,
+			behavior: 'smooth',
+		}, () => {
+			this.onFrame(frame);
+		});
 	}
 
-	onScroll(): void {
+	// @Override
+	public seekTo(scrollPosition: number): void {
+		this.scrollTo({
+			left: 0,
+			top: scrollPosition,
+			behavior: 'smooth',
+		}, () => {
+			this.onFrame(scrollPosition);
+		});
+	}
+
+	private scrollTo(scrollOptions: {
+		top?: number;
+		left?: number;
+		behavior?: 'smooth' | 'auto';
+	}, callback?: () => void): void {
+		const {
+			top = 0,
+			left = 0,
+			behavior,
+		} = scrollOptions;
+
+		const onScroll = (): void => {
+			// floor both values as some browsers support decimals while some don't
+			if (Math.floor(window.pageYOffset) === Math.floor(top)
+				&& Math.floor(window.pageXOffset) === Math.floor(left)) {
+				this.nextOnScrollCancelled = true;
+
+				window.removeEventListener('scroll', onScroll);
+
+				if (!callback) {
+					return;
+				}
+
+				callback();
+			}
+		};
+		window.addEventListener('scroll', onScroll);
+		onScroll();
+		window.scrollTo({
+			top,
+			behavior,
+		});
+	}
+
+	public onScroll(): void {
 		if (this.nextOnScrollCancelled) {
 			this.nextOnScrollCancelled = false;
 			return;
