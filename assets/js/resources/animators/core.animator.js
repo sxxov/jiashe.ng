@@ -267,18 +267,24 @@ export class CoreAnimator {
         else {
             // get an array of the 'totalFrames' of every animation,
             // and then find the total frames and the index of the current animation
-            this.getAttributeFromAnimationsItems('totalFrames', this.animations).reduce((accumulator, currentValue, i) => {
+            const animationTotalFrames = this.getAttributeFromAnimationsItems('totalFrames', this.animations);
+            animationTotalFrames.reduce((accumulated, currentValue, i) => {
+                const accumulating = currentValue + accumulated;
                 // if the current accumulated value is more than the frame,
                 // it means that we've overshot and the previous index is the current animation
-                if (currentValue + accumulator > frame) {
+                if (accumulating > frame
+                    // if i is the last index in the array,
+                    // we cut straight to it so it won't overshoot again and surpass this.animations
+                    // because the accumulating amount won't exeed the frame
+                    || i === animationTotalFrames.length - 1) {
                     if (animationIndex === null) {
                         animationIndex = i;
-                        currentAnimationsTotalFrames = currentValue + accumulator;
+                        currentAnimationsTotalFrames = currentValue + accumulated;
                     }
                     return 0;
                 }
                 // not there yet, continue accumulating
-                return currentValue + accumulator;
+                return accumulating;
             }, 0);
             workingAnimations = this.animations[animationIndex];
         }
