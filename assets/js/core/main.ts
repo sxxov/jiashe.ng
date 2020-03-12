@@ -109,7 +109,7 @@ class Main {
 			type: null,
 			index: 0,
 			items: {
-				uid: 'introduction',
+				uid: 'hello',
 			},
 		});
 
@@ -131,7 +131,7 @@ class Main {
 			type: 'lottie',
 			data: await $().getJSON('/assets/js/raw/lottie/hello.json'),
 			items: {
-				uid: 'hello',
+				uid: 'hello_lottie',
 				invert: true,
 				totalFrames: 120,
 			},
@@ -157,7 +157,7 @@ class Main {
 			index: 1,
 			type: 'solid',
 			items: {
-				uid: 'blockso',
+				uid: 'about_me',
 				respectDevicePixelRatio: false,
 				totalFrames: 150,
 			},
