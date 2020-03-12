@@ -99,12 +99,11 @@ export class CoreAnimator {
             // add up the 'totalFrames' of every animation
             this.totalFrames = this.getAttributeFromAnimationsItems('totalFrames', this.animations)
                 .reduce((accumulator, currentValue) => currentValue + accumulator, 0);
-            this.onNewAnimation(animationObject);
             this.onAdd(animationObject);
         });
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onAdd(animation) {
+        this.onNewAnimation(animation);
         // to be overriden
     }
     getRelativeFrame(frame) {
@@ -271,7 +270,7 @@ export class CoreAnimator {
             this.getAttributeFromAnimationsItems('totalFrames', this.animations).reduce((accumulator, currentValue, i) => {
                 // if the current accumulated value is more than the frame,
                 // it means that we've overshot and the previous index is the current animation
-                if (currentValue + accumulator > frame - 1) {
+                if (currentValue + accumulator > frame) {
                     if (animationIndex === null) {
                         animationIndex = i;
                         currentAnimationsTotalFrames = currentValue + accumulator;
@@ -391,14 +390,17 @@ export class CoreAnimator {
                 if (uid !== targetUid) {
                     return;
                 }
-                const frame = this.getTotalFramesBeforeIndex(i) + 1;
-                this.onFrame(frame);
+                const frame = this.getTotalFramesBeforeIndex(i);
                 this.onSeek(frame);
             });
         });
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    seekTo(frame) {
+        this.onSeek(frame);
+        this.onFrame(frame);
+    }
     onSeek(frame) {
+        this.onFrame(frame);
         // to be overriden
     }
     hide(domElement) {

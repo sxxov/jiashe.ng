@@ -161,12 +161,11 @@ export class CoreAnimator {
 		this.totalFrames = this.getAttributeFromAnimationsItems('totalFrames', this.animations)
 			.reduce((accumulator, currentValue) => currentValue + accumulator, 0);
 
-		this.onNewAnimation(animationObject);
 		this.onAdd(animationObject);
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public onAdd(animation: AnimationObject): void {
+		this.onNewAnimation(animation);
 		// to be overriden
 	}
 
@@ -412,7 +411,7 @@ export class CoreAnimator {
 				(accumulator, currentValue, i) => {
 				// if the current accumulated value is more than the frame,
 				// it means that we've overshot and the previous index is the current animation
-					if (currentValue + accumulator > frame - 1) {
+					if (currentValue + accumulator > frame) {
 						if (animationIndex === null) {
 							animationIndex = i;
 							currentAnimationsTotalFrames = currentValue + accumulator;
@@ -611,16 +610,20 @@ export class CoreAnimator {
 					return;
 				}
 
-				const frame = this.getTotalFramesBeforeIndex(i) + 1;
+				const frame = this.getTotalFramesBeforeIndex(i);
 
-				this.onFrame(frame);
 				this.onSeek(frame);
 			});
 		});
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	public seekTo(frame: number): void {
+		this.onSeek(frame);
+		this.onFrame(frame);
+	}
+
 	public onSeek(frame: number): void {
+		this.onFrame(frame);
 		// to be overriden
 	}
 
