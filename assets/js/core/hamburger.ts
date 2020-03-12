@@ -12,33 +12,36 @@ export class Hamburger {
 	public data: Record<string | number, any>;
 	public lottieAnim: any;
 	public playDirection: number;
-	public containerDom: $Object;
+	public headerHamburgerIconDom: $Object;
 	public menuContainersWrapperDom: $Object;
 	private mWindowUtility: WindowUtility;
 	private skinDom: $Object;
 	private organsDom: $Object;
-	public haveItemsBeenCreated: boolean;
 	public hamburgerMenuClassPrefix: string;
 	private titles: [{
 		domContent: $Object;
 		revealFrameAnimator: FrameAnimator;
 		hoverFrameAnimator: FrameAnimator;
-		clickFrameAnimator: FrameAnimator;
 	}?];
-	private mCoreAnimator: CoreAnimator;
+	private ctx: CoreAnimator;
+	private clickFrameAnimator: FrameAnimator;
+	private currentOnClickDom: $Object;
+	private cachedAnimationsLength: number;
 
 	public constructor(mCoreAnimator: CoreAnimator) {
 		this.lottieAnim = null;
 		this.playDirection = -1;
-		this.containerDom = $('.hamburgerContainer');
+		this.headerHamburgerIconDom = $('.header.containersWrapper > .hamburger');
 		this.menuContainersWrapperDom = $('.__hamburgerMenu.containersWrapper');
 		this.hamburgerMenuClassPrefix = '__hamburgerMenu';
 		this.organsDom = $('.organs');
 		this.skinDom = $('.skin');
 		this.mWindowUtility = new WindowUtility();
 		this.titles = [];
-		this.haveItemsBeenCreated = false;
-		this.mCoreAnimator = mCoreAnimator;
+		this.ctx = mCoreAnimator;
+		this.clickFrameAnimator = new FrameAnimator();
+		this.currentOnClickDom = null;
+		this.cachedAnimationsLength = null;
 
 		$(window).on('resize', () => window.requestAnimationFrame(() => this.onWindowResize.call(this)));
 	}
@@ -46,17 +49,59 @@ export class Hamburger {
 	public async create(data: any): Promise<void> {
 		this.data = data;
 
-		this.containerDom.on('click', () => {
-			this.onClick.call(this);
+		this.clickFrameAnimator.add({
+			index: 0,
+			type: 'null',
+			items: {
+				totalFrames: 30,
+				onFrame: (animation, frame): void => {
+					const domContent = this.currentOnClickDom;
+
+					domContent.css({
+						opacity: Math.ceil((animation.items.totalFrames - frame) / 3) % 4 ? 1 : 0,
+					});
+				},
+			},
 		});
 
+		this.headerHamburgerIconDom.on('click', (event: Event) => {
+			this.menuContainersWrapperDom.removeClass('hidden');
+			this.onClick.call(this, event);
+		});
+
+		this.menuContainersWrapperDom.addClass('hidden');
+
+		const otherOnAdd = this.ctx.onAdd;
+		this.ctx.onAdd = (animation): void => {
+			otherOnAdd.call(this.ctx, animation);
+
+			this.createHamburgerMenuItems();
+		};
+
+		this.createHamburgerMenuItems();
+		this.createHamburgerToppings();
+
 		this.addLottie();
-		this.animate();
+	}
+
+	private createHamburgerToppings(): void {
+		$('.header.containersWrapper > .logo').on('click', (event: Event) => {
+			this.ctx.seekTo(0);
+
+			if (!this.isOpen) {
+				this.currentOnClickDom = $(event.currentTarget);
+				this.clickFrameAnimator.animate(0, 30);
+
+				return;
+			}
+
+			this.onClick(event);
+		});
 	}
 
 	private addLottie(): void {
 		this.lottieAnim = lottie.loadAnimation({
-			container: this.containerDom,
+			container: this.headerHamburgerIconDom,
 			renderer: 'canvas',
 			autoplay: false,
 			animationData: this.data,
@@ -68,24 +113,31 @@ export class Hamburger {
 	}
 
 	public get isOpen(): boolean {
-		return this.playDirection === -1;
+		return this.playDirection === 1;
 	}
 
 	public async getLottieData(): Promise<Record<string | number, any>> {
 		return $().getJSON('/assets/js/raw/lottie/hamburger.json');
 	}
 
-	private onClick(): void {
+	private onClick(event: Event): void {
+		if (this.isOpen) {
+			this.animateCloseHamburger();
+		} else {
+			this.animateOpenHamburger();
+
+			$$(`.${this.hamburgerMenuClassPrefix}.title`)
+				.fastEach(
+					(hamburgerMenuTitleDom: $Object) => this.animateTitleReveal(hamburgerMenuTitleDom),
+				);
+		}
+
 		this.playDirection *= -1;
 		this.lottieAnim.setDirection(this.playDirection);
 		this.lottieAnim.play();
 
-		this.createHamburgerMenuItems();
-		this.animate();
-		$$(`.${this.hamburgerMenuClassPrefix}.title`)
-			.fastEach(
-				(hamburgerMenuTitleDom: $Object) => this.animateTextReveal(hamburgerMenuTitleDom),
-			);
+		this.currentOnClickDom = $(event.currentTarget);
+		this.clickFrameAnimator.animate(0, 30);
 	}
 
 	private onTitleMouseOver(event: Event): void {
@@ -96,11 +148,7 @@ export class Hamburger {
 		this.animateTitleHover($(event.currentTarget), 'out');
 	}
 
-	private onTitleClick(event: Event): void {
-		this.animateTitleClick($(event.currentTarget));
-	}
-
-	private animate(): void {
+	private animateOpenHamburger(): void {
 		const windowHeight = Math.min(
 			this.mWindowUtility.viewport.height,
 			this.mWindowUtility.inner.height,
@@ -114,27 +162,6 @@ export class Hamburger {
 		const width = 0;
 		const top = (windowHeight - height) / 2;
 		const left = (windowWidth - width) / 2;
-
-		if (this.isOpen) {
-			this.skinDom.css({
-				height: '',
-				width: '',
-				top: 0,
-				left: 0,
-			});
-
-			this.organsDom.css({
-				height: '',
-				width: '',
-				top: 0,
-				left: 0,
-			});
-
-			$(document.body).css({
-				overflow: '',
-			});
-			return;
-		}
 
 		this.skinDom.css({
 			height,
@@ -155,16 +182,44 @@ export class Hamburger {
 		});
 	}
 
+	private animateCloseHamburger(): void {
+		this.skinDom.css({
+			height: '',
+			width: '',
+			top: 0,
+			left: 0,
+		});
+
+		this.organsDom.css({
+			height: '',
+			width: '',
+			top: 0,
+			left: 0,
+		});
+
+		$(document.body).css({
+			overflow: '',
+		});
+	}
+
 	private createHamburgerMenuItems(): void {
-		if (this.haveItemsBeenCreated) {
+		if (this.cachedAnimationsLength === this.ctx.animations.length) {
 			return;
 		}
 
+		// used to get value of variable instead of reference
+		this.cachedAnimationsLength = Number(this.ctx.animations.length);
+
+		// clear the insides to prevent duplicates
+		this.menuContainersWrapperDom.innerHTML = '';
+
+		// programatically generate css grid
 		this.menuContainersWrapperDom.css({
-			'grid-template-rows': `auto repeat(${this.mCoreAnimator.animations.length}, min-content) auto`,
+			'grid-template-rows': `auto repeat(${this.ctx.animations.length}, min-content) auto`,
 		});
 
-		this.mCoreAnimator.animations.fastEach((workingAnimations: AnimationObject[], i: number) => {
+		// append dom nodes and create animator instances for each first animation
+		this.ctx.animations.fastEach((workingAnimations: AnimationObject[], i: number) => {
 			const {
 				uid,
 			} = workingAnimations[0].items;
@@ -185,13 +240,11 @@ export class Hamburger {
 
 			const revealFrameAnimator = new FrameAnimator();
 			const hoverFrameAnimator = new FrameAnimator();
-			const clickFrameAnimator = new FrameAnimator();
 
 			this.titles.push({
 				domContent: titleDom,
 				revealFrameAnimator,
 				hoverFrameAnimator,
-				clickFrameAnimator,
 			});
 
 			const prefix = '.';
@@ -227,9 +280,7 @@ export class Hamburger {
 						onVisible: (): void => {
 							const domContent = $(node);
 
-							domContent.css({
-								opacity: 0,
-							});
+							revealFrameAnimator.deactivate(domContent);
 						},
 						onFrame: (animation, frame): void => {
 							const {
@@ -240,8 +291,8 @@ export class Hamburger {
 
 							domContent.css({
 								transform: `translateX(${(animationTotalFrames - frame) / 2}px)`,
-								opacity: 1,
 							});
+							revealFrameAnimator.activate(domContent);
 						},
 					},
 				});
@@ -276,7 +327,6 @@ export class Hamburger {
 
 							domContent.css({
 								transform: `translateY(${index % 2 === 0 ? '' : '-'}${frame / 14}px)`,
-								opacity: 1,
 							});
 						},
 					},
@@ -288,27 +338,9 @@ export class Hamburger {
 				});
 			});
 
-			// add click animations
-			clickFrameAnimator.add({
-				index: 0,
-				type: 'null',
-				items: {
-					totalFrames,
-					bezier: [0.075, 0.82, 0.165, 1],
-					onFrame: (animation, frame): void => {
-						const domContent = titleDom;
-
-						domContent.css({
-							opacity: Math.ceil((animation.items.totalFrames - frame) / 8) % 4 ? 0 : 1,
-						});
-					},
-				},
-			});
-
 			titleDom.on('click', (event: Event) => {
-				this.onTitleClick(event);
-				this.mCoreAnimator.seekToUid(uid);
-				this.onClick();
+				this.ctx.seekToUid(uid);
+				this.onClick(event);
 			});
 			titleDom.on('mouseover', (event: Event) => {
 				this.onTitleMouseOver(event);
@@ -317,25 +349,6 @@ export class Hamburger {
 				this.onTitleMouseOut(event);
 			});
 		});
-
-
-		this.haveItemsBeenCreated = true;
-	}
-
-	private animateTitleClick(titleDom: $Object): void {
-		let titleIndex: number = this.titles.length;
-		let totalFrames = null;
-
-		this.titles.forEach(
-			(title, index: number) => {
-				if (title.domContent === titleDom) {
-					titleIndex = index;
-					totalFrames = title.hoverFrameAnimator.animations[0][0].items.totalFrames;
-				}
-			},
-		);
-
-		this.titles[titleIndex].clickFrameAnimator.animate(0, totalFrames);
 	}
 
 	private animateTitleHover(titleDom: $Object, state: 'over'| 'out'): void {
@@ -351,16 +364,13 @@ export class Hamburger {
 			},
 		);
 
-		let start = null;
 		let end = null;
 
 		switch (state) {
 		case 'over':
-			start = 0;
 			end = totalFrames;
 			break;
 		case 'out':
-			start = totalFrames;
 			end = 0;
 			break;
 		default:
@@ -369,15 +379,21 @@ export class Hamburger {
 
 		const { hoverFrameAnimator } = this.titles[titleIndex];
 
+		if (hoverFrameAnimator.currentFrame === end) {
+			hoverFrameAnimator.animate(
+				end - 1,
+				end,
+			);
+			return;
+		}
+
 		hoverFrameAnimator.animate(
 			hoverFrameAnimator.currentFrame,
-			hoverFrameAnimator.currentFrame === end
-				? start
-				: end,
+			end,
 		);
 	}
 
-	private animateTextReveal(titleDom: $Object): void {
+	private animateTitleReveal(titleDom: $Object): void {
 		let titleIndex: number = this.titles.length;
 		let totalFrames = null;
 
@@ -390,14 +406,15 @@ export class Hamburger {
 			},
 		);
 
-		if (this.isOpen) {
-			return;
-		}
-
 		this.titles[titleIndex].revealFrameAnimator.animate(0, totalFrames);
 	}
 
 	private onWindowResize(): void {
-		this.animate();
+		if (this.isOpen) {
+			this.animateOpenHamburger();
+			return;
+		}
+
+		this.animateCloseHamburger();
 	}
 }
