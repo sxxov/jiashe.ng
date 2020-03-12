@@ -27,6 +27,7 @@ export class Hamburger {
 	private clickFrameAnimator: FrameAnimator;
 	private currentOnClickDom: $Object;
 	private cachedAnimationsLength: number;
+	private currentOnMouseDom: $Object;
 
 	public constructor(mCoreAnimator: CoreAnimator) {
 		this.lottieAnim = null;
@@ -42,6 +43,7 @@ export class Hamburger {
 		this.clickFrameAnimator = new FrameAnimator();
 		this.currentOnClickDom = null;
 		this.cachedAnimationsLength = null;
+		this.currentOnMouseDom = null;
 
 		$(window).on('resize', () => window.requestAnimationFrame(() => this.onWindowResize.call(this)));
 	}
@@ -120,7 +122,29 @@ export class Hamburger {
 		return $().getJSON('/assets/js/raw/lottie/hamburger.json');
 	}
 
-	private onClick(event: Event): void {
+	private onClick(event: Event, options?: {
+		newState?: 'closed' | 'opened';
+	}): void {
+		if (!options) {
+			this.onClick(event, {});
+
+			return;
+		}
+
+		const {
+			newState,
+		} = options;
+
+		if ((
+			newState === 'closed'
+				&& !this.isOpen
+		) || (
+			newState === 'opened'
+				&& this.isOpen
+		)) {
+			return;
+		}
+
 		if (this.isOpen) {
 			this.animateCloseHamburger();
 		} else {
@@ -138,13 +162,23 @@ export class Hamburger {
 
 		this.currentOnClickDom = $(event.currentTarget);
 		this.clickFrameAnimator.animate(0, 30);
+
+		if (!this.currentOnMouseDom) {
+			return;
+		}
+
+		this.animateTitleHover(this.currentOnMouseDom, 'out');
 	}
 
 	private onTitleMouseOver(event: Event): void {
+		this.currentOnMouseDom = $(event.currentTarget);
+
 		this.animateTitleHover($(event.currentTarget), 'over');
 	}
 
 	private onTitleMouseOut(event: Event): void {
+		this.currentOnMouseDom = $(event.currentTarget);
+
 		this.animateTitleHover($(event.currentTarget), 'out');
 	}
 
@@ -340,7 +374,9 @@ export class Hamburger {
 
 			titleDom.on('click', (event: Event) => {
 				this.ctx.seekToUid(uid);
-				this.onClick(event);
+				this.onClick(event, {
+					newState: 'closed',
+				});
 			});
 			titleDom.on('mouseover', (event: Event) => {
 				this.onTitleMouseOver(event);

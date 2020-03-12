@@ -25,6 +25,7 @@ export class Hamburger {
         this.clickFrameAnimator = new FrameAnimator();
         this.currentOnClickDom = null;
         this.cachedAnimationsLength = null;
+        this.currentOnMouseDom = null;
         $(window).on('resize', () => window.requestAnimationFrame(() => this.onWindowResize.call(this)));
     }
     create(data) {
@@ -89,7 +90,17 @@ export class Hamburger {
             return $().getJSON('/assets/js/raw/lottie/hamburger.json');
         });
     }
-    onClick(event) {
+    onClick(event, options) {
+        if (!options) {
+            this.onClick(event, {});
+            return;
+        }
+        const { newState, } = options;
+        if ((newState === 'closed'
+            && !this.isOpen) || (newState === 'opened'
+            && this.isOpen)) {
+            return;
+        }
         if (this.isOpen) {
             this.animateCloseHamburger();
         }
@@ -103,11 +114,17 @@ export class Hamburger {
         this.lottieAnim.play();
         this.currentOnClickDom = $(event.currentTarget);
         this.clickFrameAnimator.animate(0, 30);
+        if (!this.currentOnMouseDom) {
+            return;
+        }
+        this.animateTitleHover(this.currentOnMouseDom, 'out');
     }
     onTitleMouseOver(event) {
+        this.currentOnMouseDom = $(event.currentTarget);
         this.animateTitleHover($(event.currentTarget), 'over');
     }
     onTitleMouseOut(event) {
+        this.currentOnMouseDom = $(event.currentTarget);
         this.animateTitleHover($(event.currentTarget), 'out');
     }
     animateOpenHamburger() {
@@ -261,7 +278,9 @@ export class Hamburger {
             });
             titleDom.on('click', (event) => {
                 this.ctx.seekToUid(uid);
-                this.onClick(event);
+                this.onClick(event, {
+                    newState: 'closed',
+                });
             });
             titleDom.on('mouseover', (event) => {
                 this.onTitleMouseOver(event);
