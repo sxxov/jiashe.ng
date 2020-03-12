@@ -38,7 +38,7 @@ class Main {
                 items: {
                     onFrame: ((animation, frame) => {
                         const { uid, totalFrames, } = animation.items;
-                        let scrollPercent = ((frame / totalFrames) * 100)
+                        let scrollPercent = ((Math.min(frame / (totalFrames - 1), 1)) * 100)
                             .toString();
                         switch (true) {
                             case scrollPercent === 'NaN'
@@ -227,7 +227,7 @@ class Main {
                     uid: 'hamburger',
                     totalFrames: 240,
                     offset: 80,
-                    domContent: this.hamburger.containerDom,
+                    domContent: this.hamburger.headerHamburgerIconDom,
                     bezier: [0.77, 0, 0.175, 1],
                     onVisible: (animation) => {
                         const { items, data, } = animation;
@@ -251,10 +251,10 @@ class Main {
             const sizeController = () => {
                 const viewportHeight = this.mWindowUtility.viewport.height;
                 const innerHeight = this.mWindowUtility.inner.height;
-                const headerGrid = $('.headerGrid');
+                const header = $('.header.containersWrapper');
                 const hamburgerMenu = $('.__hamburgerMenu.containersWrapper');
                 if (viewportHeight === innerHeight) {
-                    headerGrid.css({
+                    header.css({
                         height: viewportHeight,
                     });
                     hamburgerMenu.css({
@@ -262,7 +262,7 @@ class Main {
                     });
                 }
                 else {
-                    headerGrid.css({
+                    header.css({
                         height: innerHeight,
                     });
                     hamburgerMenu.css({

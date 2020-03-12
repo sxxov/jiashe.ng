@@ -49,7 +49,7 @@ class Main {
 					} = animation.items;
 
 					let scrollPercent = ((
-						frame / totalFrames
+						Math.min(frame / (totalFrames - 1), 1)
 					) * 100)
 						.toString();
 
@@ -278,7 +278,7 @@ class Main {
 				uid: 'hamburger',
 				totalFrames: 240,
 				offset: 80,
-				domContent: this.hamburger.containerDom,
+				domContent: this.hamburger.headerHamburgerIconDom,
 				bezier: [0.77, 0, 0.175, 1],
 				onVisible: (animation): void => {
 					const {
@@ -316,18 +316,18 @@ class Main {
 			const viewportHeight = this.mWindowUtility.viewport.height;
 			const innerHeight = this.mWindowUtility.inner.height;
 
-			const headerGrid = $('.headerGrid');
+			const header = $('.header.containersWrapper');
 			const hamburgerMenu = $('.__hamburgerMenu.containersWrapper');
 
 			if (viewportHeight === innerHeight) {
-				headerGrid.css({
+				header.css({
 					height: viewportHeight,
 				});
 				hamburgerMenu.css({
 					height: viewportHeight,
 				});
 			} else {
-				headerGrid.css({
+				header.css({
 					height: innerHeight,
 				});
 				hamburgerMenu.css({
