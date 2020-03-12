@@ -105,6 +105,9 @@ export class Hamburger {
             this.animateCloseHamburger();
         }
         else {
+            if (this.currentOnMouseDom) {
+                this.animateTitleHover(this.currentOnMouseDom, 'out');
+            }
             this.animateOpenHamburger();
             $$(`.${this.hamburgerMenuClassPrefix}.title`)
                 .fastEach((hamburgerMenuTitleDom) => this.animateTitleReveal(hamburgerMenuTitleDom));
@@ -114,10 +117,6 @@ export class Hamburger {
         this.lottieAnim.play();
         this.currentOnClickDom = $(event.currentTarget);
         this.clickFrameAnimator.animate(0, 30);
-        if (!this.currentOnMouseDom) {
-            return;
-        }
-        this.animateTitleHover(this.currentOnMouseDom, 'out');
     }
     onTitleMouseOver(event) {
         this.currentOnMouseDom = $(event.currentTarget);
@@ -312,7 +311,7 @@ export class Hamburger {
         }
         const { hoverFrameAnimator } = this.titles[titleIndex];
         if (hoverFrameAnimator.currentFrame === end) {
-            hoverFrameAnimator.animate(end - 1, end);
+            hoverFrameAnimator.animate(end, end + 1);
             return;
         }
         hoverFrameAnimator.animate(hoverFrameAnimator.currentFrame, end);

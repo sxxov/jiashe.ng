@@ -148,6 +148,10 @@ export class Hamburger {
 		if (this.isOpen) {
 			this.animateCloseHamburger();
 		} else {
+			if (this.currentOnMouseDom) {
+				this.animateTitleHover(this.currentOnMouseDom, 'out');
+			}
+
 			this.animateOpenHamburger();
 
 			$$(`.${this.hamburgerMenuClassPrefix}.title`)
@@ -162,12 +166,6 @@ export class Hamburger {
 
 		this.currentOnClickDom = $(event.currentTarget);
 		this.clickFrameAnimator.animate(0, 30);
-
-		if (!this.currentOnMouseDom) {
-			return;
-		}
-
-		this.animateTitleHover(this.currentOnMouseDom, 'out');
 	}
 
 	private onTitleMouseOver(event: Event): void {
@@ -417,8 +415,8 @@ export class Hamburger {
 
 		if (hoverFrameAnimator.currentFrame === end) {
 			hoverFrameAnimator.animate(
-				end - 1,
 				end,
+				end + 1,
 			);
 			return;
 		}

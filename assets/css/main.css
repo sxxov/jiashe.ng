@@ -88,7 +88,7 @@ body {
 	width: 0;
 }
 
-.hoverLine:hover:after { 
+.hoverLine:hover:active:after { 
 	width: 100%;
 }
 /* -- general end -- */
