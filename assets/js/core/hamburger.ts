@@ -60,7 +60,7 @@ export class Hamburger {
 					const domContent = this.currentOnClickDom;
 
 					domContent.css({
-						opacity: Math.ceil((animation.items.totalFrames - frame) / 3) % 4 ? 1 : 0,
+						opacity: Math.ceil((animation.items.totalFrames - frame) / 3) % 4 ? 0 : 1,
 					});
 				},
 			},
