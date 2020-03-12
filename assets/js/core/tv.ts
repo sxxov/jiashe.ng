@@ -128,7 +128,6 @@ export class TV {
 	}
 
 	onPlayerStateChange(event: Event): void {
-		// non-standard, used by youtube embed api
 		switch ((event as any).data) {
 		case (window as any).YT.PlayerState.PLAYING:
 			$(this.screenElementSelector).addClass('active');
@@ -137,7 +136,6 @@ export class TV {
 			$(this.screenElementSelector).css({
 				display: 'none',
 			});
-			// non-standard, used by youtube embed api
 			(event.target as any).loadVideoById(this.videoId);
 			$(this.screenElementSelector).css({
 				display: '',
