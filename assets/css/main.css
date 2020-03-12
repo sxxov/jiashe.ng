@@ -91,6 +91,12 @@ body {
 .hoverLine:hover:after { 
 	width: 100%;
 }
+
+@media (pointer: coarse), (pointer: cnone) {
+	.hoverLine:hover:after{ 
+		width: 0;
+	}
+}
 /* -- general end -- */
 
 /* -- hamburgerMenu start -- */
