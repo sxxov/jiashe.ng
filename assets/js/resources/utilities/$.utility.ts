@@ -14,6 +14,8 @@ class NotJQuery {
 				.find((node: HTMLElement) => node.matches && node.matches(objectToCreateFrom)));
 		case objectToCreateFrom === undefined:
 			return m$Factory.create({});
+		case objectToCreateFrom === null:
+			throw new Error('Cannot create from null!');
 		case objectToCreateFrom.constructor === String:
 			return m$Factory.create(document.querySelector(objectToCreateFrom));
 		default:
@@ -33,6 +35,8 @@ class NotJQuery {
 				.map((elem: HTMLElement) => m$Factory.create(elem));
 		case objectToCreateFrom === undefined:
 			return [m$Factory.create({})];
+		case objectToCreateFrom === null:
+			throw new Error('Cannot create from null!');
 		case objectToCreateFrom.constructor === String:
 			return Array.from(
 				document.querySelectorAll(objectToCreateFrom),
