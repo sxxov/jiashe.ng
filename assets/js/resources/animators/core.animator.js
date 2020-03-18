@@ -114,7 +114,7 @@ export class CoreAnimator {
     }
     rawAnimate(items, callback) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { from, to, options: { fps = 120, } = {}, } = items;
+            const { from, to, options: { fps = 120, speed = 1, } = {}, } = items;
             const inverted = to < from;
             const processedFrom = inverted ? to : from;
             const processedTo = inverted ? from : to;
@@ -158,7 +158,7 @@ export class CoreAnimator {
                         resolve();
                         return;
                     }
-                    i += 1 * (fps / 60);
+                    i += (1 * speed) * (fps / 60);
                     this.rafId = window.requestAnimationFrame(step);
                 };
                 this.rafId = window.requestAnimationFrame(step);
@@ -262,7 +262,7 @@ export class CoreAnimator {
         let workingAnimations = [];
         const uids = [];
         // TODO: optimize below code, use caching or something
-        if (frame === 0) {
+        if (frame <= 0) {
             animationIndex = -1;
             currentAnimationsTotalFrames = 0;
             workingAnimations = this.animations[-1];
@@ -300,13 +300,13 @@ export class CoreAnimator {
             uids.push(uid);
             const mBezierUtility = new BezierUtility(bezier[0], bezier[1], bezier[2], bezier[3]);
             const globalFrame = frame;
-            const localFrame = mBezierUtility.getValue(Math.min((((globalFrame - this.getTotalFramesBeforeIndex(animationIndex))
-                / ((currentAnimationsTotalFrames
-                    - this.getTotalFramesBeforeIndex(animationIndex)) - maxOffset + offset))
+            const localFrame = mBezierUtility.getValue(Math.min((((globalFrame
+                - this.getTotalFramesBeforeIndex(animationIndex)) / ((currentAnimationsTotalFrames
+                - this.getTotalFramesBeforeIndex(animationIndex)) - maxOffset + offset))
                 * (totalFrames)), totalFrames) / totalFrames) * totalFrames || totalFrames;
-            if (__caller.name !== 'FrameAnimator'
-                && window.DEBUG === true) {
+            if (window.DEBUG === true) {
                 console.log('frame', frame);
+                console.log('__caller', __caller.name);
                 console.log('workingAnimation', workingAnimation);
                 console.log('globalFrame', globalFrame);
                 console.log('animationIndex', animationIndex);

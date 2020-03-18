@@ -183,6 +183,7 @@ export class CoreAnimator {
 		options?: {
 			fps?: number;
 			bezier?: number[];
+			speed?: number;
 		};
 	}, callback: (frame: number) => void): Promise<void> {
 		const {
@@ -190,6 +191,7 @@ export class CoreAnimator {
 			to,
 			options: {
 				fps = 120,
+				speed = 1,
 			} = {},
 		} = items;
 
@@ -244,7 +246,7 @@ export class CoreAnimator {
 					return;
 				}
 
-				i += 1 * (fps / 60);
+				i += (1 * speed) * (fps / 60);
 				this.rafId = window.requestAnimationFrame(step);
 			};
 
@@ -404,7 +406,7 @@ export class CoreAnimator {
 
 		// TODO: optimize below code, use caching or something
 
-		if (frame === 0) {
+		if (frame <= 0) {
 			animationIndex = -1;
 			currentAnimationsTotalFrames = 0;
 			workingAnimations = this.animations[-1];
@@ -463,8 +465,10 @@ export class CoreAnimator {
 			const globalFrame = frame;
 			const localFrame = mBezierUtility.getValue(Math.min(
 				((
-					(globalFrame - this.getTotalFramesBeforeIndex(animationIndex))
-					/ ((
+					(
+						globalFrame
+						- this.getTotalFramesBeforeIndex(animationIndex)
+					) / ((
 						currentAnimationsTotalFrames
 						- this.getTotalFramesBeforeIndex(animationIndex)
 					) - maxOffset + offset)
@@ -473,9 +477,9 @@ export class CoreAnimator {
 				totalFrames,
 			) / totalFrames) * totalFrames || totalFrames;
 
-			if (__caller.name !== 'FrameAnimator'
-				&& (window as any).DEBUG === true) {
+			if ((window as any).DEBUG === true) {
 				console.log('frame', frame);
+				console.log('__caller', __caller.name);
 				console.log('workingAnimation', workingAnimation);
 				console.log('globalFrame', globalFrame);
 				console.log('animationIndex', animationIndex);
