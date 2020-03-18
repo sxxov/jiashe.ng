@@ -7,9 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { $, $$, } from '../../utilities.js';
+import { $, $$, ForUtility, } from '../../utilities.js';
 export class $Factory {
     create(objectToCreateFrom = {}) {
+        ForUtility.addToArrayPrototype();
         const object = Object.assign({ evaluate(functionToEvaluate) {
                 return this.apply(functionToEvaluate(this));
             },

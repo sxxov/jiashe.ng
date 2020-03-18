@@ -1,11 +1,14 @@
 import {
 	$,
 	$$,
+	ForUtility,
 } from '../../utilities.js';
 import { $Object } from '../../utilities.types.js';
 
 export class $Factory {
 	create(objectToCreateFrom: any = {}): $Object {
+		ForUtility.addToArrayPrototype();
+
 		const object: $Object = {
 			evaluate(functionToEvaluate): $Object {
 				return this.apply(functionToEvaluate(this));
