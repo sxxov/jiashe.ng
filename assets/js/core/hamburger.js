@@ -101,16 +101,17 @@ export class Hamburger {
             && this.isOpen)) {
             return;
         }
+        const titles = $$(`.${this.hamburgerMenuClassPrefix}.title`);
         if (this.isOpen) {
             this.animateCloseHamburger();
+            titles.fastEach((hamburgerMenuTitleDom) => this.animateTitleReveal(hamburgerMenuTitleDom, 'hide'));
         }
         else {
             if (this.currentOnMouseDom) {
                 this.animateTitleHover(this.currentOnMouseDom, 'out');
             }
             this.animateOpenHamburger();
-            $$(`.${this.hamburgerMenuClassPrefix}.title`)
-                .fastEach((hamburgerMenuTitleDom) => this.animateTitleReveal(hamburgerMenuTitleDom));
+            titles.fastEach((hamburgerMenuTitleDom) => this.animateTitleReveal(hamburgerMenuTitleDom, 'reveal'));
         }
         this.playDirection *= -1;
         this.lottieAnim.setDirection(this.playDirection);
@@ -226,17 +227,19 @@ export class Hamburger {
                         offset: (index
                             * ((totalFrames + 60) / titleDom.textContent.length)),
                         bezier: [0.165, 0.84, 0.44, 1],
-                        onVisible: () => {
+                        onHidden: () => {
                             const domContent = $(node);
-                            revealFrameAnimator.deactivate(domContent);
+                            domContent.css({
+                                opacity: 0,
+                            });
                         },
                         onFrame: (animation, frame) => {
                             const { totalFrames: animationTotalFrames, } = animation.items;
                             const domContent = $(node);
                             domContent.css({
                                 transform: `translateX(${(animationTotalFrames - frame) / 2}px)`,
+                                opacity: 1,
                             });
-                            revealFrameAnimator.activate(domContent);
                         },
                     },
                 });
@@ -292,6 +295,7 @@ export class Hamburger {
     animateTitleHover(titleDom, state) {
         let titleIndex = this.titles.length;
         let totalFrames = null;
+        // get working title
         this.titles.forEach((title, index) => {
             if (title.domContent === titleDom) {
                 titleIndex = index;
@@ -316,16 +320,38 @@ export class Hamburger {
         }
         hoverFrameAnimator.animate(hoverFrameAnimator.currentFrame, end);
     }
-    animateTitleReveal(titleDom) {
+    animateTitleReveal(titleDom, state) {
         let titleIndex = this.titles.length;
         let totalFrames = null;
+        // get working title
         this.titles.forEach((title, index) => {
             if (title.domContent === titleDom) {
                 titleIndex = index;
                 totalFrames = title.revealFrameAnimator.animations[0][0].items.totalFrames;
             }
         });
-        this.titles[titleIndex].revealFrameAnimator.animate(0, totalFrames);
+        let end = null;
+        let speed = null;
+        switch (state) {
+            case 'reveal':
+                end = totalFrames;
+                speed = 1;
+                break;
+            case 'hide':
+                end = 0;
+                speed = 2;
+                break;
+            default:
+                return;
+        }
+        const { revealFrameAnimator } = this.titles[titleIndex];
+        if (revealFrameAnimator.currentFrame === end) {
+            revealFrameAnimator.animate(end, end + 1);
+            return;
+        }
+        revealFrameAnimator.animate(revealFrameAnimator.currentFrame, end, {
+            speed,
+        });
     }
     onWindowResize() {
         if (this.isOpen) {

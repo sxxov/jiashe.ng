@@ -145,8 +145,14 @@ export class Hamburger {
 			return;
 		}
 
+		const titles = $$(`.${this.hamburgerMenuClassPrefix}.title`);
+
 		if (this.isOpen) {
 			this.animateCloseHamburger();
+
+			titles.fastEach(
+				(hamburgerMenuTitleDom: $Object) => this.animateTitleReveal(hamburgerMenuTitleDom, 'hide'),
+			);
 		} else {
 			if (this.currentOnMouseDom) {
 				this.animateTitleHover(this.currentOnMouseDom, 'out');
@@ -154,10 +160,9 @@ export class Hamburger {
 
 			this.animateOpenHamburger();
 
-			$$(`.${this.hamburgerMenuClassPrefix}.title`)
-				.fastEach(
-					(hamburgerMenuTitleDom: $Object) => this.animateTitleReveal(hamburgerMenuTitleDom),
-				);
+			titles.fastEach(
+				(hamburgerMenuTitleDom: $Object) => this.animateTitleReveal(hamburgerMenuTitleDom, 'reveal'),
+			);
 		}
 
 		this.playDirection *= -1;
@@ -309,10 +314,12 @@ export class Hamburger {
 								* ((totalFrames + 60) / titleDom.textContent.length)
 						),
 						bezier: [0.165, 0.84, 0.44, 1],
-						onVisible: (): void => {
+						onHidden: (): void => {
 							const domContent = $(node);
 
-							revealFrameAnimator.deactivate(domContent);
+							domContent.css({
+								opacity: 0,
+							});
 						},
 						onFrame: (animation, frame): void => {
 							const {
@@ -323,8 +330,8 @@ export class Hamburger {
 
 							domContent.css({
 								transform: `translateX(${(animationTotalFrames - frame) / 2}px)`,
+								opacity: 1,
 							});
-							revealFrameAnimator.activate(domContent);
 						},
 					},
 				});
@@ -389,6 +396,7 @@ export class Hamburger {
 		let titleIndex: number = this.titles.length;
 		let totalFrames = null;
 
+		// get working title
 		this.titles.forEach(
 			(title, index: number) => {
 				if (title.domContent === titleDom) {
@@ -427,10 +435,11 @@ export class Hamburger {
 		);
 	}
 
-	private animateTitleReveal(titleDom: $Object): void {
+	private animateTitleReveal(titleDom: $Object, state: 'reveal' | 'hide'): void {
 		let titleIndex: number = this.titles.length;
 		let totalFrames = null;
 
+		// get working title
 		this.titles.forEach(
 			(title, index: number) => {
 				if (title.domContent === titleDom) {
@@ -440,7 +449,39 @@ export class Hamburger {
 			},
 		);
 
-		this.titles[titleIndex].revealFrameAnimator.animate(0, totalFrames);
+		let end = null;
+		let speed = null;
+
+		switch (state) {
+		case 'reveal':
+			end = totalFrames;
+			speed = 1;
+			break;
+		case 'hide':
+			end = 0;
+			speed = 2;
+			break;
+		default:
+			return;
+		}
+
+		const { revealFrameAnimator } = this.titles[titleIndex];
+
+		if (revealFrameAnimator.currentFrame === end) {
+			revealFrameAnimator.animate(
+				end,
+				end + 1,
+			);
+			return;
+		}
+
+		revealFrameAnimator.animate(
+			revealFrameAnimator.currentFrame,
+			end,
+			{
+				speed,
+			},
+		);
 	}
 
 	private onWindowResize(): void {
