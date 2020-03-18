@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 export class ForUtility {
-    addToArrayPrototype() {
+    static addToArrayPrototype() {
         // non-standard, used by this to keep track of the singleton
         if (!Array.prototype.__forUtilitySingletonExecuted) {
             Array.prototype.__forUtilitySingletonExecuted = true;

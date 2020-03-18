@@ -13,7 +13,7 @@ import { ScrollAnimator, FrameAnimator, } from '../resources/animators.js';
 import { $, WindowUtility, ForUtility, } from '../resources/utilities.js';
 class Main {
     constructor() {
-        (new ForUtility()).addToArrayPrototype();
+        ForUtility.addToArrayPrototype();
         this.mTV = new TV();
         this.miscellaneousScrollingAnimator = new ScrollAnimator();
         this.scrollToContinueFrameAnimator = new FrameAnimator();

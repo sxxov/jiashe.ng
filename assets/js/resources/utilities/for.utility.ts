@@ -9,7 +9,7 @@ declare global {
 }
 
 export class ForUtility {
-	addToArrayPrototype(): void {
+	static addToArrayPrototype(): void {
 		// non-standard, used by this to keep track of the singleton
 		if (!(Array.prototype as any).__forUtilitySingletonExecuted) {
 			(Array.prototype as any).__forUtilitySingletonExecuted = true;
