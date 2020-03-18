@@ -27,7 +27,7 @@ export class CoreAnimator {
 	public metaAnimations: AnimationObject[];
 	public animatorClassPrefix: string;
 	public animatorContainers: $Object[];
-	public animatorContainersWrapper: $Object;
+	private __animatorContainersWrapper: $Object;
 	public visibleAnimations: AnimationObject[];
 
 	public dpr: number;
@@ -48,7 +48,7 @@ export class CoreAnimator {
 		this.metaAnimations = [];
 		this.animatorClassPrefix = '__animate';
 		this.animatorContainers = [];
-		this.animatorContainersWrapper = null;
+		this.__animatorContainersWrapper = null;
 		this.visibleAnimations = null;
 
 		this.dpr = Math.max(window.devicePixelRatio / 2, 1);
@@ -57,8 +57,6 @@ export class CoreAnimator {
 		this.rafId = null;
 
 		this.attributeCache = {};
-
-		this.createContainersWrapperDom();
 
 		$(window).on('load resize', () => window.requestAnimationFrame(() => {
 			this.onWindowResize.call(this);
@@ -71,19 +69,25 @@ export class CoreAnimator {
 		}));
 	}
 
-	private createContainersWrapperDom(): void {
-		this.animatorContainersWrapper = $(document.createElement('div'));
+	public get animatorContainersWrapper(): $Object {
+		if (this.__animatorContainersWrapper) {
+			return this.__animatorContainersWrapper;
+		}
 
-		this.animatorContainersWrapper.addClass([
+		this.__animatorContainersWrapper = $(document.createElement('div'));
+
+		this.__animatorContainersWrapper.addClass([
 			this.animatorClassPrefix,
 			'containersWrapper',
 			this.uid,
 			'height',
 		]);
 
-		this.activate(this.animatorContainersWrapper);
+		this.activate(this.__animatorContainersWrapper);
 
-		$('.organs').appendChild(this.animatorContainersWrapper);
+		$('.organs').appendChild(this.__animatorContainersWrapper);
+
+		return this.__animatorContainersWrapper;
 	}
 
 	public async add(animationToBeConstructed: AnimationObject): Promise<void> {
@@ -266,7 +270,7 @@ export class CoreAnimator {
 	}
 
 	private onWindowResize(): void {
-		if (!this.animatorContainers) {
+		if (this.animatorContainers.length < 1) {
 			return;
 		}
 
@@ -450,10 +454,6 @@ export class CoreAnimator {
 				bezier,
 			} = workingAnimation.items;
 
-			// if (frame < offset) {
-			// 	return;
-			// }
-
 			uids.push(uid);
 
 			const mBezierUtility = new BezierUtility(
@@ -474,9 +474,7 @@ export class CoreAnimator {
 			) / totalFrames) * totalFrames || totalFrames;
 
 			if (__caller.name !== 'FrameAnimator'
-				|| uid === 'logo'
-				|| uid === 'scrollCounter'
-				|| uid.indexOf('char') !== -1) {
+				&& (window as any).DEBUG === true) {
 				console.log('frame', frame);
 				console.log('workingAnimation', workingAnimation);
 				console.log('globalFrame', globalFrame);
