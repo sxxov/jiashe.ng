@@ -10,13 +10,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { CoreAnimator } from './core.animator.js';
 export class FrameAnimator extends CoreAnimator {
     animate(from, to, options = {}) {
+        const _super = Object.create(null, {
+            onFrame: { get: () => super.onFrame }
+        });
         return __awaiter(this, void 0, void 0, function* () {
             return this.rawAnimate({
                 from,
                 to,
                 options,
             }, (frame) => {
-                this.onFrame(frame);
+                _super.onFrame.call(this, frame);
             });
         });
     }

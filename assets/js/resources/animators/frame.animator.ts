@@ -11,7 +11,7 @@ export class FrameAnimator extends CoreAnimator {
 			to,
 			options,
 		}, (frame) => {
-			this.onFrame(frame);
+			super.onFrame(frame);
 		});
 	}
 
