@@ -78,13 +78,13 @@ body {
 .hoverLine:after {    
 	background: none repeat scroll 0 0 transparent;
 	left: 0;
-	bottom: -10px;
+	bottom: -9px;
 	content: "";
 	display: block;
 	height: 1px;
 	position: absolute;
 	background: grey;
-	transition: width 0.3s var(--easeFastSlow);
+	transition: width 0.3s var(--easeSlowSlow);
 	width: 0;
 }
 
