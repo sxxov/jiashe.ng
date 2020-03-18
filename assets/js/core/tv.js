@@ -16,15 +16,15 @@ export class TV {
         this.screenElementSelector = `#${this.screenElementId}`;
         this.tvElementSelector = '.tv';
         this.playerVars = {
-            loop: 1,
-            autoplay: 1,
-            autohide: 1,
-            modestbranding: 1,
-            rel: 0,
-            showinfo: 0,
-            controls: 0,
-            disablekb: 1,
-            enablejsapi: 1,
+            loop: 1 /* Loop */,
+            autoplay: 1 /* AutoPlay */,
+            autohide: 1 /* HideAllControls */,
+            modestbranding: 1 /* Modest */,
+            rel: 0 /* Hide */,
+            showinfo: 0 /* Hide */,
+            controls: 0 /* Hide */,
+            disablekb: 1 /* Disable */,
+            enablejsapi: 1 /* Enable */,
         };
         this.mWindowUtility = new WindowUtility();
     }
@@ -34,14 +34,17 @@ export class TV {
                 return;
             }
             yield this.loadApi();
+            const ctx = this;
             new Promise((resolve) => {
-                this.api = new window.YT.Player(this.screenElementId, {
+                this.api = new YT.Player(this.screenElementId, {
                     events: {
-                        onReady: (event) => {
-                            this.onPlayerReady(event);
+                        onReady(event) {
+                            ctx.onPlayerReady.call(ctx, event);
                             resolve();
                         },
-                        onStateChange: (event) => this.onPlayerStateChange.call(this, event),
+                        onStateChange(event) {
+                            ctx.onPlayerStateChange.call(ctx, event);
+                        },
                     },
                     playerVars: this.playerVars,
                 });
@@ -104,10 +107,10 @@ export class TV {
     }
     onPlayerStateChange(event) {
         switch (event.data) {
-            case window.YT.PlayerState.PLAYING:
+            case 1 /* PLAYING */:
                 $(this.screenElementSelector).addClass('active');
                 return;
-            case window.YT.PlayerState.ENDED:
+            case 0 /* ENDED */:
                 $(this.screenElementSelector).css({
                     display: 'none',
                 });
@@ -122,13 +125,11 @@ export class TV {
     }
     onPlayerReady(event) {
         const { target, } = event;
-        // non-standard, used by youtube embed api
         target.loadVideoById(this.videoId);
         target.mute();
     }
     loadApi() {
         return new Promise((resolve) => {
-            // non-standard, used by youtube embed api
             window.onYouTubePlayerAPIReady = resolve;
             const tag = document.createElement('script');
             tag.src = 'https://www.youtube.com/iframe_api';

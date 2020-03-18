@@ -10,17 +10,7 @@ export class TV {
 	screenElementId: string;
 	screenElementSelector: string;
 	tvElementSelector: string;
-	playerVars: {
-		loop: number;
-		autoplay: number;
-		autohide: number;
-		modestbranding: number;
-		rel: number;
-		showinfo: number;
-		controls: number;
-		disablekb: number;
-		enablejsapi: number;
-	};
+	playerVars: YT.PlayerVars;
 
 	constructor() {
 		this.api = null;
@@ -29,15 +19,15 @@ export class TV {
 		this.screenElementSelector = `#${this.screenElementId}`;
 		this.tvElementSelector = '.tv';
 		this.playerVars = {
-			loop: 1,
-			autoplay: 1,
-			autohide: 1,
-			modestbranding: 1,
-			rel: 0,
-			showinfo: 0,
-			controls: 0,
-			disablekb: 1,
-			enablejsapi: 1,
+			loop: YT.Loop.Loop,
+			autoplay: YT.AutoPlay.AutoPlay,
+			autohide: YT.AutoHide.HideAllControls,
+			modestbranding: YT.ModestBranding.Modest,
+			rel: YT.RelatedVideos.Hide,
+			showinfo: YT.ShowInfo.Hide,
+			controls: YT.Controls.Hide,
+			disablekb: YT.KeyboardControls.Disable,
+			enablejsapi: YT.JsApi.Enable,
 		};
 
 		this.mWindowUtility = new WindowUtility();
@@ -50,14 +40,18 @@ export class TV {
 
 		await this.loadApi();
 
+		const ctx = this;
+
 		new Promise((resolve) => {
-			this.api = new (window as any).YT.Player(this.screenElementId, {
+			this.api = new YT.Player(this.screenElementId, {
 				events: {
-					onReady: (event: Event): void => {
-						this.onPlayerReady(event);
+					onReady(event: YT.PlayerEvent): void {
+						ctx.onPlayerReady.call(ctx, event);
 						resolve();
 					},
-					onStateChange: (event: Event): void => this.onPlayerStateChange.call(this, event),
+					onStateChange(event: YT.OnStateChangeEvent): void {
+						ctx.onPlayerStateChange.call(ctx, event);
+					},
 				},
 				playerVars: this.playerVars,
 			});
@@ -127,16 +121,16 @@ export class TV {
 		}
 	}
 
-	onPlayerStateChange(event: Event): void {
-		switch ((event as any).data) {
-		case (window as any).YT.PlayerState.PLAYING:
+	onPlayerStateChange(event: YT.OnStateChangeEvent): void {
+		switch (event.data) {
+		case YT.PlayerState.PLAYING:
 			$(this.screenElementSelector).addClass('active');
 			return;
-		case (window as any).YT.PlayerState.ENDED:
+		case YT.PlayerState.ENDED:
 			$(this.screenElementSelector).css({
 				display: 'none',
 			});
-			(event.target as any).loadVideoById(this.videoId);
+			event.target.loadVideoById(this.videoId);
 			$(this.screenElementSelector).css({
 				display: '',
 			});
@@ -146,19 +140,17 @@ export class TV {
 		}
 	}
 
-	onPlayerReady(event: Event): void {
+	onPlayerReady(event: YT.PlayerEvent): void {
 		const {
 			target,
 		} = event;
 
-		// non-standard, used by youtube embed api
-		(target as any).loadVideoById(this.videoId);
-		(target as any).mute();
+		target.loadVideoById(this.videoId);
+		target.mute();
 	}
 
 	loadApi(): Promise<void> {
 		return new Promise((resolve) => {
-			// non-standard, used by youtube embed api
 			(window as any).onYouTubePlayerAPIReady = resolve;
 
 			const tag = document.createElement('script');
