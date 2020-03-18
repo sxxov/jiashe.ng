@@ -1,0 +1,23 @@
+.pace {
+	pointer-events: none;
+	user-select: none;
+}
+  
+.pace.inactive > .pace-progress {
+	height: 0 !important;
+}
+  
+.pace > .pace-progress {
+	background: white;
+	position: fixed;
+	z-index: 6969;
+	top: 0;
+	right: 100%;
+	width: 100%;
+	height: 2px;
+
+	mix-blend-mode: difference;
+
+	transition: height 1s cubic-bezier(0.77, 0, 0.175, 1);
+}
+  
