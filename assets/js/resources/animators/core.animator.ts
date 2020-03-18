@@ -3,7 +3,7 @@ import {
 	WindowUtility,
 	BezierUtility,
 } from '../utilities.js';
-import { lottie } from '../lottie.js';
+import { lottie } from '../../raw/libraries/lottie.js';
 import {
 	LottieFactory,
 	SolidFactory,

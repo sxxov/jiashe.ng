@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { lottie } from '../resources/lottie.js';
+import { lottie } from '../raw/libraries/lottie.js';
 import { $, WindowUtility, $$, } from '../resources/utilities.js';
 import { FrameAnimator } from '../resources/animators.js';
 export class Hamburger {

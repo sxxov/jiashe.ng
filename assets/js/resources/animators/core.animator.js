@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { $, WindowUtility, BezierUtility, } from '../utilities.js';
-import { lottie } from '../lottie.js';
+import { lottie } from '../../raw/libraries/lottie.js';
 import { LottieFactory, SolidFactory, AnimationFactory, } from '../animators.factories.js';
 export class CoreAnimator {
     constructor() {

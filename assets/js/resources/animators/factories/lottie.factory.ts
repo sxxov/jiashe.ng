@@ -1,6 +1,6 @@
 import { CoreAnimator } from '../../animators.js';
 import { $ } from '../../utilities.js';
-import { lottie } from '../../lottie.js';
+import { lottie } from '../../../raw/libraries/lottie.js';
 import {
 	LottieObject,
 	AnimationObject,

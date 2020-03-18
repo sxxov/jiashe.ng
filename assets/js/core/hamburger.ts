@@ -1,4 +1,4 @@
-import { lottie } from '../resources/lottie.js';
+import { lottie } from '../raw/libraries/lottie.js';
 import {
 	$,
 	WindowUtility,

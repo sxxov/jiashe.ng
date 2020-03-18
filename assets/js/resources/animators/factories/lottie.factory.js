@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { $ } from '../../utilities.js';
-import { lottie } from '../../lottie.js';
+import { lottie } from '../../../raw/libraries/lottie.js';
 export class LottieFactory {
     constructor(thisArg) {
         this.ctx = thisArg;
