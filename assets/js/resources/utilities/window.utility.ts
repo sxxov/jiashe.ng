@@ -54,6 +54,10 @@ export class WindowUtility {
 		return (this.viewport.width / 100) * amount;
 	}
 
+	public px(amount: number): number {
+		return amount * window.devicePixelRatio;
+	}
+
 	get client(): {
 		height: number;
 		width: number;

@@ -33,6 +33,9 @@ export class WindowUtility {
     vw(amount) {
         return (this.viewport.width / 100) * amount;
     }
+    px(amount) {
+        return amount * window.devicePixelRatio;
+    }
     get client() {
         if (this.cache.client.height
             || this.cache.client.width) {
