@@ -281,11 +281,13 @@ export class CoreAnimator {
             uids.push(uid);
             const mBezierUtility = new BezierUtility(bezier[0], bezier[1], bezier[2], bezier[3]);
             const globalFrame = frame;
-            const localFrame = mBezierUtility.getValue(Math.min((((globalFrame
+            let localFrame = mBezierUtility.getValue(Math.min((((globalFrame
                 - this.getTotalFramesBeforeIndex(animationIndex)) / ((currentAnimationsTotalFrames
                 - this.getTotalFramesBeforeIndex(animationIndex)) - maxOffset + offset))
-                * (totalFrames)), totalFrames) / totalFrames) * totalFrames || totalFrames;
-            if (window.DEBUG === true) {
+                * (totalFrames)), totalFrames) / totalFrames) * totalFrames;
+            localFrame = Number.isNaN(localFrame) ? totalFrames : localFrame;
+            if (window.DEBUG === true
+                && __caller.name !== 'FrameAnimator') {
                 console.log('frame', frame);
                 console.log('__caller', __caller.name);
                 console.log('workingAnimation', workingAnimation);

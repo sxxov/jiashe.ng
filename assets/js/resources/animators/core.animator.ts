@@ -423,7 +423,7 @@ export class CoreAnimator {
 			);
 
 			const globalFrame = frame;
-			const localFrame = mBezierUtility.getValue(Math.min(
+			let localFrame = mBezierUtility.getValue(Math.min(
 				((
 					(
 						globalFrame
@@ -435,9 +435,11 @@ export class CoreAnimator {
 				)
 				* (totalFrames)),
 				totalFrames,
-			) / totalFrames) * totalFrames || totalFrames;
+			) / totalFrames) * totalFrames;
+			localFrame = Number.isNaN(localFrame) ? totalFrames : localFrame;
 
-			if ((window as any).DEBUG === true) {
+			if ((window as any).DEBUG === true
+				&& __caller.name !== 'FrameAnimator') {
 				console.log('frame', frame);
 				console.log('__caller', __caller.name);
 				console.log('workingAnimation', workingAnimation);
