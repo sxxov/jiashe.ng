@@ -153,7 +153,7 @@ class Main {
                 index: 1,
                 type: 'solid',
                 items: {
-                    uid: 'about_me',
+                    uid: 'what_now?',
                     respectDevicePixelRatio: false,
                     totalFrames: 150,
                 },
