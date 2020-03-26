@@ -26,6 +26,6 @@ export class FrameAnimator extends CoreAnimator {
 	}
 
 	public cancelNextFrame(): void {
-		cancelAnimationFrame(super.rafId);
+		cancelAnimationFrame(this.rafId);
 	}
 }
