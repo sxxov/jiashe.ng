@@ -10,53 +10,54 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 export class ForUtility {
     static addToArrayPrototype() {
         // non-standard, used by this to keep track of the singleton
-        if (!Array.prototype.__forUtilitySingletonExecuted) {
-            Array.prototype.__forUtilitySingletonExecuted = true;
-            const methods = {
-                fastEach(callback, ctx = null) {
-                    const workingArray = this;
-                    if (ctx === null) {
-                        for (let i = 0, l = workingArray.length; i < l; ++i) {
-                            callback(workingArray[i], i);
-                        }
-                        return;
-                    }
-                    for (let i = 0, l = workingArray.length; i < l; ++i) {
-                        callback.call(ctx || this, workingArray[i], i);
-                    }
-                },
-                forAwait(callback, ctx = null) {
-                    return __awaiter(this, void 0, void 0, function* () {
-                        const workingArray = this;
-                        for (let i = 0, l = workingArray.length; i < l; ++i) {
-                            yield callback.call(ctx || this, workingArray[i], i);
-                        }
-                    });
-                },
-                getAll(callback, ctx = null) {
-                    const workingArray = this;
-                    const returnValues = [];
-                    for (let i = 0, l = workingArray.length; i < l; ++i) {
-                        if (callback.call(ctx || this, workingArray[i], i)) {
-                            returnValues.push(workingArray[i]);
-                        }
-                    }
-                    return returnValues;
-                },
-                getSome(callback, ctx = null) {
-                    const workingArray = this;
-                    for (let i = 0, l = workingArray.length; i < l; ++i) {
-                        if (callback.call(ctx || this, workingArray[i], i)) {
-                            return workingArray[i];
-                        }
-                    }
-                    return null;
-                },
-            };
-            Object.keys(methods).forEach((key) => {
-                Array.prototype[key] = methods[key];
-            });
+        if (Array.prototype.__forUtilitySingletonExecuted) {
+            return;
         }
+        const methods = {
+            fastEach(callback, ctx = null) {
+                const workingArray = this;
+                if (ctx === null) {
+                    for (let i = 0, l = workingArray.length; i < l; ++i) {
+                        callback(workingArray[i], i);
+                    }
+                    return;
+                }
+                for (let i = 0, l = workingArray.length; i < l; ++i) {
+                    callback.call(ctx || this, workingArray[i], i);
+                }
+            },
+            forAwait(callback, ctx = null) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    const workingArray = this;
+                    for (let i = 0, l = workingArray.length; i < l; ++i) {
+                        yield callback.call(ctx || this, workingArray[i], i);
+                    }
+                });
+            },
+            getAll(callback, ctx = null) {
+                const workingArray = this;
+                const returnValues = [];
+                for (let i = 0, l = workingArray.length; i < l; ++i) {
+                    if (callback.call(ctx || this, workingArray[i], i)) {
+                        returnValues.push(workingArray[i]);
+                    }
+                }
+                return returnValues;
+            },
+            getSome(callback, ctx = null) {
+                const workingArray = this;
+                for (let i = 0, l = workingArray.length; i < l; ++i) {
+                    if (callback.call(ctx || this, workingArray[i], i)) {
+                        return workingArray[i];
+                    }
+                }
+                return null;
+            },
+        };
+        Object.keys(methods).forEach((key) => {
+            Array.prototype[key] = methods[key];
+        });
+        Array.prototype.__forUtilitySingletonExecuted = true;
     }
 }
 //# sourceMappingURL=for.utility.js.map
