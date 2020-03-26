@@ -120,17 +120,24 @@ export class Hamburger {
     }
     onTitleMouseOver(event) {
         this.currentOnMouseDom = $(event.currentTarget);
+        if (!event.target.classList.contains('prefix')) {
+            this.animateTitleHoverLine($(event.target), 'over');
+        }
         this.animateTitleHover($(event.currentTarget), 'over');
     }
     onTitleMouseOut(event) {
         this.currentOnMouseDom = $(event.currentTarget);
+        if (!event.target.classList.contains('prefix')) {
+            this.animateTitleHoverLine($(event.target), 'out');
+        }
         this.animateTitleHover($(event.currentTarget), 'out');
     }
     animateOpenHamburger() {
         const windowHeight = Math.min(this.mWindowUtility.viewport.height, this.mWindowUtility.inner.height);
         const windowWidth = Math.min(this.mWindowUtility.viewport.width, this.mWindowUtility.inner.width);
-        const height = 1;
-        const width = 0;
+        const magic = (20 + this.mWindowUtility.vw(2));
+        const height = windowHeight - magic;
+        const width = windowWidth - magic;
         const top = (windowHeight - height) / 2;
         const left = (windowWidth - width) / 2;
         this.skinDom.css({
@@ -144,6 +151,7 @@ export class Hamburger {
             width: width + left,
             top: -top,
             left: -left,
+            filter: 'brightness(0)',
         });
         $(document.body).css({
             overflow: 'hidden',
@@ -161,6 +169,7 @@ export class Hamburger {
             width: '',
             top: 0,
             left: 0,
+            filter: '',
         });
         $(document.body).css({
             overflow: '',
@@ -183,9 +192,17 @@ export class Hamburger {
         const handler = (workingAnimations, i) => {
             const { uid, } = workingAnimations[0].items;
             const menuContainerDom = $(document.createElement('div'));
-            menuContainerDom.addClass([Hamburger.PREFIX, 'container', uid]);
+            menuContainerDom.addClass([
+                Hamburger.PREFIX,
+                'container',
+                uid,
+            ]);
             const titleDom = $(document.createElement('h1'));
-            titleDom.addClass([Hamburger.PREFIX, 'title', uid]);
+            titleDom.addClass([
+                Hamburger.PREFIX,
+                'title',
+                uid,
+            ]);
             titleDom.textContent = uid;
             this.menuContainersWrapperDom.appendChild(menuContainerDom);
             menuContainerDom.appendChild(titleDom);
@@ -204,16 +221,18 @@ export class Hamburger {
                 revealFrameAnimator,
                 hoverFrameAnimator,
             });
-            const prefix = '.';
+            const prefix = '——';
             const suffix = '';
             titleDom.innerHTML = titleDom
                 .textContent
                 .split('')
-                .map((char) => `<span class="${titleDom.classList.value.replace('title', 'char')}">${char}</span>`)
+                .map((char) => `<span class="${titleDom.classList.value.replace('title', 'char')} hoverLine">
+						${char}
+					</span>`)
                 .join('');
             titleDom.innerHTML = `
 				<span class="${titleDom.classList.value.replace('title', 'prefix')}">
-					${prefix}
+					${prefix}&nbsp;
 				</span>
 				${titleDom.innerHTML}
 				<span class="${titleDom.classList.value.replace('title', 'suffix')}">
@@ -227,9 +246,9 @@ export class Hamburger {
                     index: 0,
                     type: 'null',
                     items: {
-                        totalFrames: totalFrames + 60,
+                        totalFrames,
                         offset: (index
-                            * ((totalFrames + 60) / titleDom.textContent.length)),
+                            * ((totalFrames) / titleDom.textContent.length)),
                         bezier: [0.165, 0.84, 0.44, 1],
                         onHidden: () => {
                             const domContent = $(node);
@@ -300,6 +319,22 @@ export class Hamburger {
         }
         this.ctx.animations.fastEach(handler);
     }
+    animateTitleHoverLine(titleChildDom, state) {
+        const { parentNode } = titleChildDom;
+        switch (state) {
+            case 'over':
+                parentNode.childNodes.forEach((childNode) => {
+                    $(childNode).addClass('forced');
+                });
+                break;
+            case 'out':
+                parentNode.childNodes.forEach((childNode) => {
+                    $(childNode).removeClass('forced');
+                });
+                break;
+            default:
+        }
+    }
     animateTitleHover(titleDom, state) {
         let titleIndex = this.titles.length;
         let totalFrames = null;
@@ -322,7 +357,8 @@ export class Hamburger {
                 return;
         }
         const { hoverFrameAnimator } = this.titles[titleIndex];
-        if (hoverFrameAnimator.currentFrame === end) {
+        if (hoverFrameAnimator.currentFrame === end
+            && end === 0) {
             hoverFrameAnimator.animate(end, end + 1);
             return;
         }

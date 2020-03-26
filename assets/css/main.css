@@ -13,7 +13,7 @@ body {
 	height: 0px;
 	width: 100%;
 
-	background-color: black;
+	background-color: white;
 	margin: 0px;
 	overflow-x: hidden;
 }
@@ -27,10 +27,10 @@ body {
 	height: 100%;
 
 	transition: 
-		height .5s var(--easeFastSlow), 
-		width 1s var(--easeSlowSlow), 
-		top .5s var(--easeFastSlow), 
-		left 1s var(--easeSlowSlow), 
+		height 1s var(--easeFastSlow), 
+		width 1s var(--easeFastSlow), 
+		top 1s var(--easeFastSlow), 
+		left 1s var(--easeFastSlow), 
 		filter 1s var(--easeFastSlow),
 		transform 1s var(--easeFastSlow),
 		opacity 1s var(--easeFastSlow);
@@ -88,7 +88,8 @@ body {
 	width: 0;
 }
 
-.hoverLine:hover:after { 
+.hoverLine:hover:after,
+.hoverLine.forced:after { 
 	width: 100%;
 }
 
@@ -114,7 +115,7 @@ body {
     justify-items: left;
     align-items: center;
 
-	z-index: 0;
+	z-index: 5;
 
 	transition: height .5s var(--easeFastSlow);
 
@@ -144,12 +145,13 @@ body {
 	display: inline-block;
 	
 	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
 }
 
-.__hamburgerMenu.containersWrapper > .container > .title > .char {
+/* .__hamburgerMenu.containersWrapper > .container > .title > .char {
 	padding-bottom: 5px;
 	border-bottom: .5px solid grey;
-}
+} */
 /* -- hamburgerMenu end -- */
 
 /* -- windowUtility start -- */

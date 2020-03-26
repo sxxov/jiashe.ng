@@ -167,11 +167,19 @@ export class Hamburger {
 	private onTitleMouseOver(event: Event): void {
 		this.currentOnMouseDom = $(event.currentTarget);
 
+		if (!(event.target as HTMLSpanElement).classList.contains('prefix')) {
+			this.animateTitleHoverLine($(event.target), 'over');
+		}
+
 		this.animateTitleHover($(event.currentTarget), 'over');
 	}
 
 	private onTitleMouseOut(event: Event): void {
 		this.currentOnMouseDom = $(event.currentTarget);
+
+		if (!(event.target as HTMLSpanElement).classList.contains('prefix')) {
+			this.animateTitleHoverLine($(event.target), 'out');
+		}
 
 		this.animateTitleHover($(event.currentTarget), 'out');
 	}
@@ -186,8 +194,9 @@ export class Hamburger {
 			this.mWindowUtility.inner.width,
 		);
 
-		const height = 1;
-		const width = 0;
+		const magic = (20 + this.mWindowUtility.vw(2));
+		const height = windowHeight - magic;
+		const width = windowWidth - magic;
 		const top = (windowHeight - height) / 2;
 		const left = (windowWidth - width) / 2;
 
@@ -203,6 +212,7 @@ export class Hamburger {
 			width: width + left,
 			top: -top,
 			left: -left,
+			filter: 'brightness(0)',
 		});
 
 		$(document.body).css({
@@ -223,6 +233,7 @@ export class Hamburger {
 			width: '',
 			top: 0,
 			left: 0,
+			filter: '',
 		});
 
 		$(document.body).css({
@@ -254,10 +265,18 @@ export class Hamburger {
 			} = workingAnimations[0].items;
 
 			const menuContainerDom = $(document.createElement('div'));
-			menuContainerDom.addClass([Hamburger.PREFIX, 'container', uid]);
+			menuContainerDom.addClass([
+				Hamburger.PREFIX,
+				'container',
+				uid,
+			]);
 
 			const titleDom = $(document.createElement('h1'));
-			titleDom.addClass([Hamburger.PREFIX, 'title', uid]);
+			titleDom.addClass([
+				Hamburger.PREFIX,
+				'title',
+				uid,
+			]);
 			titleDom.textContent = uid;
 
 			this.menuContainersWrapperDom.appendChild(menuContainerDom);
@@ -283,16 +302,20 @@ export class Hamburger {
 				hoverFrameAnimator,
 			});
 
-			const prefix = '.';
+			const prefix = '——';
 			const suffix = '';
 			titleDom.innerHTML = titleDom
 				.textContent
 				.split('')
-				.map((char: string) => `<span class="${titleDom.classList.value.replace('title', 'char')}">${char}</span>`)
+				.map(
+					(char: string) => `<span class="${titleDom.classList.value.replace('title', 'char')} hoverLine">
+						${char}
+					</span>`,
+				)
 				.join('');
 			titleDom.innerHTML = `
 				<span class="${titleDom.classList.value.replace('title', 'prefix')}">
-					${prefix}
+					${prefix}&nbsp;
 				</span>
 				${titleDom.innerHTML}
 				<span class="${titleDom.classList.value.replace('title', 'suffix')}">
@@ -308,9 +331,9 @@ export class Hamburger {
 					index: 0,
 					type: 'null',
 					items: {
-						totalFrames: totalFrames + 60,
+						totalFrames,
 						offset: (index
-								* ((totalFrames + 60) / titleDom.textContent.length)
+								* ((totalFrames) / titleDom.textContent.length)
 						),
 						bezier: [0.165, 0.84, 0.44, 1],
 						onHidden: (): void => {
@@ -397,6 +420,24 @@ export class Hamburger {
 		this.ctx.animations.fastEach(handler);
 	}
 
+	private animateTitleHoverLine(titleChildDom: $Object, state: 'over' | 'out'): void {
+		const { parentNode } = titleChildDom;
+
+		switch (state) {
+		case 'over':
+			parentNode.childNodes.forEach((childNode) => {
+				$(childNode).addClass('forced');
+			});
+			break;
+		case 'out':
+			parentNode.childNodes.forEach((childNode) => {
+				$(childNode).removeClass('forced');
+			});
+			break;
+		default:
+		}
+	}
+
 	private animateTitleHover(titleDom: $Object, state: 'over'| 'out'): void {
 		let titleIndex: number = this.titles.length;
 		let totalFrames = null;
@@ -426,7 +467,8 @@ export class Hamburger {
 
 		const { hoverFrameAnimator } = this.titles[titleIndex];
 
-		if (hoverFrameAnimator.currentFrame === end) {
+		if (hoverFrameAnimator.currentFrame === end
+			&& end === 0) {
 			hoverFrameAnimator.animate(
 				end,
 				end + 1,
