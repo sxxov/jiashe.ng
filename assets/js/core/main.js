@@ -11,6 +11,7 @@ import { TV } from './tv.js';
 import { Hamburger } from './hamburger.js';
 import { ScrollAnimator, FrameAnimator, } from '../resources/animators.js';
 import { $, WindowUtility, ForUtility, } from '../resources/utilities.js';
+import { SmoothScroll, } from '../raw/libraries/smoothscroll.js';
 class Main {
     constructor() {
         this.mTV = new TV();
@@ -19,6 +20,11 @@ class Main {
         this.hamburger = new Hamburger(this.miscellaneousScrollingAnimator);
         this.mWindowUtility = new WindowUtility();
         ForUtility.addToArrayPrototype();
+        SmoothScroll.init({
+            animationTime: 500,
+            touchpadSupport: true,
+            pulseScale: 8,
+        });
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {

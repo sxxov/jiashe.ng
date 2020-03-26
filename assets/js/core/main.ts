@@ -9,6 +9,9 @@ import {
 	WindowUtility,
 	ForUtility,
 } from '../resources/utilities.js';
+import {
+	SmoothScroll,
+} from '../raw/libraries/smoothscroll.js';
 
 
 class Main {
@@ -20,6 +23,11 @@ class Main {
 
 	constructor() {
 		ForUtility.addToArrayPrototype();
+		SmoothScroll.init({
+			animationTime: 500,
+			touchpadSupport: true,
+			pulseScale: 8,
+		});
 	}
 
 	async init(): Promise<void> {
