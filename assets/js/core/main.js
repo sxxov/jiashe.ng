@@ -85,7 +85,7 @@ class Main {
                 type: null,
                 index: 0,
                 items: {
-                    uid: 'hello',
+                    uid: 'about_me',
                 },
             });
             // blocks
@@ -99,13 +99,37 @@ class Main {
                     totalFrames: 150,
                 },
             });
+            // aux about me stuff
+            yield mScrollAnimator.add({
+                index: 0,
+                type: 'lottie',
+                data: yield $().getJSON('/assets/js/raw/lottie/aux about me stuff.json'),
+                items: {
+                    uid: 'aux_about_me_stuff',
+                    respectDevicePixelRatio: false,
+                    invert: true,
+                    totalFrames: 120,
+                },
+            });
+            // aux about me dots
+            yield mScrollAnimator.add({
+                index: 0,
+                type: 'lottie',
+                data: yield $().getJSON('/assets/js/raw/lottie/aux about me dots.json'),
+                items: {
+                    uid: 'aux_about_me_dots',
+                    respectDevicePixelRatio: false,
+                    invert: true,
+                    totalFrames: 120,
+                },
+            });
             // hello
             yield mScrollAnimator.add({
                 index: 0,
                 type: 'lottie',
                 data: yield $().getJSON('/assets/js/raw/lottie/hello.json'),
                 items: {
-                    uid: 'hello_lottie',
+                    uid: 'hello',
                     invert: true,
                     totalFrames: 120,
                 },
@@ -132,6 +156,30 @@ class Main {
                     uid: 'about_me',
                     respectDevicePixelRatio: false,
                     totalFrames: 150,
+                },
+            });
+            // aux what now stuff
+            yield mScrollAnimator.add({
+                index: 1,
+                type: 'lottie',
+                data: yield $().getJSON('/assets/js/raw/lottie/aux what now stuff.json'),
+                items: {
+                    uid: 'aux_what_now_stuff',
+                    respectDevicePixelRatio: false,
+                    invert: true,
+                    totalFrames: 120,
+                },
+            });
+            // aux what dots
+            yield mScrollAnimator.add({
+                index: 1,
+                type: 'lottie',
+                data: yield $().getJSON('/assets/js/raw/lottie/aux what now dots.json'),
+                items: {
+                    uid: 'aux_what_now_dots',
+                    respectDevicePixelRatio: false,
+                    invert: true,
+                    totalFrames: 120,
                 },
             });
         });
