@@ -91,6 +91,7 @@ export class ScrollAnimator extends CoreAnimator {
 	public onScroll(): void {
 		if (this.nextOnScrollCancelled) {
 			this.nextOnScrollCancelled = false;
+
 			return;
 		}
 
