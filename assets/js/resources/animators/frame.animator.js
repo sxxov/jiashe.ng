@@ -30,5 +30,8 @@ export class FrameAnimator extends CoreAnimator {
             }
         });
     }
+    cancelNextFrame() {
+        cancelAnimationFrame(super.rafId);
+    }
 }
 //# sourceMappingURL=frame.animator.js.map

@@ -1,7 +1,7 @@
 import { CoreAnimator } from './core.animator.js';
 
 export class FrameAnimator extends CoreAnimator {
-	async animate(
+	public async animate(
 		from: number,
 		to: number,
 		options = {},
@@ -15,7 +15,7 @@ export class FrameAnimator extends CoreAnimator {
 		});
 	}
 
-	async repeat(
+	public async repeat(
 		from: number,
 		to: number,
 		options = {},
@@ -23,5 +23,9 @@ export class FrameAnimator extends CoreAnimator {
 		for (;;) {
 			await this.animate(from, to, options);
 		}
+	}
+
+	public cancelNextFrame(): void {
+		cancelAnimationFrame(super.rafId);
 	}
 }

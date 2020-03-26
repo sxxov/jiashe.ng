@@ -131,27 +131,9 @@ export class CoreAnimator {
             if (this.rafId !== null) {
                 cancelAnimationFrame(this.rafId);
             }
-            // let processedCallback = callback;
-            // if (bezier !== []
-            // 	&& bezier.length === 4) {
-            // 	const mBezierUtility = new BezierUtility(
-            // 		bezier[0], bezier[1], bezier[2], bezier[3],
-            // 	);
-            // 	processedCallback = (frame): void => callback(
-            // 		mBezierUtility.getValue(
-            // 			// offset frame so it starts from 'from'
-            // 			(frame - processedFrom)
-            // 			// divide by, the amount of frames in between 'to' & 'from'
-            // 			/ (processedTo - processedFrom),
-            // 		// times it all back with, the amount of frames in between 'to' & 'from',
-            // 		// after getting the bezier-altered value
-            // 		) * (processedTo - processedFrom),
-            // 	);
-            // }
             return new Promise((resolve) => {
                 let i = processedFrom;
                 const step = () => {
-                    // processedCallback(i);
                     callback(inverted ? processedTo - i : i);
                     if (i >= processedTo) {
                         resolve();
