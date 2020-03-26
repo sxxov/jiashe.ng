@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { CoreAnimator } from '../../animators.js';
 import { $ } from '../../utilities.js';
 import { lottie } from '../../../raw/libraries/lottie.js';
 export class LottieFactory {
@@ -27,7 +28,7 @@ export class LottieFactory {
                         ? 1
                         : this.ctx.dpr * this.ctx.dprMultiplier,
                     preserveAspectRatio: 'xMidYMid slice',
-                    className: `${this.ctx.animatorClassPrefix} ${className} hidden`,
+                    className: `${CoreAnimator.PREFIX} ${className} hidden`,
                 },
             });
             yield $(animation).on('DOMLoaded', () => new Promise((resolve) => resolve));

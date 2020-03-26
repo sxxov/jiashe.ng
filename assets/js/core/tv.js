@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { $, WindowUtility, } from '../resources/utilities.js';
 export class TV {
     constructor() {
-        this.api = null;
+        this.mWindowUtility = new WindowUtility();
         this.videoId = 'vwKtPoE6Ppg';
         this.screenElementId = 'screen';
         this.screenElementSelector = `#${this.screenElementId}`;
@@ -26,7 +26,6 @@ export class TV {
             disablekb: 1 /* Disable */,
             enablejsapi: 1 /* Enable */,
         };
-        this.mWindowUtility = new WindowUtility();
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -36,7 +35,7 @@ export class TV {
             yield this.loadApi();
             const ctx = this;
             new Promise((resolve) => {
-                this.api = new YT.Player(this.screenElementId, {
+                new YT.Player(this.screenElementId, {
                     events: {
                         onReady(event) {
                             ctx.onPlayerReady.call(ctx, event);

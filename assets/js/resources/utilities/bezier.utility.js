@@ -16,7 +16,9 @@ export class BezierUtility {
         this.SUBDIVISION_MAX_ITERATIONS = 10;
         this.kSplineTableSize = 11;
         this.kSampleStepSize = 1.0 / (this.kSplineTableSize - 1.0);
-        const float32ArraySupported = typeof Float32Array === 'function';
+        this.sampleValues = (typeof Float32Array === 'function')
+            ? new Float32Array(this.kSplineTableSize)
+            : new Array(this.kSplineTableSize);
         if (!(mX1 >= 0 && mX1 <= 1 && mX2 >= 0 && mX2 <= 1)) {
             throw new Error('bezier x values must be in [0, 1] range');
         }
@@ -25,9 +27,6 @@ export class BezierUtility {
             return this;
         }
         // Precompute samples table
-        this.sampleValues = float32ArraySupported
-            ? new Float32Array(this.kSplineTableSize)
-            : new Array(this.kSplineTableSize);
         for (let i = 0; i < this.kSplineTableSize; ++i) {
             this.sampleValues[i] = this.calcBezier(i * this.kSampleStepSize, mX1, mX2);
         }

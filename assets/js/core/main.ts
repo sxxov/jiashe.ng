@@ -12,20 +12,14 @@ import {
 
 
 class Main {
-	mTV: TV;
-	hamburger: Hamburger;
-	miscellaneousScrollingAnimator: ScrollAnimator;
-	scrollToContinueFrameAnimator: FrameAnimator;
-	mWindowUtility: WindowUtility;
+	private mTV = new TV();
+	private miscellaneousScrollingAnimator = new ScrollAnimator();
+	private scrollToContinueFrameAnimator = new FrameAnimator();
+	private hamburger = new Hamburger(this.miscellaneousScrollingAnimator);
+	private mWindowUtility = new WindowUtility();
 
 	constructor() {
 		ForUtility.addToArrayPrototype();
-
-		this.mTV = new TV();
-		this.miscellaneousScrollingAnimator = new ScrollAnimator();
-		this.scrollToContinueFrameAnimator = new FrameAnimator();
-		this.hamburger = new Hamburger(this.miscellaneousScrollingAnimator);
-		this.mWindowUtility = new WindowUtility();
 	}
 
 	async init(): Promise<void> {

@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { CoreAnimator } from '../../animators.js';
 import { $ } from '../../utilities.js';
 export class SolidFactory {
     constructor(thisArg) {
@@ -33,7 +34,7 @@ export class SolidFactory {
             position: 'absolute',
         });
         domContent.addClass([
-            this.ctx.animatorClassPrefix,
+            CoreAnimator.PREFIX,
             'solid',
             className,
             'hidden',

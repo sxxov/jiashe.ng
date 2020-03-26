@@ -54,7 +54,7 @@ export class AnimationFactory {
 		const animatorContainer = $(document.createElement('div'));
 
 		animatorContainer.addClass([
-			this.ctx.animatorClassPrefix,
+			CoreAnimator.PREFIX,
 			'container',
 			Math.round(performance.now()).toString(),
 		]);

@@ -12,20 +12,19 @@ import { $, WindowUtility, $$, } from '../resources/utilities.js';
 import { FrameAnimator } from '../resources/animators.js';
 export class Hamburger {
     constructor(mCoreAnimator) {
+        this.mWindowUtility = new WindowUtility();
         this.lottieAnim = null;
         this.playDirection = -1;
         this.headerHamburgerIconDom = $('.header.containersWrapper > .hamburger');
         this.menuContainersWrapperDom = $('.__hamburgerMenu.containersWrapper');
-        this.hamburgerMenuClassPrefix = '__hamburgerMenu';
-        this.organsDom = $('.organs');
         this.skinDom = $('.skin');
-        this.mWindowUtility = new WindowUtility();
+        this.organsDom = $('.organs');
         this.titles = [];
-        this.ctx = mCoreAnimator;
         this.clickFrameAnimator = new FrameAnimator();
         this.currentOnClickDom = null;
         this.cachedAnimationsLength = null;
         this.currentOnMouseDom = null;
+        this.ctx = mCoreAnimator;
         $(window).on('resize', () => window.requestAnimationFrame(() => this.onWindowResize.call(this)));
     }
     create(data) {
@@ -101,7 +100,7 @@ export class Hamburger {
             && this.isOpen)) {
             return;
         }
-        const titles = $$(`.${this.hamburgerMenuClassPrefix}.title`);
+        const titles = $$(`.${Hamburger.PREFIX}.title`);
         if (this.isOpen) {
             this.animateCloseHamburger();
             titles.fastEach((hamburgerMenuTitleDom) => this.animateTitleReveal(hamburgerMenuTitleDom, 'hide'));
@@ -183,9 +182,9 @@ export class Hamburger {
         this.ctx.animations.fastEach((workingAnimations, i) => {
             const { uid, } = workingAnimations[0].items;
             const menuContainerDom = $(document.createElement('div'));
-            menuContainerDom.addClass([this.hamburgerMenuClassPrefix, 'container', uid]);
+            menuContainerDom.addClass([Hamburger.PREFIX, 'container', uid]);
             const titleDom = $(document.createElement('h1'));
-            titleDom.addClass([this.hamburgerMenuClassPrefix, 'title', uid]);
+            titleDom.addClass([Hamburger.PREFIX, 'title', uid]);
             titleDom.textContent = uid;
             this.menuContainersWrapperDom.appendChild(menuContainerDom);
             menuContainerDom.appendChild(titleDom);
@@ -361,4 +360,5 @@ export class Hamburger {
         this.animateCloseHamburger();
     }
 }
+Hamburger.PREFIX = '__hamburgerMenu';
 //# sourceMappingURL=hamburger.js.map

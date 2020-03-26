@@ -5,13 +5,17 @@
  */
 
 export class BezierUtility {
-	private NEWTON_ITERATIONS: number;
-	private NEWTON_MIN_SLOPE: number;
-	private SUBDIVISION_PRECISION: number;
-	private SUBDIVISION_MAX_ITERATIONS: number;
-	private kSplineTableSize: number;
-	private kSampleStepSize: number;
-	private sampleValues: Float32Array | number[];
+	// These values are established by empiricism with tests (tradeoff: performance VS precision)
+	private NEWTON_ITERATIONS = 4;
+	private NEWTON_MIN_SLOPE = 0.001;
+	private SUBDIVISION_PRECISION = 0.0000001;
+	private SUBDIVISION_MAX_ITERATIONS = 10;
+	private kSplineTableSize = 11;
+	private kSampleStepSize = 1.0 / (this.kSplineTableSize - 1.0);
+	private sampleValues: Float32Array | number[] = (
+		typeof Float32Array === 'function')
+		? new Float32Array(this.kSplineTableSize)
+		: new Array(this.kSplineTableSize);
 
 	constructor(
 		private mX1: number,
@@ -19,17 +23,6 @@ export class BezierUtility {
 		private mX2: number,
 		private mY2: number,
 	) {
-		// These values are established by empiricism with tests (tradeoff: performance VS precision)
-		this.NEWTON_ITERATIONS = 4;
-		this.NEWTON_MIN_SLOPE = 0.001;
-		this.SUBDIVISION_PRECISION = 0.0000001;
-		this.SUBDIVISION_MAX_ITERATIONS = 10;
-
-		this.kSplineTableSize = 11;
-		this.kSampleStepSize = 1.0 / (this.kSplineTableSize - 1.0);
-
-		const float32ArraySupported = typeof Float32Array === 'function';
-
 		if (!(mX1 >= 0 && mX1 <= 1 && mX2 >= 0 && mX2 <= 1)) {
 			throw new Error('bezier x values must be in [0, 1] range');
 		}
@@ -40,9 +33,6 @@ export class BezierUtility {
 		}
 
 		// Precompute samples table
-		this.sampleValues = float32ArraySupported
-			? new Float32Array(this.kSplineTableSize)
-			: new Array(this.kSplineTableSize);
 		for (let i = 0; i < this.kSplineTableSize; ++i) {
 			this.sampleValues[i] = this.calcBezier(i * this.kSampleStepSize, mX1, mX2);
 		}

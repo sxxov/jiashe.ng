@@ -9,41 +9,32 @@ import { AnimationObject } from '../resources/animator.types.js';
 import { FrameAnimator, CoreAnimator } from '../resources/animators.js';
 
 export class Hamburger {
+	public static PREFIX = '__hamburgerMenu';
+
+	private mWindowUtility = new WindowUtility();
+
 	public data: Record<string | number, any>;
-	public lottieAnim: any;
-	public playDirection: number;
-	public headerHamburgerIconDom: $Object;
-	public menuContainersWrapperDom: $Object;
-	private mWindowUtility: WindowUtility;
-	private skinDom: $Object;
-	private organsDom: $Object;
-	public hamburgerMenuClassPrefix: string;
+	public lottieAnim: any = null;
+	public playDirection = -1;
+	public headerHamburgerIconDom = $('.header.containersWrapper > .hamburger');
+	public menuContainersWrapperDom = $('.__hamburgerMenu.containersWrapper');
+
+	private skinDom = $('.skin');
+	private organsDom = $('.organs');
+
 	private titles: [{
 		domContent: $Object;
 		revealFrameAnimator: FrameAnimator;
 		hoverFrameAnimator: FrameAnimator;
-	}?];
+	}?] = [];
 	private ctx: CoreAnimator;
-	private clickFrameAnimator: FrameAnimator;
-	private currentOnClickDom: $Object;
-	private cachedAnimationsLength: number;
-	private currentOnMouseDom: $Object;
+	private clickFrameAnimator = new FrameAnimator();
+	private currentOnClickDom: $Object = null;
+	private cachedAnimationsLength: number = null;
+	private currentOnMouseDom: $Object = null;
 
 	public constructor(mCoreAnimator: CoreAnimator) {
-		this.lottieAnim = null;
-		this.playDirection = -1;
-		this.headerHamburgerIconDom = $('.header.containersWrapper > .hamburger');
-		this.menuContainersWrapperDom = $('.__hamburgerMenu.containersWrapper');
-		this.hamburgerMenuClassPrefix = '__hamburgerMenu';
-		this.organsDom = $('.organs');
-		this.skinDom = $('.skin');
-		this.mWindowUtility = new WindowUtility();
-		this.titles = [];
 		this.ctx = mCoreAnimator;
-		this.clickFrameAnimator = new FrameAnimator();
-		this.currentOnClickDom = null;
-		this.cachedAnimationsLength = null;
-		this.currentOnMouseDom = null;
 
 		$(window).on('resize', () => window.requestAnimationFrame(() => this.onWindowResize.call(this)));
 	}
@@ -145,7 +136,7 @@ export class Hamburger {
 			return;
 		}
 
-		const titles = $$(`.${this.hamburgerMenuClassPrefix}.title`);
+		const titles = $$(`.${Hamburger.PREFIX}.title`);
 
 		if (this.isOpen) {
 			this.animateCloseHamburger();
@@ -262,10 +253,10 @@ export class Hamburger {
 			} = workingAnimations[0].items;
 
 			const menuContainerDom = $(document.createElement('div'));
-			menuContainerDom.addClass([this.hamburgerMenuClassPrefix, 'container', uid]);
+			menuContainerDom.addClass([Hamburger.PREFIX, 'container', uid]);
 
 			const titleDom = $(document.createElement('h1'));
-			titleDom.addClass([this.hamburgerMenuClassPrefix, 'title', uid]);
+			titleDom.addClass([Hamburger.PREFIX, 'title', uid]);
 			titleDom.textContent = uid;
 
 			this.menuContainersWrapperDom.appendChild(menuContainerDom);

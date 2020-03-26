@@ -1,3 +1,4 @@
+import { CoreAnimator } from '../core.animator.js';
 import { $ } from '../../utilities.js';
 export class AnimationFactory {
     constructor(thisArg) {
@@ -17,7 +18,7 @@ export class AnimationFactory {
     createAndReturnNewContainerDom(animationObject) {
         const animatorContainer = $(document.createElement('div'));
         animatorContainer.addClass([
-            this.ctx.animatorClassPrefix,
+            CoreAnimator.PREFIX,
             'container',
             Math.round(performance.now()).toString(),
         ]);

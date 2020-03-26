@@ -42,7 +42,7 @@ export class SolidFactory {
 		});
 
 		domContent.addClass([
-			this.ctx.animatorClassPrefix,
+			CoreAnimator.PREFIX,
 			'solid',
 			className,
 			'hidden',

@@ -18,10 +18,9 @@ export class CoreAnimator {
         this.totalFrames = 0;
         this.animations = [];
         this.metaAnimations = [];
-        this.animatorClassPrefix = '__animate';
         this.animatorContainers = [];
         this.__animatorContainersWrapper = null;
-        this.visibleAnimations = null;
+        this.visibleAnimations = [];
         this.dpr = Math.max(window.devicePixelRatio / 2, 1);
         this.dprMultiplier = this.dpr;
         this.rafId = null;
@@ -41,7 +40,7 @@ export class CoreAnimator {
         }
         this.__animatorContainersWrapper = $(document.createElement('div'));
         this.__animatorContainersWrapper.addClass([
-            this.animatorClassPrefix,
+            CoreAnimator.PREFIX,
             'containersWrapper',
             this.uid,
             'height',
@@ -420,4 +419,5 @@ export class CoreAnimator {
         return $(domElement).removeClass('active');
     }
 }
+CoreAnimator.PREFIX = '__animate';
 //# sourceMappingURL=core.animator.js.map

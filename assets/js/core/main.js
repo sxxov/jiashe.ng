@@ -13,12 +13,12 @@ import { ScrollAnimator, FrameAnimator, } from '../resources/animators.js';
 import { $, WindowUtility, ForUtility, } from '../resources/utilities.js';
 class Main {
     constructor() {
-        ForUtility.addToArrayPrototype();
         this.mTV = new TV();
         this.miscellaneousScrollingAnimator = new ScrollAnimator();
         this.scrollToContinueFrameAnimator = new FrameAnimator();
         this.hamburger = new Hamburger(this.miscellaneousScrollingAnimator);
         this.mWindowUtility = new WindowUtility();
+        ForUtility.addToArrayPrototype();
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {

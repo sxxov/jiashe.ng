@@ -4,34 +4,22 @@ import {
 } from '../resources/utilities.js';
 
 export class TV {
-	api: any;
-	mWindowUtility: WindowUtility;
-	videoId: string;
-	screenElementId: string;
-	screenElementSelector: string;
-	tvElementSelector: string;
-	playerVars: YT.PlayerVars;
-
-	constructor() {
-		this.api = null;
-		this.videoId = 'vwKtPoE6Ppg';
-		this.screenElementId = 'screen';
-		this.screenElementSelector = `#${this.screenElementId}`;
-		this.tvElementSelector = '.tv';
-		this.playerVars = {
-			loop: YT.Loop.Loop,
-			autoplay: YT.AutoPlay.AutoPlay,
-			autohide: YT.AutoHide.HideAllControls,
-			modestbranding: YT.ModestBranding.Modest,
-			rel: YT.RelatedVideos.Hide,
-			showinfo: YT.ShowInfo.Hide,
-			controls: YT.Controls.Hide,
-			disablekb: YT.KeyboardControls.Disable,
-			enablejsapi: YT.JsApi.Enable,
-		};
-
-		this.mWindowUtility = new WindowUtility();
-	}
+	private mWindowUtility = new WindowUtility();
+	public videoId = 'vwKtPoE6Ppg';
+	private screenElementId = 'screen';
+	private screenElementSelector = `#${this.screenElementId}`;
+	private tvElementSelector = '.tv';
+	private playerVars: YT.PlayerVars = {
+		loop: YT.Loop.Loop,
+		autoplay: YT.AutoPlay.AutoPlay,
+		autohide: YT.AutoHide.HideAllControls,
+		modestbranding: YT.ModestBranding.Modest,
+		rel: YT.RelatedVideos.Hide,
+		showinfo: YT.ShowInfo.Hide,
+		controls: YT.Controls.Hide,
+		disablekb: YT.KeyboardControls.Disable,
+		enablejsapi: YT.JsApi.Enable,
+	};
 
 	async init(): Promise<void> {
 		if (navigator.onLine === false) {
@@ -43,7 +31,7 @@ export class TV {
 		const ctx = this;
 
 		new Promise((resolve) => {
-			this.api = new YT.Player(this.screenElementId, {
+			new YT.Player(this.screenElementId, {
 				events: {
 					onReady(event: YT.PlayerEvent): void {
 						ctx.onPlayerReady.call(ctx, event);

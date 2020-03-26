@@ -3,11 +3,10 @@ import { $ } from '../utilities.js';
 import { AnimationObject } from '../animator.types.js';
 
 export class ScrollAnimator extends CoreAnimator {
-	private nextOnScrollCancelled: boolean;
+	private nextOnScrollCancelled = false;
 	constructor() {
 		super();
 
-		this.nextOnScrollCancelled = false;
 		$(window).on('scroll', () => window.requestAnimationFrame(() => this.onScroll.call(this)));
 	}
 

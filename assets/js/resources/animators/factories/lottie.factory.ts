@@ -26,7 +26,7 @@ export class LottieFactory {
 					? 1
 					: this.ctx.dpr * this.ctx.dprMultiplier,
 				preserveAspectRatio: 'xMidYMid slice',
-				className: `${this.ctx.animatorClassPrefix} ${className} hidden`,
+				className: `${CoreAnimator.PREFIX} ${className} hidden`,
 			},
 		});
 

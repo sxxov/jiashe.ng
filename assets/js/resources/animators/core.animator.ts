@@ -17,47 +17,28 @@ import {
 import { $Object } from '../utilities.types.js';
 
 export class CoreAnimator {
-	protected mWindowUtility: WindowUtility;
-	public uid: string;
+	public static PREFIX = '__animate';
 
-	public currentFrame: number;
-	public totalFrames: number;
+	protected mWindowUtility = new WindowUtility();
+	public uid = Math.round(performance.now()).toString();
 
-	public animations: AnimationObject[][];
-	public metaAnimations: AnimationObject[];
-	public animatorClassPrefix: string;
-	public animatorContainers: $Object[];
-	private __animatorContainersWrapper: $Object;
-	public visibleAnimations: AnimationObject[];
+	public currentFrame = 0;
+	public totalFrames = 0;
 
-	public dpr: number;
-	public dprMultiplier: number;
+	public animations: AnimationObject[][] = [];
+	public metaAnimations: AnimationObject[] = [];
+	public animatorContainers: $Object[] = [];
+	private __animatorContainersWrapper: $Object = null;
+	public visibleAnimations: AnimationObject[] = [];
 
-	private rafId: number;
+	public dpr = Math.max(window.devicePixelRatio / 2, 1);
+	public dprMultiplier = this.dpr;
 
-	private attributeCache: Record<string, any[]>;
+	private rafId: number = null;
+
+	private attributeCache: Record<string, any[]> = {};
 
 	constructor() {
-		this.mWindowUtility = new WindowUtility();
-		this.uid = Math.round(performance.now()).toString();
-
-		this.currentFrame = 0;
-		this.totalFrames = 0;
-
-		this.animations = [];
-		this.metaAnimations = [];
-		this.animatorClassPrefix = '__animate';
-		this.animatorContainers = [];
-		this.__animatorContainersWrapper = null;
-		this.visibleAnimations = null;
-
-		this.dpr = Math.max(window.devicePixelRatio / 2, 1);
-		this.dprMultiplier = this.dpr;
-
-		this.rafId = null;
-
-		this.attributeCache = {};
-
 		$(window).on('load resize', () => window.requestAnimationFrame(() => {
 			this.onWindowResize.call(this);
 
@@ -77,7 +58,7 @@ export class CoreAnimator {
 		this.__animatorContainersWrapper = $(document.createElement('div'));
 
 		this.__animatorContainersWrapper.addClass([
-			this.animatorClassPrefix,
+			CoreAnimator.PREFIX,
 			'containersWrapper',
 			this.uid,
 			'height',
