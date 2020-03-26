@@ -512,6 +512,10 @@ export class CoreAnimator {
 					return 0;
 				}
 
+				if (i + 1 === index) {
+					previousFrames = currentValue + accumulator;
+				}
+
 				// not there yet, continue accumulating
 				return currentValue + accumulator;
 			},
@@ -581,9 +585,9 @@ export class CoreAnimator {
 					return;
 				}
 
-				const frame = this.getTotalFramesBeforeIndex(i);
+				const frame = this.getTotalFramesBeforeIndex(i + 1);
 
-				this.onSeek(frame);
+				this.onSeek(frame - 1);
 			});
 		});
 	}

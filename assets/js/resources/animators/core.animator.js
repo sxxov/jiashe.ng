@@ -335,6 +335,9 @@ export class CoreAnimator {
                 }
                 return 0;
             }
+            if (i + 1 === index) {
+                previousFrames = currentValue + accumulator;
+            }
             // not there yet, continue accumulating
             return currentValue + accumulator;
         }, 0);
@@ -377,8 +380,8 @@ export class CoreAnimator {
                 if (uid !== targetUid) {
                     return;
                 }
-                const frame = this.getTotalFramesBeforeIndex(i);
-                this.onSeek(frame);
+                const frame = this.getTotalFramesBeforeIndex(i + 1);
+                this.onSeek(frame - 1);
             });
         });
     }
