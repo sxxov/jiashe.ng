@@ -44,7 +44,7 @@ class Main {
                 items: {
                     onFrame: ((animation, frame) => {
                         const { uid, totalFrames, } = animation.items;
-                        let scrollPercent = ((Math.min(frame / (totalFrames - 1), 1)) * 100)
+                        let scrollPercent = ((Math.min(Math.max(frame, 0) / (totalFrames - 1), 1)) * 100)
                             .toString();
                         switch (true) {
                             case scrollPercent === 'NaN'

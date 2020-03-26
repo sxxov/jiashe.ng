@@ -243,11 +243,12 @@ export class Hamburger {
 
 		// programatically generate css grid
 		this.menuContainersWrapperDom.css({
-			'grid-template-rows': `auto repeat(${this.ctx.animations.length}, min-content) auto`,
+			// add 1 if there's a pre animation (index of -1)
+			'grid-template-rows': `auto repeat(${this.ctx.animations.length + Number(!!this.ctx.animations[-1])}, min-content) auto`,
 		});
 
 		// append dom nodes and create animator instances for each first animation
-		this.ctx.animations.fastEach((workingAnimations: AnimationObject[], i: number) => {
+		const handler = (workingAnimations: AnimationObject[], i: number): void => {
 			const {
 				uid,
 			} = workingAnimations[0].items;
@@ -261,8 +262,15 @@ export class Hamburger {
 
 			this.menuContainersWrapperDom.appendChild(menuContainerDom);
 			menuContainerDom.appendChild(titleDom);
+
+			let processedIndex = i;
+
+			if (this.ctx.animations[-1]) {
+				processedIndex += 1;
+			}
+
 			menuContainerDom.css({
-				'grid-row': `${i + 2} / ${i + 3}`,
+				'grid-row': `${processedIndex + 2} / ${processedIndex + 3}`,
 				'grid-column': '2 / 3',
 			});
 
@@ -380,7 +388,13 @@ export class Hamburger {
 			titleDom.on('mouseout mouseleave', (event: Event) => {
 				this.onTitleMouseOut(event);
 			});
-		});
+		};
+
+		if (this.ctx.animations[-1]) {
+			handler(this.ctx.animations[-1], -1);
+		}
+
+		this.ctx.animations.fastEach(handler);
 	}
 
 	private animateTitleHover(titleDom: $Object, state: 'over'| 'out'): void {

@@ -575,7 +575,7 @@ export class CoreAnimator {
 	}
 
 	public seekToUid(targetUid: string): void {
-		this.animations.fastEach((workingAnimations: AnimationObject[], i: number) => {
+		const handler = (workingAnimations: AnimationObject[], i: number): void => {
 			workingAnimations.fastEach((workingAnimation: AnimationObject) => {
 				const {
 					uid,
@@ -587,9 +587,15 @@ export class CoreAnimator {
 
 				const frame = this.getTotalFramesBeforeIndex(i + 1);
 
-				this.onSeek(frame - 1);
+				this.onSeek(Math.max(frame - 1, 0));
 			});
-		});
+		};
+
+		if (this.animations[-1]) {
+			handler(this.animations[-1], -1);
+		}
+
+		this.animations.fastEach(handler);
 	}
 
 	public seekTo(frame: number): void {

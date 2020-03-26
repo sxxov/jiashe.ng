@@ -374,16 +374,20 @@ export class CoreAnimator {
         this.visibleAnimations = animations;
     }
     seekToUid(targetUid) {
-        this.animations.fastEach((workingAnimations, i) => {
+        const handler = (workingAnimations, i) => {
             workingAnimations.fastEach((workingAnimation) => {
                 const { uid, } = workingAnimation.items;
                 if (uid !== targetUid) {
                     return;
                 }
                 const frame = this.getTotalFramesBeforeIndex(i + 1);
-                this.onSeek(frame - 1);
+                this.onSeek(Math.max(frame - 1, 0));
             });
-        });
+        };
+        if (this.animations[-1]) {
+            handler(this.animations[-1], -1);
+        }
+        this.animations.fastEach(handler);
     }
     seekTo(frame) {
         this.onSeek(frame);
