@@ -32,6 +32,7 @@ export class Hamburger {
 	private currentOnClickDom: $Object = null;
 	private cachedAnimationsLength: number = null;
 	private currentOnMouseDom: $Object = null;
+	private currentOnMouseChildDom: $Object;
 
 	public constructor(mCoreAnimator: CoreAnimator) {
 		this.ctx = mCoreAnimator;
@@ -166,20 +167,14 @@ export class Hamburger {
 
 	private onTitleMouseOver(event: Event): void {
 		this.currentOnMouseDom = $(event.currentTarget);
-
-		if (!(event.target as HTMLSpanElement).classList.contains('prefix')) {
-			this.animateTitleHoverLine($(event.target), 'over');
-		}
+		this.currentOnMouseChildDom = $(event.target);
 
 		this.animateTitleHover($(event.currentTarget), 'over');
 	}
 
 	private onTitleMouseOut(event: Event): void {
 		this.currentOnMouseDom = $(event.currentTarget);
-
-		if (!(event.target as HTMLSpanElement).classList.contains('prefix')) {
-			this.animateTitleHoverLine($(event.target), 'out');
-		}
+		this.currentOnMouseChildDom = $(event.target);
 
 		this.animateTitleHover($(event.currentTarget), 'out');
 	}
@@ -358,45 +353,68 @@ export class Hamburger {
 					},
 				});
 
+				// add pre to enable onHidden
 				revealFrameAnimator.add({
 					index: -1,
 					type: 'null',
 				});
 
-				// add hover animations
-				hoverFrameAnimator.add({
-					index: 0,
-					type: 'null',
-					items: {
-						totalFrames,
-						offset: index
+				// if the currently working item is not the prefix
+				if (!(node as Element).classList.contains('prefix')) {
+					// add hover animations
+					hoverFrameAnimator.add({
+						index: 0,
+						type: 'null',
+						items: {
+							totalFrames,
+							offset: index
 							* ((totalFrames) / titleDom.textContent.length),
-						bezier: [0.77, 0, 0.175, 1],
-						onHidden: (): void => {
-							const domContent = $(node);
+							bezier: [0.77, 0, 0.175, 1],
+							onHidden: (): void => {
+								const domContent = $(node);
 
-							domContent.css({
-								transform: 'translateY(0px)',
-							});
+								domContent.css({
+									transform: 'translateY(0px)',
+								});
+							},
+							onFrame: (animation, frame): void => {
+								const domContent = $(node);
+								const {
+									totalFrames: animationTotalFrames,
+								} = animation.items;
+
+								switch (true) {
+								// if currently not hovering over prefix, remove 'forced'
+								case !this.currentOnMouseChildDom.classList.contains('prefix'):
+									domContent.removeClass('forced');
+									break;
+								case frame <= animationTotalFrames / 2:
+									domContent.removeClass('forced');
+									break;
+								case frame > animationTotalFrames / 2:
+									// if currently hovering on prefix, add 'forced'
+									if (!this.currentOnMouseChildDom.classList.contains('prefix')) {
+										break;
+									}
+
+									domContent.addClass('forced');
+									break;
+								default:
+								}
+
+								domContent.css({
+									transform: `translateY(${index % 2 === 0 ? '' : '-'}${frame / 14}px)`,
+								});
+							},
 						},
-						onFrame: (animation, frame): void => {
-							const domContent = $(node);
+					});
 
-							if (/prefix/gi.test((node as Element).classList.value)) {
-								return;
-							}
-
-							domContent.css({
-								transform: `translateY(${index % 2 === 0 ? '' : '-'}${frame / 14}px)`,
-							});
-						},
-					},
-				});
-
-				hoverFrameAnimator.add({
-					index: -1,
-					type: 'null',
-				});
+					// add pre to enable onHidden
+					hoverFrameAnimator.add({
+						index: -1,
+						type: 'null',
+					});
+				}
 			});
 
 			titleDom.on('click', (event: Event) => {
@@ -418,24 +436,6 @@ export class Hamburger {
 		}
 
 		this.ctx.animations.fastEach(handler);
-	}
-
-	private animateTitleHoverLine(titleChildDom: $Object, state: 'over' | 'out'): void {
-		const { parentNode } = titleChildDom;
-
-		switch (state) {
-		case 'over':
-			parentNode.childNodes.forEach((childNode) => {
-				$(childNode).addClass('forced');
-			});
-			break;
-		case 'out':
-			parentNode.childNodes.forEach((childNode) => {
-				$(childNode).removeClass('forced');
-			});
-			break;
-		default:
-		}
 	}
 
 	private animateTitleHover(titleDom: $Object, state: 'over'| 'out'): void {

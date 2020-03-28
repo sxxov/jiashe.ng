@@ -120,16 +120,12 @@ export class Hamburger {
     }
     onTitleMouseOver(event) {
         this.currentOnMouseDom = $(event.currentTarget);
-        if (!event.target.classList.contains('prefix')) {
-            this.animateTitleHoverLine($(event.target), 'over');
-        }
+        this.currentOnMouseChildDom = $(event.target);
         this.animateTitleHover($(event.currentTarget), 'over');
     }
     onTitleMouseOut(event) {
         this.currentOnMouseDom = $(event.currentTarget);
-        if (!event.target.classList.contains('prefix')) {
-            this.animateTitleHoverLine($(event.target), 'out');
-        }
+        this.currentOnMouseChildDom = $(event.target);
         this.animateTitleHover($(event.currentTarget), 'out');
     }
     animateOpenHamburger() {
@@ -266,40 +262,60 @@ export class Hamburger {
                         },
                     },
                 });
+                // add pre to enable onHidden
                 revealFrameAnimator.add({
                     index: -1,
                     type: 'null',
                 });
-                // add hover animations
-                hoverFrameAnimator.add({
-                    index: 0,
-                    type: 'null',
-                    items: {
-                        totalFrames,
-                        offset: index
-                            * ((totalFrames) / titleDom.textContent.length),
-                        bezier: [0.77, 0, 0.175, 1],
-                        onHidden: () => {
-                            const domContent = $(node);
-                            domContent.css({
-                                transform: 'translateY(0px)',
-                            });
+                // if the currently working item is not the prefix
+                if (!node.classList.contains('prefix')) {
+                    // add hover animations
+                    hoverFrameAnimator.add({
+                        index: 0,
+                        type: 'null',
+                        items: {
+                            totalFrames,
+                            offset: index
+                                * ((totalFrames) / titleDom.textContent.length),
+                            bezier: [0.77, 0, 0.175, 1],
+                            onHidden: () => {
+                                const domContent = $(node);
+                                domContent.css({
+                                    transform: 'translateY(0px)',
+                                });
+                            },
+                            onFrame: (animation, frame) => {
+                                const domContent = $(node);
+                                const { totalFrames: animationTotalFrames, } = animation.items;
+                                switch (true) {
+                                    // if currently not hovering over prefix, remove 'forced'
+                                    case !this.currentOnMouseChildDom.classList.contains('prefix'):
+                                        domContent.removeClass('forced');
+                                        break;
+                                    case frame <= animationTotalFrames / 2:
+                                        domContent.removeClass('forced');
+                                        break;
+                                    case frame > animationTotalFrames / 2:
+                                        // if currently hovering on prefix, add 'forced'
+                                        if (!this.currentOnMouseChildDom.classList.contains('prefix')) {
+                                            break;
+                                        }
+                                        domContent.addClass('forced');
+                                        break;
+                                    default:
+                                }
+                                domContent.css({
+                                    transform: `translateY(${index % 2 === 0 ? '' : '-'}${frame / 14}px)`,
+                                });
+                            },
                         },
-                        onFrame: (animation, frame) => {
-                            const domContent = $(node);
-                            if (/prefix/gi.test(node.classList.value)) {
-                                return;
-                            }
-                            domContent.css({
-                                transform: `translateY(${index % 2 === 0 ? '' : '-'}${frame / 14}px)`,
-                            });
-                        },
-                    },
-                });
-                hoverFrameAnimator.add({
-                    index: -1,
-                    type: 'null',
-                });
+                    });
+                    // add pre to enable onHidden
+                    hoverFrameAnimator.add({
+                        index: -1,
+                        type: 'null',
+                    });
+                }
             });
             titleDom.on('click', (event) => {
                 this.ctx.seekToUid(uid);
@@ -318,22 +334,6 @@ export class Hamburger {
             handler(this.ctx.animations[-1], -1);
         }
         this.ctx.animations.fastEach(handler);
-    }
-    animateTitleHoverLine(titleChildDom, state) {
-        const { parentNode } = titleChildDom;
-        switch (state) {
-            case 'over':
-                parentNode.childNodes.forEach((childNode) => {
-                    $(childNode).addClass('forced');
-                });
-                break;
-            case 'out':
-                parentNode.childNodes.forEach((childNode) => {
-                    $(childNode).removeClass('forced');
-                });
-                break;
-            default:
-        }
     }
     animateTitleHover(titleDom, state) {
         let titleIndex = this.titles.length;
