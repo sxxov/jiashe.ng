@@ -252,10 +252,6 @@ export class $Factory {
                         if (!event) {
                             return handler(undefined);
                         }
-                        if (!processedEvent.data) {
-                            processedEvent.data = {};
-                        }
-                        processedEvent.data.value = data;
                         const { target } = processedEvent;
                         if (!target) {
                             return null;
