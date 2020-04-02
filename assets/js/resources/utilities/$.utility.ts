@@ -16,8 +16,10 @@ class NotJQuery {
 			return m$Factory.create({});
 		case objectToCreateFrom === null:
 			throw new Error('Cannot create from null!');
-		case objectToCreateFrom.constructor === String:
-			return m$Factory.create(document.querySelector(objectToCreateFrom));
+		case objectToCreateFrom.constructor === String: {
+			const queryResult = document.querySelector(objectToCreateFrom);
+			return queryResult && m$Factory.create(queryResult);
+		}
 		default:
 			return m$Factory.create(objectToCreateFrom);
 		}
