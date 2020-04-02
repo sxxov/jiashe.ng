@@ -66,7 +66,7 @@ export class CoreAnimator {
 
 		this.activate(this.__animatorContainersWrapper);
 
-		$('.organs').appendChild(this.__animatorContainersWrapper);
+		$('.painting').appendChild(this.__animatorContainersWrapper);
 
 		return this.__animatorContainersWrapper;
 	}

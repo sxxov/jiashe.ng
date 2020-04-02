@@ -46,7 +46,7 @@ export class CoreAnimator {
             'height',
         ]);
         this.activate(this.__animatorContainersWrapper);
-        $('.organs').appendChild(this.__animatorContainersWrapper);
+        $('.painting').appendChild(this.__animatorContainersWrapper);
         return this.__animatorContainersWrapper;
     }
     add(animationToBeConstructed) {
