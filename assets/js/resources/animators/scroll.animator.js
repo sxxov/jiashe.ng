@@ -31,6 +31,9 @@ export class ScrollAnimator extends CoreAnimator {
         super.onWindowResize();
         const windowHeight = this.mWindowUtility.viewport.height;
         const documentHeight = windowHeight * (this.animations.length + 1);
+        if (Number.parseInt($(document.body).css('height'), 10) > documentHeight) {
+            return;
+        }
         $(document.body).css({
             height: documentHeight,
         });
