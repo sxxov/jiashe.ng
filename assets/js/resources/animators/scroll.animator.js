@@ -41,7 +41,7 @@ export class ScrollAnimator extends CoreAnimator {
     // @Override
     onSeek(frame) {
         const yOffset = Math.max(Math.ceil((frame / this.totalFrames)
-            * (document.body.scrollHeight - this.mWindowUtility.viewport.height)) - 7, 0);
+            * (document.body.scrollHeight - this.mWindowUtility.viewport.height)) + 7, 0);
         this.scrollTo({
             left: 0,
             top: yOffset,

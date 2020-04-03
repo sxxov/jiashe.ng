@@ -40,7 +40,7 @@ export class ScrollAnimator extends CoreAnimator {
 			Math.ceil(
 				(frame / this.totalFrames)
 				* (document.body.scrollHeight - this.mWindowUtility.viewport.height),
-			) - 7,
+			) + 7,
 			0,
 		);
 
