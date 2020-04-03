@@ -22,12 +22,17 @@ export class ScrollAnimator extends CoreAnimator {
         });
         return __awaiter(this, void 0, void 0, function* () {
             yield _super.add.call(this, animationToBeConstructed);
-            const windowHeight = this.mWindowUtility.viewport.height;
-            const documentHeight = windowHeight * (this.animations.length + 1);
-            $(document.body).css({
-                height: documentHeight,
-            });
+            this.onWindowResize();
             this.onScroll();
+        });
+    }
+    // @Override
+    onWindowResize() {
+        super.onWindowResize();
+        const windowHeight = this.mWindowUtility.viewport.height;
+        const documentHeight = windowHeight * (this.animations.length + 1);
+        $(document.body).css({
+            height: documentHeight,
         });
     }
     // @Override

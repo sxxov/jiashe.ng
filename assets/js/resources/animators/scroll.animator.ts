@@ -14,14 +14,20 @@ export class ScrollAnimator extends CoreAnimator {
 	async add(animationToBeConstructed: AnimationObject): Promise<void> {
 		await super.add(animationToBeConstructed);
 
+		this.onWindowResize();
+		this.onScroll();
+	}
+
+	// @Override
+	protected onWindowResize(): void {
+		super.onWindowResize();
+
 		const windowHeight = this.mWindowUtility.viewport.height;
 		const documentHeight = windowHeight * (this.animations.length + 1);
 
 		$(document.body).css({
 			height: documentHeight,
 		});
-
-		this.onScroll();
 	}
 
 	// @Override

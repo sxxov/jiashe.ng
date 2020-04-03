@@ -231,7 +231,7 @@ export class CoreAnimator {
 		this.onFrame(this.currentFrame);
 	}
 
-	private onWindowResize(): void {
+	protected onWindowResize(): void {
 		if (this.animatorContainers.length < 1) {
 			return;
 		}
