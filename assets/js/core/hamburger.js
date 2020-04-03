@@ -131,9 +131,11 @@ export class Hamburger {
     animateOpenHamburger() {
         const windowHeight = Math.min(this.mWindowUtility.viewport.height, this.mWindowUtility.inner.height);
         const windowWidth = Math.min(this.mWindowUtility.viewport.width, this.mWindowUtility.inner.width);
-        const magic = (20 + this.mWindowUtility.vw(2));
-        const height = windowHeight - magic;
-        const width = windowWidth - magic;
+        // const magic = (20 + this.mWindowUtility.vw(2));
+        // const height = windowHeight - magic;
+        // const width = windowWidth - magic;
+        const height = 1;
+        const width = 0;
         const top = (windowHeight - height) / 2;
         const left = (windowWidth - width) / 2;
         this.skinDom.css({
@@ -147,7 +149,6 @@ export class Hamburger {
             width: width + left,
             top: -top,
             left: -left,
-            filter: 'brightness(0)',
         });
         $(document.body).css({
             overflow: 'hidden',
@@ -165,7 +166,6 @@ export class Hamburger {
             width: '',
             top: 0,
             left: 0,
-            filter: '',
         });
         $(document.body).css({
             overflow: '',

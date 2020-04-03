@@ -189,9 +189,8 @@ export class Hamburger {
 			this.mWindowUtility.inner.width,
 		);
 
-		const magic = (20 + this.mWindowUtility.vw(2));
-		const height = windowHeight - magic;
-		const width = windowWidth - magic;
+		const height = 1;
+		const width = 0;
 		const top = (windowHeight - height) / 2;
 		const left = (windowWidth - width) / 2;
 
@@ -207,7 +206,6 @@ export class Hamburger {
 			width: width + left,
 			top: -top,
 			left: -left,
-			filter: 'brightness(0)',
 		});
 
 		$(document.body).css({
@@ -228,7 +226,6 @@ export class Hamburger {
 			width: '',
 			top: 0,
 			left: 0,
-			filter: '',
 		});
 
 		$(document.body).css({
