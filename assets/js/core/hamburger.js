@@ -131,9 +131,6 @@ export class Hamburger {
     animateOpenHamburger() {
         const windowHeight = Math.min(this.mWindowUtility.viewport.height, this.mWindowUtility.inner.height);
         const windowWidth = Math.min(this.mWindowUtility.viewport.width, this.mWindowUtility.inner.width);
-        // const magic = (20 + this.mWindowUtility.vw(2));
-        // const height = windowHeight - magic;
-        // const width = windowWidth - magic;
         const height = 1;
         const width = 0;
         const top = (windowHeight - height) / 2;
@@ -199,7 +196,7 @@ export class Hamburger {
                 'title',
                 uid,
             ]);
-            titleDom.textContent = uid;
+            // titleDom.textContent = uid;
             this.menuContainersWrapperDom.appendChild(menuContainerDom);
             menuContainerDom.appendChild(titleDom);
             let processedIndex = i;
@@ -219,22 +216,28 @@ export class Hamburger {
             });
             const prefix = '——';
             const suffix = '';
-            titleDom.innerHTML = titleDom
-                .textContent
+            const textContent = uid;
+            const classList = titleDom.classList.value;
+            titleDom.textContent = '';
+            // prefix
+            const prefixSpanDom = document.createElement('span');
+            prefixSpanDom.className = classList.replace('title', 'prefix');
+            prefixSpanDom.textContent = `${prefix}\xa0`; // prefix + &nbsp;
+            titleDom.appendChild(prefixSpanDom);
+            // content
+            textContent
                 .split('')
-                .map((char) => `<span class="${titleDom.classList.value.replace('title', 'char')} hoverLine">
-						${char}
-					</span>`)
-                .join('');
-            titleDom.innerHTML = `
-				<span class="${titleDom.classList.value.replace('title', 'prefix')}">
-					${prefix}&nbsp;
-				</span>
-				${titleDom.innerHTML}
-				<span class="${titleDom.classList.value.replace('title', 'suffix')}">
-					${suffix}
-				</span>
-			`.replace(/[\t\n\r]/g, '');
+                .fastEach((titleChar) => {
+                const spanDom = document.createElement('span');
+                spanDom.className = `${classList.replace('title', 'char')} hoverLine`;
+                spanDom.textContent = titleChar;
+                titleDom.appendChild(spanDom);
+            });
+            // suffix
+            const suffixSpanDom = document.createElement('span');
+            suffixSpanDom.className = classList.replace('title', 'suffix');
+            suffixSpanDom.textContent = suffix; // prefix + &nbsp;
+            titleDom.appendChild(suffixSpanDom);
             const totalFrames = 120;
             titleDom.childNodes.forEach((node, index) => {
                 // add reveal animations

@@ -269,7 +269,7 @@ export class Hamburger {
 				'title',
 				uid,
 			]);
-			titleDom.textContent = uid;
+			// titleDom.textContent = uid;
 
 			this.menuContainersWrapperDom.appendChild(menuContainerDom);
 			menuContainerDom.appendChild(titleDom);
@@ -296,24 +296,38 @@ export class Hamburger {
 
 			const prefix = '——';
 			const suffix = '';
-			titleDom.innerHTML = titleDom
-				.textContent
+			const textContent = uid;
+			const classList = titleDom.classList.value;
+
+			titleDom.textContent = '';
+
+			// prefix
+			const prefixSpanDom = document.createElement('span');
+
+			prefixSpanDom.className = classList.replace('title', 'prefix');
+			prefixSpanDom.textContent = `${prefix}\xa0`; // prefix + &nbsp;
+
+			titleDom.appendChild(prefixSpanDom);
+
+			// content
+			textContent
 				.split('')
-				.map(
-					(char: string) => `<span class="${titleDom.classList.value.replace('title', 'char')} hoverLine">
-						${char}
-					</span>`,
-				)
-				.join('');
-			titleDom.innerHTML = `
-				<span class="${titleDom.classList.value.replace('title', 'prefix')}">
-					${prefix}&nbsp;
-				</span>
-				${titleDom.innerHTML}
-				<span class="${titleDom.classList.value.replace('title', 'suffix')}">
-					${suffix}
-				</span>
-			`.replace(/[\t\n\r]/g, '');
+				.fastEach((titleChar: string[1]) => {
+					const spanDom = document.createElement('span');
+
+					spanDom.className = `${classList.replace('title', 'char')} hoverLine`;
+					spanDom.textContent = titleChar;
+
+					titleDom.appendChild(spanDom);
+				});
+
+			// suffix
+			const suffixSpanDom = document.createElement('span');
+
+			suffixSpanDom.className = classList.replace('title', 'suffix');
+			suffixSpanDom.textContent = suffix; // prefix + &nbsp;
+
+			titleDom.appendChild(suffixSpanDom);
 
 			const totalFrames = 120;
 
