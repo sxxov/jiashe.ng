@@ -13,23 +13,23 @@ import { FrameAnimator } from '../resources/animators.js';
 export class Hamburger {
     constructor(mCoreAnimator) {
         this.mWindowUtility = new WindowUtility();
-        this.lottieAnim = null;
-        this.playDirection = -1;
-        this.headerHamburgerIconDom = $('.header.containersWrapper > .hamburger');
-        this.menuContainersWrapperDom = $('.__hamburgerMenu.containersWrapper');
+        this.lottieAnimation = null;
+        this.lottiePlayDirection = -1;
+        this.hamburgerIconDom = $('.header.containersWrapper > .hamburger');
+        this.hamburgerMenuContainersWrapperDom = $('.__hamburgerMenu.containersWrapper');
         this.skinDom = $('.skin');
         this.organsDom = $('.organs');
         this.titles = [];
         this.clickFrameAnimator = new FrameAnimator();
         this.currentOnClickDom = null;
-        this.cachedAnimationsLength = null;
         this.currentOnMouseDom = null;
+        this.cachedAnimationsLength = null;
         this.ctx = mCoreAnimator;
         $(window).on('resize', () => window.requestAnimationFrame(() => this.onWindowResize.call(this)));
     }
-    create(data) {
+    create(lottieAnimationData) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.data = data;
+            this.lottieAnimationData = lottieAnimationData;
             this.clickFrameAnimator.add({
                 index: 0,
                 type: 'null',
@@ -43,11 +43,11 @@ export class Hamburger {
                     },
                 },
             });
-            this.headerHamburgerIconDom.on('click', (event) => {
-                this.menuContainersWrapperDom.removeClass('hidden');
+            this.hamburgerIconDom.on('click', (event) => {
+                this.hamburgerMenuContainersWrapperDom.removeClass('hidden');
                 this.onClick.call(this, event);
             });
-            this.menuContainersWrapperDom.addClass('hidden');
+            this.hamburgerMenuContainersWrapperDom.addClass('hidden');
             const otherOnAdd = this.ctx.onAdd;
             this.ctx.onAdd = (animation) => {
                 otherOnAdd.call(this.ctx, animation);
@@ -70,11 +70,11 @@ export class Hamburger {
         });
     }
     addLottie() {
-        this.lottieAnim = lottie.loadAnimation({
-            container: this.headerHamburgerIconDom,
+        this.lottieAnimation = lottie.loadAnimation({
+            container: this.hamburgerIconDom,
             renderer: 'canvas',
             autoplay: false,
-            animationData: this.data,
+            animationData: this.lottieAnimationData,
             rendererSettings: {
                 preserveAspectRatio: 'xMidYMin meet',
                 className: 'hamburger',
@@ -82,7 +82,7 @@ export class Hamburger {
         });
     }
     get isOpen() {
-        return this.playDirection === 1;
+        return this.lottiePlayDirection === 1;
     }
     getLottieData() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -112,9 +112,9 @@ export class Hamburger {
             this.animateOpenHamburger();
             titles.fastEach((hamburgerMenuTitleDom) => this.animateTitleReveal(hamburgerMenuTitleDom, 'reveal'));
         }
-        this.playDirection *= -1;
-        this.lottieAnim.setDirection(this.playDirection);
-        this.lottieAnim.play();
+        this.lottiePlayDirection *= -1;
+        this.lottieAnimation.setDirection(this.lottiePlayDirection);
+        this.lottieAnimation.play();
         this.currentOnClickDom = $(event.currentTarget);
         this.clickFrameAnimator.animate(0, 30);
     }
@@ -175,9 +175,9 @@ export class Hamburger {
         // used to get value of variable instead of reference
         this.cachedAnimationsLength = Number(this.ctx.animations.length);
         // clear the insides to prevent duplicates
-        this.menuContainersWrapperDom.innerHTML = '';
+        this.hamburgerMenuContainersWrapperDom.innerHTML = '';
         // programatically generate css grid
-        this.menuContainersWrapperDom.css({
+        this.hamburgerMenuContainersWrapperDom.css({
             // add 1 if there's a pre animation (index of -1)
             'grid-template-rows': `auto repeat(${this.ctx.animations.length + Number(!!this.ctx.animations[-1])}, min-content) auto`,
         });
@@ -197,7 +197,7 @@ export class Hamburger {
                 uid,
             ]);
             // titleDom.textContent = uid;
-            this.menuContainersWrapperDom.appendChild(menuContainerDom);
+            this.hamburgerMenuContainersWrapperDom.appendChild(menuContainerDom);
             menuContainerDom.appendChild(titleDom);
             let processedIndex = i;
             if (this.ctx.animations[-1]) {

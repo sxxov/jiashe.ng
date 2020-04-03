@@ -333,7 +333,7 @@ class Main {
 				uid: 'hamburger',
 				totalFrames: 240,
 				offset: 80,
-				domContent: this.hamburger.headerHamburgerIconDom,
+				domContent: this.hamburger.hamburgerIconDom,
 				bezier: [0.77, 0, 0.175, 1],
 				onVisible: (animation): void => {
 					const {

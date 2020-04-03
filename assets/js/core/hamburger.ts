@@ -13,11 +13,12 @@ export class Hamburger {
 
 	private mWindowUtility = new WindowUtility();
 
-	public data: Record<string | number, any>;
-	public lottieAnim: any = null;
-	public playDirection = -1;
-	public headerHamburgerIconDom = $('.header.containersWrapper > .hamburger');
-	public menuContainersWrapperDom = $('.__hamburgerMenu.containersWrapper');
+	public lottieAnimationData: Record<string | number, any>;
+	public lottieAnimation: any = null;
+	public lottiePlayDirection = -1;
+
+	public hamburgerIconDom = $('.header.containersWrapper > .hamburger');
+	public hamburgerMenuContainersWrapperDom = $('.__hamburgerMenu.containersWrapper');
 
 	private skinDom = $('.skin');
 	private organsDom = $('.organs');
@@ -27,12 +28,16 @@ export class Hamburger {
 		revealFrameAnimator: FrameAnimator;
 		hoverFrameAnimator: FrameAnimator;
 	}?] = [];
+
 	private ctx: CoreAnimator;
+
 	private clickFrameAnimator = new FrameAnimator();
+
 	private currentOnClickDom: $Object = null;
-	private cachedAnimationsLength: number = null;
 	private currentOnMouseDom: $Object = null;
 	private currentOnMouseChildDom: $Object;
+
+	private cachedAnimationsLength: number = null;
 
 	public constructor(mCoreAnimator: CoreAnimator) {
 		this.ctx = mCoreAnimator;
@@ -40,8 +45,8 @@ export class Hamburger {
 		$(window).on('resize', () => window.requestAnimationFrame(() => this.onWindowResize.call(this)));
 	}
 
-	public async create(data: any): Promise<void> {
-		this.data = data;
+	public async create(lottieAnimationData: any): Promise<void> {
+		this.lottieAnimationData = lottieAnimationData;
 
 		this.clickFrameAnimator.add({
 			index: 0,
@@ -58,12 +63,12 @@ export class Hamburger {
 			},
 		});
 
-		this.headerHamburgerIconDom.on('click', (event: Event) => {
-			this.menuContainersWrapperDom.removeClass('hidden');
+		this.hamburgerIconDom.on('click', (event: Event) => {
+			this.hamburgerMenuContainersWrapperDom.removeClass('hidden');
 			this.onClick.call(this, event);
 		});
 
-		this.menuContainersWrapperDom.addClass('hidden');
+		this.hamburgerMenuContainersWrapperDom.addClass('hidden');
 
 		const otherOnAdd = this.ctx.onAdd;
 		this.ctx.onAdd = (animation): void => {
@@ -94,11 +99,11 @@ export class Hamburger {
 	}
 
 	private addLottie(): void {
-		this.lottieAnim = lottie.loadAnimation({
-			container: this.headerHamburgerIconDom,
+		this.lottieAnimation = lottie.loadAnimation({
+			container: this.hamburgerIconDom,
 			renderer: 'canvas',
 			autoplay: false,
-			animationData: this.data,
+			animationData: this.lottieAnimationData,
 			rendererSettings: {
 				preserveAspectRatio: 'xMidYMin meet',
 				className: 'hamburger',
@@ -107,7 +112,7 @@ export class Hamburger {
 	}
 
 	public get isOpen(): boolean {
-		return this.playDirection === 1;
+		return this.lottiePlayDirection === 1;
 	}
 
 	public async getLottieData(): Promise<Record<string | number, any>> {
@@ -157,9 +162,9 @@ export class Hamburger {
 			);
 		}
 
-		this.playDirection *= -1;
-		this.lottieAnim.setDirection(this.playDirection);
-		this.lottieAnim.play();
+		this.lottiePlayDirection *= -1;
+		this.lottieAnimation.setDirection(this.lottiePlayDirection);
+		this.lottieAnimation.play();
 
 		this.currentOnClickDom = $(event.currentTarget);
 		this.clickFrameAnimator.animate(0, 30);
@@ -242,10 +247,10 @@ export class Hamburger {
 		this.cachedAnimationsLength = Number(this.ctx.animations.length);
 
 		// clear the insides to prevent duplicates
-		this.menuContainersWrapperDom.innerHTML = '';
+		this.hamburgerMenuContainersWrapperDom.innerHTML = '';
 
 		// programatically generate css grid
-		this.menuContainersWrapperDom.css({
+		this.hamburgerMenuContainersWrapperDom.css({
 			// add 1 if there's a pre animation (index of -1)
 			'grid-template-rows': `auto repeat(${this.ctx.animations.length + Number(!!this.ctx.animations[-1])}, min-content) auto`,
 		});
@@ -271,7 +276,7 @@ export class Hamburger {
 			]);
 			// titleDom.textContent = uid;
 
-			this.menuContainersWrapperDom.appendChild(menuContainerDom);
+			this.hamburgerMenuContainersWrapperDom.appendChild(menuContainerDom);
 			menuContainerDom.appendChild(titleDom);
 
 			let processedIndex = i;
