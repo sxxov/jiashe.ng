@@ -12,6 +12,7 @@ import {
 import {
 	SmoothScroll,
 } from '../raw/libraries/smoothscroll.js';
+import { Sign } from './sign.js';
 
 
 class Main {
@@ -20,6 +21,7 @@ class Main {
 	private scrollToContinueFrameAnimator = new FrameAnimator();
 	private hamburger = new Hamburger(this.miscellaneousScrollingAnimator);
 	private mWindowUtility = new WindowUtility();
+	private sign = new Sign();
 
 	constructor() {
 		ForUtility.addToArrayPrototype();
@@ -35,6 +37,7 @@ class Main {
 		await this.addScrollToContinueFrameAnimation();
 		await this.addHeaderFrameAnimation();
 		await this.addMiscellaneousScrollingAnimations();
+		this.sign.create();
 	}
 
 	async addMiscellaneousScrollingAnimations(): Promise<void> {
@@ -112,7 +115,7 @@ class Main {
 			type: null,
 			index: 0,
 			items: {
-				uid: 'about_me',
+				uid: 'who_am_i?',
 			},
 		});
 
@@ -154,17 +157,17 @@ class Main {
 			},
 		});
 
-		// hello
-		await mScrollAnimator.add({
-			index: 0,
-			type: 'lottie',
-			data: await $().getJSON('/assets/js/raw/lottie/hello.json'),
-			items: {
-				uid: 'hello',
-				invert: true,
-				totalFrames: 120,
-			},
-		});
+		// // hello
+		// await mScrollAnimator.add({
+		// 	index: 0,
+		// 	type: 'lottie',
+		// 	data: await $().getJSON('/assets/js/raw/lottie/hello.json'),
+		// 	items: {
+		// 		uid: 'hello',
+		// 		invert: true,
+		// 		totalFrames: 120,
+		// 	},
+		// });
 
 		// overlayController
 		await mScrollAnimator.add({

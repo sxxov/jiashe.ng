@@ -12,6 +12,7 @@ import { Hamburger } from './hamburger.js';
 import { ScrollAnimator, FrameAnimator, } from '../resources/animators.js';
 import { $, WindowUtility, ForUtility, } from '../resources/utilities.js';
 import { SmoothScroll, } from '../raw/libraries/smoothscroll.js';
+import { Sign } from './sign.js';
 class Main {
     constructor() {
         this.mTV = new TV();
@@ -19,6 +20,7 @@ class Main {
         this.scrollToContinueFrameAnimator = new FrameAnimator();
         this.hamburger = new Hamburger(this.miscellaneousScrollingAnimator);
         this.mWindowUtility = new WindowUtility();
+        this.sign = new Sign();
         ForUtility.addToArrayPrototype();
         SmoothScroll.init({
             animationTime: 500,
@@ -32,6 +34,7 @@ class Main {
             yield this.addScrollToContinueFrameAnimation();
             yield this.addHeaderFrameAnimation();
             yield this.addMiscellaneousScrollingAnimations();
+            this.sign.create();
         });
     }
     addMiscellaneousScrollingAnimations() {
@@ -91,7 +94,7 @@ class Main {
                 type: null,
                 index: 0,
                 items: {
-                    uid: 'about_me',
+                    uid: 'who_am_i?',
                 },
             });
             // blocks
@@ -129,17 +132,17 @@ class Main {
                     totalFrames: 120,
                 },
             });
-            // hello
-            yield mScrollAnimator.add({
-                index: 0,
-                type: 'lottie',
-                data: yield $().getJSON('/assets/js/raw/lottie/hello.json'),
-                items: {
-                    uid: 'hello',
-                    invert: true,
-                    totalFrames: 120,
-                },
-            });
+            // // hello
+            // await mScrollAnimator.add({
+            // 	index: 0,
+            // 	type: 'lottie',
+            // 	data: await $().getJSON('/assets/js/raw/lottie/hello.json'),
+            // 	items: {
+            // 		uid: 'hello',
+            // 		invert: true,
+            // 		totalFrames: 120,
+            // 	},
+            // });
             // overlayController
             yield mScrollAnimator.add({
                 index: 0,
