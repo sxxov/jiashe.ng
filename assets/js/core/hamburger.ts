@@ -45,7 +45,7 @@ export class Hamburger {
 		$(window).on('resize', () => window.requestAnimationFrame(() => this.onWindowResize.call(this)));
 	}
 
-	public async create(lottieAnimationData: any): Promise<void> {
+	public create(lottieAnimationData: any): void {
 		this.lottieAnimationData = lottieAnimationData;
 
 		this.clickFrameAnimator.add({
@@ -147,9 +147,11 @@ export class Hamburger {
 		if (this.isOpen) {
 			this.animateCloseHamburger();
 
-			titles.fastEach(
-				(hamburgerMenuTitleDom: $Object) => this.animateTitleReveal(hamburgerMenuTitleDom, 'hide'),
-			);
+			titles.fastEach((hamburgerMenuTitleDom: $Object) => {
+				hamburgerMenuTitleDom.css('pointer-events', 'none');
+
+				this.animateTitleReveal(hamburgerMenuTitleDom, 'hide');
+			});
 		} else {
 			if (this.currentOnMouseDom) {
 				this.animateTitleHover(this.currentOnMouseDom, 'out');
@@ -157,9 +159,11 @@ export class Hamburger {
 
 			this.animateOpenHamburger();
 
-			titles.fastEach(
-				(hamburgerMenuTitleDom: $Object) => this.animateTitleReveal(hamburgerMenuTitleDom, 'reveal'),
-			);
+			titles.fastEach((hamburgerMenuTitleDom: $Object) => {
+				hamburgerMenuTitleDom.css('pointer-events', 'auto');
+
+				this.animateTitleReveal(hamburgerMenuTitleDom, 'reveal');
+			});
 		}
 
 		this.lottiePlayDirection *= -1;
@@ -302,14 +306,14 @@ export class Hamburger {
 			const prefix = '——';
 			const suffix = '';
 			const textContent = uid;
-			const classList = titleDom.classList.value;
+			const { className } = titleDom;
 
 			titleDom.textContent = '';
 
 			// prefix
 			const prefixSpanDom = document.createElement('span');
 
-			prefixSpanDom.className = classList.replace('title', 'prefix');
+			prefixSpanDom.className = className.replace('title', 'prefix');
 			prefixSpanDom.textContent = `${prefix}\xa0`; // prefix + &nbsp;
 
 			titleDom.appendChild(prefixSpanDom);
@@ -320,7 +324,7 @@ export class Hamburger {
 				.fastEach((titleChar: string[1]) => {
 					const spanDom = document.createElement('span');
 
-					spanDom.className = `${classList.replace('title', 'char')} hoverLine`;
+					spanDom.className = `${className.replace('title', 'char')} hoverLine`;
 					spanDom.textContent = titleChar;
 
 					titleDom.appendChild(spanDom);
@@ -329,7 +333,7 @@ export class Hamburger {
 			// suffix
 			const suffixSpanDom = document.createElement('span');
 
-			suffixSpanDom.className = classList.replace('title', 'suffix');
+			suffixSpanDom.className = className.replace('title', 'suffix');
 			suffixSpanDom.textContent = suffix; // prefix + &nbsp;
 
 			titleDom.appendChild(suffixSpanDom);
@@ -344,6 +348,7 @@ export class Hamburger {
 					items: {
 						totalFrames,
 						offset: (index
+								// prefix and suffix changes the length of textContent, so just get it from dom
 								* ((totalFrames) / titleDom.textContent.length)
 						),
 						bezier: [0.165, 0.84, 0.44, 1],

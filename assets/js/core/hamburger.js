@@ -28,35 +28,33 @@ export class Hamburger {
         $(window).on('resize', () => window.requestAnimationFrame(() => this.onWindowResize.call(this)));
     }
     create(lottieAnimationData) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.lottieAnimationData = lottieAnimationData;
-            this.clickFrameAnimator.add({
-                index: 0,
-                type: 'null',
-                items: {
-                    totalFrames: 30,
-                    onFrame: (animation, frame) => {
-                        const domContent = this.currentOnClickDom;
-                        domContent.css({
-                            opacity: Math.ceil((animation.items.totalFrames - frame) / 3) % 4 ? 0 : 1,
-                        });
-                    },
+        this.lottieAnimationData = lottieAnimationData;
+        this.clickFrameAnimator.add({
+            index: 0,
+            type: 'null',
+            items: {
+                totalFrames: 30,
+                onFrame: (animation, frame) => {
+                    const domContent = this.currentOnClickDom;
+                    domContent.css({
+                        opacity: Math.ceil((animation.items.totalFrames - frame) / 3) % 4 ? 0 : 1,
+                    });
                 },
-            });
-            this.hamburgerIconDom.on('click', (event) => {
-                this.hamburgerMenuContainersWrapperDom.removeClass('hidden');
-                this.onClick.call(this, event);
-            });
-            this.hamburgerMenuContainersWrapperDom.addClass('hidden');
-            const otherOnAdd = this.ctx.onAdd;
-            this.ctx.onAdd = (animation) => {
-                otherOnAdd.call(this.ctx, animation);
-                this.createHamburgerMenuItems();
-            };
-            this.createHamburgerMenuItems();
-            this.createHamburgerToppings();
-            this.addLottie();
+            },
         });
+        this.hamburgerIconDom.on('click', (event) => {
+            this.hamburgerMenuContainersWrapperDom.removeClass('hidden');
+            this.onClick.call(this, event);
+        });
+        this.hamburgerMenuContainersWrapperDom.addClass('hidden');
+        const otherOnAdd = this.ctx.onAdd;
+        this.ctx.onAdd = (animation) => {
+            otherOnAdd.call(this.ctx, animation);
+            this.createHamburgerMenuItems();
+        };
+        this.createHamburgerMenuItems();
+        this.createHamburgerToppings();
+        this.addLottie();
     }
     createHamburgerToppings() {
         $('.header.containersWrapper > .logo').on('click', (event) => {
@@ -103,14 +101,20 @@ export class Hamburger {
         const titles = $$(`.${Hamburger.PREFIX}.title`);
         if (this.isOpen) {
             this.animateCloseHamburger();
-            titles.fastEach((hamburgerMenuTitleDom) => this.animateTitleReveal(hamburgerMenuTitleDom, 'hide'));
+            titles.fastEach((hamburgerMenuTitleDom) => {
+                hamburgerMenuTitleDom.css('pointer-events', 'none');
+                this.animateTitleReveal(hamburgerMenuTitleDom, 'hide');
+            });
         }
         else {
             if (this.currentOnMouseDom) {
                 this.animateTitleHover(this.currentOnMouseDom, 'out');
             }
             this.animateOpenHamburger();
-            titles.fastEach((hamburgerMenuTitleDom) => this.animateTitleReveal(hamburgerMenuTitleDom, 'reveal'));
+            titles.fastEach((hamburgerMenuTitleDom) => {
+                hamburgerMenuTitleDom.css('pointer-events', 'auto');
+                this.animateTitleReveal(hamburgerMenuTitleDom, 'reveal');
+            });
         }
         this.lottiePlayDirection *= -1;
         this.lottieAnimation.setDirection(this.lottiePlayDirection);
@@ -217,11 +221,11 @@ export class Hamburger {
             const prefix = '——';
             const suffix = '';
             const textContent = uid;
-            const classList = titleDom.classList.value;
+            const { className } = titleDom;
             titleDom.textContent = '';
             // prefix
             const prefixSpanDom = document.createElement('span');
-            prefixSpanDom.className = classList.replace('title', 'prefix');
+            prefixSpanDom.className = className.replace('title', 'prefix');
             prefixSpanDom.textContent = `${prefix}\xa0`; // prefix + &nbsp;
             titleDom.appendChild(prefixSpanDom);
             // content
@@ -229,13 +233,13 @@ export class Hamburger {
                 .split('')
                 .fastEach((titleChar) => {
                 const spanDom = document.createElement('span');
-                spanDom.className = `${classList.replace('title', 'char')} hoverLine`;
+                spanDom.className = `${className.replace('title', 'char')} hoverLine`;
                 spanDom.textContent = titleChar;
                 titleDom.appendChild(spanDom);
             });
             // suffix
             const suffixSpanDom = document.createElement('span');
-            suffixSpanDom.className = classList.replace('title', 'suffix');
+            suffixSpanDom.className = className.replace('title', 'suffix');
             suffixSpanDom.textContent = suffix; // prefix + &nbsp;
             titleDom.appendChild(suffixSpanDom);
             const totalFrames = 120;
@@ -247,6 +251,7 @@ export class Hamburger {
                     items: {
                         totalFrames,
                         offset: (index
+                            // prefix and suffix changes the length of textContent, so just get it from dom
                             * ((totalFrames) / titleDom.textContent.length)),
                         bezier: [0.165, 0.84, 0.44, 1],
                         onHidden: () => {
