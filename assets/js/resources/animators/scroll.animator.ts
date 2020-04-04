@@ -4,6 +4,8 @@ import { AnimationObject } from '../animator.types.js';
 
 export class ScrollAnimator extends CoreAnimator {
 	private nextOnScrollCancelled = false;
+	private responsibleForLastResize = false;
+
 	constructor() {
 		super();
 
@@ -25,9 +27,13 @@ export class ScrollAnimator extends CoreAnimator {
 		const windowHeight = this.mWindowUtility.viewport.height;
 		const documentHeight = windowHeight * (this.animations.length + 1);
 
-		if (Number.parseInt($(document.body).css('height') as string, 10) > documentHeight) {
+		if (!(documentHeight > (Number.parseInt($(document.body).css('height') as string, 10) || 0)
+			|| this.responsibleForLastResize)) {
+			this.responsibleForLastResize = false;
 			return;
 		}
+
+		this.responsibleForLastResize = true;
 
 		$(document.body).css({
 			height: documentHeight,
@@ -39,7 +45,7 @@ export class ScrollAnimator extends CoreAnimator {
 		const yOffset = Math.max(
 			Math.ceil(
 				(frame / this.totalFrames)
-				* (document.body.scrollHeight - this.mWindowUtility.viewport.height),
+				* (document.body.offsetHeight - this.mWindowUtility.viewport.height),
 			) + 7,
 			0,
 		);
@@ -107,7 +113,12 @@ export class ScrollAnimator extends CoreAnimator {
 
 		const { scrollY } = window;
 		const globalFrame = this.getRelativeFrame(
-			scrollY / (document.body.scrollHeight - this.mWindowUtility.viewport.height),
+			scrollY / (
+				Math.min(
+					document.body.scrollHeight,
+					this.mWindowUtility.viewport.height * (this.animations.length + 1),
+				)
+				- this.mWindowUtility.viewport.height),
 		);
 
 		this.onFrame(globalFrame);
