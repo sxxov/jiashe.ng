@@ -13,11 +13,13 @@ export class ScrollAnimator extends CoreAnimator {
 	}
 
 	// @Override
-	async add(animationToBeConstructed: AnimationObject): Promise<void> {
-		await super.add(animationToBeConstructed);
+	async add(animationToBeConstructed: AnimationObject): Promise<AnimationObject> {
+		const result = await super.add(animationToBeConstructed);
 
 		this.onWindowResize();
 		this.onScroll();
+
+		return result;
 	}
 
 	// @Override

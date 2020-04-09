@@ -22,9 +22,10 @@ export class ScrollAnimator extends CoreAnimator {
             add: { get: () => super.add }
         });
         return __awaiter(this, void 0, void 0, function* () {
-            yield _super.add.call(this, animationToBeConstructed);
+            const result = yield _super.add.call(this, animationToBeConstructed);
             this.onWindowResize();
             this.onScroll();
+            return result;
         });
     }
     // @Override
