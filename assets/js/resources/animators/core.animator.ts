@@ -32,11 +32,12 @@ export class CoreAnimator {
 	public visibleAnimations: AnimationObject[] = [];
 
 	public dpr = Math.max(window.devicePixelRatio / 2, 1);
-	public dprMultiplier = this.dpr;
+	public resolutionMultiplier = 1;
 
 	protected rafId: number = null;
 
-	private attributeCache: Record<string, any[]> = {};
+	private maxAttributeCache: Record<string, any[]> = {};
+	private minAttributeCache: Record<string, any[]> = {};
 
 	constructor() {
 		$(window).on('load resize', () => window.requestAnimationFrame(() => {
@@ -71,9 +72,9 @@ export class CoreAnimator {
 		return this.__animatorContainersWrapper;
 	}
 
-	public async add(animationToBeConstructed: AnimationObject): Promise<void> {
+	public async add(animationToBeConstructed: AnimationObject): Promise<AnimationObject> {
 		const mAnimationFactory = new AnimationFactory(this);
-		const animationObject = mAnimationFactory.create(animationToBeConstructed, this);
+		const animationObject = mAnimationFactory.create(animationToBeConstructed);
 		const {
 			type,
 			index,
@@ -140,13 +141,13 @@ export class CoreAnimator {
 		default:
 		}
 
-		this.attributeCache = {};
-
 		// add up the 'totalFrames' of every animation
-		this.totalFrames = this.getAttributeFromAnimationsItems('totalFrames', this.animations)
+		this.totalFrames = this.getMaxAttributeFromAnimationsItems('totalFrames', this.animations)
 			.reduce((accumulator, currentValue) => currentValue + accumulator, 0);
 
 		this.onAdd(animationObject);
+
+		return animationObject;
 	}
 
 	public onAdd(animation: AnimationObject): void {
@@ -342,14 +343,14 @@ export class CoreAnimator {
 			const lottieObjectContainersWrapperWidth = this.animatorContainersWrapper.clientWidth;
 			const lottieObjectContainersWrapperHeight = this.animatorContainersWrapper.clientHeight;
 
-			const lottieObjectWidth = parseFloat(lottieObjectDom.css('width', { computed: true }) as string) / this.dprMultiplier;
-			const lottieObjectHeight = parseFloat(lottieObjectDom.css('height', { computed: true }) as string) / this.dprMultiplier;
+			const lottieObjectWidth = parseFloat(lottieObjectDom.css('width', { computed: true }) as string) / this.resolutionMultiplier;
+			const lottieObjectHeight = parseFloat(lottieObjectDom.css('height', { computed: true }) as string) / this.resolutionMultiplier;
 
 			const offsetWidth = -(lottieObjectWidth - lottieObjectContainersWrapperWidth) / 2;
 			const offsetHeight = -(lottieObjectHeight - lottieObjectContainersWrapperHeight) / 2;
 
 			lottieObjectDom.css({
-				transform: `translate(${offsetWidth}px, ${offsetHeight}px) scale(${1 / this.dprMultiplier})`,
+				transform: `translate(${offsetWidth}px, ${offsetHeight}px) scale(${1 / this.resolutionMultiplier})`,
 			});
 		}
 	}
@@ -373,7 +374,7 @@ export class CoreAnimator {
 		} else {
 			// get an array of the 'totalFrames' of every animation,
 			// and then find the total frames and the index of the current animation
-			const animationTotalFrames = this.getAttributeFromAnimationsItems('totalFrames', this.animations);
+			const animationTotalFrames = this.getMaxAttributeFromAnimationsItems('totalFrames', this.animations);
 			animationTotalFrames.reduce(
 				(accumulated, currentValue, i) => {
 					const accumulating = currentValue + accumulated;
@@ -404,11 +405,13 @@ export class CoreAnimator {
 			return;
 		}
 
-		const maxOffset = Math.max(...this.getAttributeFromAnimationsItems('offset', this.animations));
+		const maxOffset = Math.max(...this.getMaxAttributeFromAnimationsItems('offset', [workingAnimations]));
+		const minOffset = Math.min(...this.getMinAttributeFromAnimationsItems('offset', [workingAnimations]));
 
-		workingAnimations.forEach((workingAnimation: AnimationObject) => {
+		workingAnimations.fastEach((workingAnimation: AnimationObject) => {
 			const {
 				__caller,
+				__framesBeforeCurrent,
 				uid,
 				totalFrames,
 				onFrame,
@@ -416,26 +419,36 @@ export class CoreAnimator {
 				bezier,
 			} = workingAnimation.items;
 
-			uids.push(uid);
+			// slightly faster sometimes than Array.push() https://jsben.ch/gO5B7
+			uids[uids.length] = uid;
 
 			const mBezierUtility = new BezierUtility(
 				bezier[0], bezier[1], bezier[2], bezier[3],
 			);
 
 			const globalFrame = frame;
-			let localFrame = mBezierUtility.getValue(Math.min(
-				((
-					(
-						globalFrame
-						- this.getTotalFramesBeforeIndex(animationIndex)
-					) / ((
-						currentAnimationsTotalFrames
-						- this.getTotalFramesBeforeIndex(animationIndex)
-					) - maxOffset + offset)
-				)
-				* (totalFrames)),
-				totalFrames,
-			) / totalFrames) * totalFrames;
+
+			// todo: add support for mixing -ve and +ve offsets in one instance
+			let localFrame = mBezierUtility.getValue(
+				Math.max(
+					Math.min(
+						(
+							((
+								globalFrame
+								- __framesBeforeCurrent
+							) + offset)
+							/ ((
+								currentAnimationsTotalFrames
+								- __framesBeforeCurrent
+							// conditions below are for support of negative offsets
+							) - (maxOffset || Math.abs(minOffset)) + (maxOffset && offset))
+						),
+						1,
+					),
+					0,
+				),
+			)
+			* totalFrames;
 			localFrame = Number.isNaN(localFrame) ? totalFrames : localFrame;
 
 			if ((window as any).DEBUG === true
@@ -457,14 +470,16 @@ export class CoreAnimator {
 			this.onVisibleAnimationsChange(workingAnimations);
 
 			onFrame(
-				workingAnimation, localFrame,
+				workingAnimation,
+				localFrame,
 			);
 		});
 
-		this.metaAnimations.forEach((metaAnimation) => {
+		this.metaAnimations.fastEach((metaAnimation: AnimationObject) => {
 			const {
 				onFrame,
 			} = metaAnimation.items;
+			const __framesBeforeCurrent = this.getTotalFramesBeforeIndex(animationIndex);
 			const mAnimationFactory = new AnimationFactory(this);
 			const animation = mAnimationFactory.create({
 				type: 'meta',
@@ -472,20 +487,23 @@ export class CoreAnimator {
 				items: {
 					uid: uids.join(' '),
 					totalFrames: currentAnimationsTotalFrames
-						- this.getTotalFramesBeforeIndex(animationIndex),
+						- __framesBeforeCurrent,
 				},
-			}, this);
+			});
 
-			onFrame(animation, frame - this.getTotalFramesBeforeIndex(animationIndex));
+			onFrame(
+				animation,
+				frame - __framesBeforeCurrent,
+			);
 		});
 	}
 
-	private getAttributeFromAnimationsItems(
+	private getMaxAttributeFromAnimationsItems(
 		attributeKey: string,
 		animations: AnimationObject[][],
 	): any[] {
-		if (this.attributeCache[attributeKey]) {
-			return this.attributeCache[attributeKey];
+		if (this.maxAttributeCache[attributeKey]) {
+			return this.maxAttributeCache[attributeKey];
 		}
 
 		return animations.map(
@@ -499,8 +517,27 @@ export class CoreAnimator {
 		);
 	}
 
-	protected getTotalFramesBeforeIndex(index: number): number {
-		const totalFrames: number[] = this.getAttributeFromAnimationsItems('totalFrames', this.animations);
+	private getMinAttributeFromAnimationsItems(
+		attributeKey: string,
+		animations: AnimationObject[][],
+	): any[] {
+		if (this.minAttributeCache[attributeKey]) {
+			return this.minAttributeCache[attributeKey];
+		}
+
+		return animations.map(
+			(animation) => Math.min(
+				...animation.map(
+					(workingAnimation) => (
+						workingAnimation.items[attributeKey]
+					),
+				),
+			),
+		);
+	}
+
+	public getTotalFramesBeforeIndex(index: number): number {
+		const totalFrames: number[] = this.getMaxAttributeFromAnimationsItems('totalFrames', this.animations);
 		let previousFrames: number = null;
 
 		totalFrames.reduce(
