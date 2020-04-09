@@ -36,8 +36,9 @@ export class Hamburger {
                 totalFrames: 30,
                 onFrame: (animation, frame) => {
                     const domContent = this.currentOnClickDom;
+                    const { totalFrames, } = animation.items;
                     domContent.css({
-                        opacity: Math.ceil((animation.items.totalFrames - frame) / 3) % 4 ? 0 : 1,
+                        opacity: Math.ceil((totalFrames - frame) / 3) % 4 ? 0 : 1,
                     });
                 },
             },
@@ -202,7 +203,6 @@ export class Hamburger {
             ]);
             // titleDom.textContent = uid;
             this.hamburgerMenuContainersWrapperDom.appendChild(menuContainerDom);
-            menuContainerDom.appendChild(titleDom);
             let processedIndex = i;
             if (this.ctx.animations[-1]) {
                 processedIndex += 1;
@@ -218,22 +218,22 @@ export class Hamburger {
                 revealFrameAnimator,
                 hoverFrameAnimator,
             });
-            const prefix = '——';
             const suffix = '';
+            const prefix = '——\xa0\xa0'; // prefix + &nbsp&nbsp;
             const textContent = uid;
             const { className } = titleDom;
             titleDom.textContent = '';
             // prefix
             const prefixSpanDom = document.createElement('span');
             prefixSpanDom.className = className.replace('title', 'prefix');
-            prefixSpanDom.textContent = `${prefix}\xa0`; // prefix + &nbsp;
+            prefixSpanDom.textContent = prefix;
             titleDom.appendChild(prefixSpanDom);
             // content
             textContent
                 .split('')
                 .fastEach((titleChar) => {
                 const spanDom = document.createElement('span');
-                spanDom.className = `${className.replace('title', 'char')} hoverLine`;
+                spanDom.className = `${className.replace('title', 'char')}`;
                 spanDom.textContent = titleChar;
                 titleDom.appendChild(spanDom);
             });
@@ -243,6 +243,48 @@ export class Hamburger {
             suffixSpanDom.textContent = suffix; // prefix + &nbsp;
             titleDom.appendChild(suffixSpanDom);
             const totalFrames = 120;
+            // add pre to enable onHidden
+            revealFrameAnimator.add({
+                index: -1,
+                type: 'null',
+            });
+            // add pre to enable onHidden
+            hoverFrameAnimator.add({
+                index: -1,
+                type: 'null',
+            });
+            // add container background reveal
+            revealFrameAnimator.add({
+                index: 0,
+                type: 'null',
+                items: {
+                    totalFrames,
+                    offset: -(totalFrames
+                        * ((i + 1) / (this.ctx.animations.length + 1))) / 4,
+                    bezier: [0.25, 1, 0.5, 1],
+                    onHidden: () => {
+                        const containerDomContent = $(titleDom.parentElement);
+                        containerDomContent.css({
+                            opacity: 0,
+                        });
+                    },
+                    onFrame: (animation, frame) => {
+                        const { totalFrames: animationTotalFrames, } = animation.items;
+                        const containerDomContent = $(titleDom.parentElement);
+                        if (frame > 0) {
+                            containerDomContent.css({
+                                width: `${((frame) / animationTotalFrames) * 100}%`,
+                                opacity: 1,
+                            });
+                            return;
+                        }
+                        containerDomContent.css({
+                            width: `${((frame) / animationTotalFrames) * 100}%`,
+                            opacity: 0,
+                        });
+                    },
+                },
+            });
             titleDom.childNodes.forEach((node, index) => {
                 // add reveal animations
                 revealFrameAnimator.add({
@@ -250,9 +292,9 @@ export class Hamburger {
                     type: 'null',
                     items: {
                         totalFrames,
-                        offset: (index
+                        offset: -(totalFrames
                             // prefix and suffix changes the length of textContent, so just get it from dom
-                            * ((totalFrames) / titleDom.textContent.length)),
+                            * ((titleDom.textContent.length - index) / titleDom.textContent.length)) / 4,
                         bezier: [0.165, 0.84, 0.44, 1],
                         onHidden: () => {
                             const domContent = $(node);
@@ -264,16 +306,11 @@ export class Hamburger {
                             const { totalFrames: animationTotalFrames, } = animation.items;
                             const domContent = $(node);
                             domContent.css({
-                                transform: `translateX(${(animationTotalFrames - frame) / 2}px)`,
+                                transform: `translateX(-${(animationTotalFrames - frame) * 2}px)`,
                                 opacity: 1,
                             });
                         },
                     },
-                });
-                // add pre to enable onHidden
-                revealFrameAnimator.add({
-                    index: -1,
-                    type: 'null',
                 });
                 // if the currently working item is not the prefix
                 if (!node.classList.contains('prefix')) {
@@ -283,9 +320,9 @@ export class Hamburger {
                         type: 'null',
                         items: {
                             totalFrames,
-                            offset: index
-                                * ((totalFrames) / titleDom.textContent.length),
-                            bezier: [0.77, 0, 0.175, 1],
+                            offset: -(totalFrames
+                                * ((index) / titleDom.textContent.length)),
+                            bezier: [0.25, 1, 0.5, 1],
                             onHidden: () => {
                                 const domContent = $(node);
                                 domContent.css({
@@ -318,12 +355,8 @@ export class Hamburger {
                             },
                         },
                     });
-                    // add pre to enable onHidden
-                    hoverFrameAnimator.add({
-                        index: -1,
-                        type: 'null',
-                    });
                 }
+                menuContainerDom.appendChild(titleDom);
             });
             titleDom.on('click', (event) => {
                 this.ctx.seekToUid(uid);
@@ -348,9 +381,10 @@ export class Hamburger {
         let totalFrames = null;
         // get working title
         this.titles.forEach((title, index) => {
+            const { totalFrames: animationTotalFrames, } = title.hoverFrameAnimator.animations[0][0].items;
             if (title.domContent === titleDom) {
                 titleIndex = index;
-                totalFrames = title.hoverFrameAnimator.animations[0][0].items.totalFrames;
+                totalFrames = animationTotalFrames;
             }
         });
         let end = null;
@@ -365,21 +399,25 @@ export class Hamburger {
                 return;
         }
         const { hoverFrameAnimator } = this.titles[titleIndex];
+        const options = {
+            fps: 240,
+        };
         if (hoverFrameAnimator.currentFrame === end
             && end === 0) {
-            hoverFrameAnimator.animate(end, end + 1);
+            hoverFrameAnimator.animate(end, end + 1, options);
             return;
         }
-        hoverFrameAnimator.animate(hoverFrameAnimator.currentFrame, end);
+        hoverFrameAnimator.animate(hoverFrameAnimator.currentFrame, end, options);
     }
     animateTitleReveal(titleDom, state) {
         let titleIndex = this.titles.length;
         let totalFrames = null;
         // get working title
         this.titles.forEach((title, index) => {
+            const { totalFrames: animationTotalFrames, } = title.hoverFrameAnimator.animations[0][0].items;
             if (title.domContent === titleDom) {
                 titleIndex = index;
-                totalFrames = title.revealFrameAnimator.animations[0][0].items.totalFrames;
+                totalFrames = animationTotalFrames;
             }
         });
         let end = null;
