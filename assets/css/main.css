@@ -596,6 +596,7 @@ footer > .skin {
 
 	.__animate.containersWrapper > .container > canvas.email,
 	.__animate.containersWrapper > .container > canvas.blocks,
+	.__animate.containersWrapper > .container > canvas.scrollToContinue,
 	.__animate.containersWrapper > .container > div.solid {
 		visibility: visible;
 	}
