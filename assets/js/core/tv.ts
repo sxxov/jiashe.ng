@@ -133,7 +133,7 @@ export class TV {
 			target,
 		} = event;
 
-		target.loadVideoById(this.videoId);
+		// target.loadVideoById(this.videoId);
 		target.mute();
 	}
 

@@ -124,7 +124,7 @@ export class TV {
     }
     onPlayerReady(event) {
         const { target, } = event;
-        target.loadVideoById(this.videoId);
+        // target.loadVideoById(this.videoId);
         target.mute();
     }
     loadApi() {
