@@ -13,6 +13,7 @@ import { ScrollAnimator, FrameAnimator, } from '../resources/animators.js';
 import { $, WindowUtility, ForUtility, } from '../resources/utilities.js';
 import { SmoothScroll, } from '../raw/libraries/smoothscroll.js';
 import { Sign } from './sign.js';
+import { Email } from './email.js';
 class Main {
     constructor() {
         this.mTV = new TV();
@@ -21,15 +22,16 @@ class Main {
         this.hamburger = new Hamburger(this.miscellaneousScrollingAnimator);
         this.mWindowUtility = new WindowUtility();
         this.sign = new Sign();
+        this.email = new Email();
         ForUtility.addToArrayPrototype();
-        SmoothScroll.init({
-            animationTime: 500,
-            touchpadSupport: true,
-            pulseScale: 8,
-        });
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
+            SmoothScroll.init({
+                animationTime: 500,
+                touchpadSupport: true,
+                pulseScale: 6,
+            });
             yield this.mTV.init();
             yield this.addScrollToContinueFrameAnimation();
             yield this.addHeaderFrameAnimation();
@@ -70,8 +72,8 @@ class Main {
                                     .substr(0, scrollPercent.indexOf('.'))
                                     .padStart(3, '0');
                         }
-                        $('.scrollCounter > h1').innerHTML = `${scrollPercent}%`;
-                        [$('.scrollCounter > h2').innerHTML] = uid.split(' ');
+                        $('.scrollCounter > h1').textContent = `${scrollPercent}%`;
+                        [$('.scrollCounter > h2').textContent] = uid.split(' ');
                     }),
                 },
             });
@@ -157,7 +159,7 @@ class Main {
                     },
                 },
             });
-            // placeholder
+            // white solid background
             yield mScrollAnimator.add({
                 index: 1,
                 type: 'solid',
@@ -190,6 +192,59 @@ class Main {
                     invert: true,
                     totalFrames: 120,
                 },
+            });
+            // white solid background
+            yield mScrollAnimator.add({
+                index: 2,
+                type: 'solid',
+                items: {
+                    uid: 'contact_me',
+                    respectDevicePixelRatio: false,
+                    totalFrames: 150,
+                },
+            });
+            // aux contact me stuff
+            yield mScrollAnimator.add({
+                index: 2,
+                type: 'lottie',
+                data: yield $().getJSON('/assets/js/raw/lottie/aux contact me stuff.json'),
+                items: {
+                    uid: 'aux_contact_me_stuff',
+                    respectDevicePixelRatio: false,
+                    invert: true,
+                    totalFrames: 120,
+                },
+            });
+            // aux contact me dots
+            yield mScrollAnimator.add({
+                index: 2,
+                type: 'lottie',
+                data: yield $().getJSON('/assets/js/raw/lottie/aux contact me dots.json'),
+                items: {
+                    uid: 'aux_contact_me_dots',
+                    respectDevicePixelRatio: false,
+                    invert: true,
+                    totalFrames: 120,
+                },
+            });
+            // email
+            const email = yield mScrollAnimator.add({
+                index: 2,
+                type: 'lottie',
+                data: yield $().getJSON('/assets/js/raw/lottie/email.json'),
+                items: {
+                    uid: 'email',
+                    invert: true,
+                    totalFrames: 120,
+                },
+            });
+            // email on hover
+            const emailDomContent = email.items.domContent;
+            const { dpr, resolutionMultiplier, } = mScrollAnimator;
+            this.email.create({
+                domContent: emailDomContent,
+                dpr,
+                resolutionMultiplier,
             });
         });
     }

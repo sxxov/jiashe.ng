@@ -13,6 +13,7 @@ import {
 	SmoothScroll,
 } from '../raw/libraries/smoothscroll.js';
 import { Sign } from './sign.js';
+import { Email } from './email.js';
 
 
 class Main {
@@ -22,17 +23,19 @@ class Main {
 	private hamburger = new Hamburger(this.miscellaneousScrollingAnimator);
 	private mWindowUtility = new WindowUtility();
 	private sign = new Sign();
+	private email = new Email();
 
 	constructor() {
 		ForUtility.addToArrayPrototype();
-		SmoothScroll.init({
-			animationTime: 500,
-			touchpadSupport: true,
-			pulseScale: 8,
-		});
 	}
 
 	async init(): Promise<void> {
+		SmoothScroll.init({
+			animationTime: 500,
+			touchpadSupport: true,
+			pulseScale: 6,
+		});
+
 		await this.mTV.init();
 		await this.addScrollToContinueFrameAnimation();
 		await this.addHeaderFrameAnimation();
@@ -81,8 +84,8 @@ class Main {
 							.padStart(3, '0');
 					}
 
-					($('.scrollCounter > h1') as HTMLElement).innerHTML = `${scrollPercent}%`;
-					[($('.scrollCounter > h2') as HTMLElement).innerHTML] = uid.split(' ');
+					($('.scrollCounter > h1') as HTMLElement).textContent = `${scrollPercent}%`;
+					[($('.scrollCounter > h2') as HTMLElement).textContent] = uid.split(' ');
 				}),
 			},
 		});
@@ -184,7 +187,7 @@ class Main {
 			},
 		});
 
-		// placeholder
+		// white solid background
 		await mScrollAnimator.add({
 			index: 1,
 			type: 'solid',
@@ -219,6 +222,68 @@ class Main {
 				invert: true,
 				totalFrames: 120,
 			},
+		});
+
+		// white solid background
+		await mScrollAnimator.add({
+			index: 2,
+			type: 'solid',
+			items: {
+				uid: 'contact_me',
+				respectDevicePixelRatio: false,
+				totalFrames: 150,
+			},
+		});
+
+		// aux contact me stuff
+		await mScrollAnimator.add({
+			index: 2,
+			type: 'lottie',
+			data: await $().getJSON('/assets/js/raw/lottie/aux contact me stuff.json'),
+			items: {
+				uid: 'aux_contact_me_stuff',
+				respectDevicePixelRatio: false,
+				invert: true,
+				totalFrames: 120,
+			},
+		});
+
+		// aux contact me dots
+		await mScrollAnimator.add({
+			index: 2,
+			type: 'lottie',
+			data: await $().getJSON('/assets/js/raw/lottie/aux contact me dots.json'),
+			items: {
+				uid: 'aux_contact_me_dots',
+				respectDevicePixelRatio: false,
+				invert: true,
+				totalFrames: 120,
+			},
+		});
+
+		// email
+		const email = await mScrollAnimator.add({
+			index: 2,
+			type: 'lottie',
+			data: await $().getJSON('/assets/js/raw/lottie/email.json'),
+			items: {
+				uid: 'email',
+				invert: true,
+				totalFrames: 120,
+			},
+		});
+
+		// email on hover
+		const emailDomContent = email.items.domContent;
+		const {
+			dpr,
+			resolutionMultiplier,
+		} = mScrollAnimator;
+
+		this.email.create({
+			domContent: emailDomContent,
+			dpr,
+			resolutionMultiplier,
 		});
 	}
 
