@@ -150,9 +150,8 @@ export class $Factory {
                 }
                 function formatValueString(valueString) {
                     return valueString
-                        .toLocaleLowerCase()
-                        .replace(/\s/g, '')
-                        .replace(/\r?\n|\r/g, '');
+                        .toLowerCase()
+                        .replace(/\s/g, '');
                 }
                 function getValueWithoutUnit(valueWithUnit) {
                     if (valueWithUnit.includes('px') === false) {
@@ -175,18 +174,20 @@ export class $Factory {
                     let attributeKeys = null;
                     let attributeValues = null;
                     if (hasParentheses) {
-                        // split between and keep every ')'
+                        // split between ')' and remove ')' in the meantime
                         valueArrayWithAttributes = formatValueString(valueStringWithAttributes)
-                            .replace(/\)/g, ')__delim__')
-                            .split('__delim__');
+                            .split(')');
                         // remove everything inside parentheses
-                        attributeKeys = valueArrayWithAttributes.map((attribute) => attribute
-                            .replace(/ *\([^)]*\) */g, ''));
-                        // remove everything before '(' and remove '(' then ')'
-                        attributeValues = valueArrayWithAttributes.map((attribute) => attribute
-                            .substr(attribute.indexOf('('))
-                            .substr(1)
-                            .slice(0, -1));
+                        // regex is slower than native functions https://jsben.ch/8GY5K
+                        attributeKeys = valueArrayWithAttributes
+                            .map((attribute) => attribute
+                            .substr(0, attribute.indexOf('('))
+                            .trim());
+                        // remove everything before and including '('
+                        // ')' was removed when we split it in 'valueArrayWithAttributes'
+                        attributeValues = valueArrayWithAttributes
+                            .map((attribute) => attribute
+                            .substr(attribute.indexOf('(') + 1));
                     }
                     else {
                         // split between and remove every ','
@@ -225,7 +226,6 @@ export class $Factory {
             on(eventsStr, ...options) {
                 const events = eventsStr.split(' ');
                 let selector = null;
-                let data = null;
                 let handler = null;
                 options.fastEach((option, i) => {
                     switch (option.constructor) {
@@ -244,7 +244,6 @@ export class $Factory {
                         default:
                             break;
                     }
-                    data = option;
                 });
                 events.fastEach((eventStr) => {
                     this.addEventListener(eventStr, (event) => {

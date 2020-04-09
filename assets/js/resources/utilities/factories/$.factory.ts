@@ -193,9 +193,8 @@ export class $Factory {
 
 				function formatValueString(valueString: string): string {
 					return valueString
-						.toLocaleLowerCase()
-						.replace(/\s/g, '')
-						.replace(/\r?\n|\r/g, '');
+						.toLowerCase()
+						.replace(/\s/g, '');
 				}
 
 				function getValueWithoutUnit(valueWithUnit: string): string {
@@ -228,22 +227,28 @@ export class $Factory {
 					let attributeValues: string[] = null;
 
 					if (hasParentheses) {
-						// split between and keep every ')'
+						// split between ')' and remove ')' in the meantime
 						valueArrayWithAttributes = formatValueString(valueStringWithAttributes)
-							.replace(/\)/g, ')__delim__')
-							.split('__delim__');
+							.split(')');
 
 						// remove everything inside parentheses
-						attributeKeys = valueArrayWithAttributes.map((attribute) => attribute
-							.replace(/ *\([^)]*\) */g, ''));
+						// regex is slower than native functions https://jsben.ch/8GY5K
+						attributeKeys = valueArrayWithAttributes
+							.map(
+								(attribute) => attribute
+									.substr(0, attribute.indexOf('('))
+									.trim(),
+							);
 
-						// remove everything before '(' and remove '(' then ')'
-						attributeValues = valueArrayWithAttributes.map((attribute) => attribute
-							.substr(
-								attribute.indexOf('('),
-							)
-							.substr(1)
-							.slice(0, -1));
+						// remove everything before and including '('
+						// ')' was removed when we split it in 'valueArrayWithAttributes'
+						attributeValues = valueArrayWithAttributes
+							.map(
+								(attribute) => attribute
+									.substr(
+										attribute.indexOf('(') + 1,
+									),
+							);
 					} else {
 						// split between and remove every ','
 						valueArrayWithAttributes = formatValueString(valueStringWithAttributes)
@@ -298,7 +303,6 @@ export class $Factory {
 			on(eventsStr: string, ...options) {
 				const events: string[] = eventsStr.split(' ');
 				let selector: string = null;
-				let data: unknown = null;
 				let handler: (event: Event) => unknown = null;
 
 				options.fastEach((option: string | string[] | ((event: Event) => unknown), i) => {
@@ -318,7 +322,6 @@ export class $Factory {
 					default:
 						break;
 					}
-					data = option;
 				});
 
 				events.fastEach((eventStr) => {
