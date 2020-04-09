@@ -11,16 +11,17 @@ export interface AnimationObject {
 	items?: {
 		__caller?: any;
 		__container?: $Object | null;
+		__framesBeforeCurrent?: number;
 		uid?: string;
 		domContent?: $Object | null;
 		offset?: number;
+		disabled?: boolean;
 		object?: {
 			lottie?: LottieObject;
 			solid?: SolidObject;
 		};
 		respectDevicePixelRatio?: boolean;
 		totalFrames?: number | null;
-		fps?: number;
 		invert?: boolean;
 		bezier?: [number, number, number, number];
 		height?: {

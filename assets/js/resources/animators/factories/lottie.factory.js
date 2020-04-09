@@ -26,7 +26,7 @@ export class LottieFactory {
                 rendererSettings: {
                     dpr: animationObject.items.respectDevicePixelRatio === false
                         ? 1
-                        : this.ctx.dpr * this.ctx.dprMultiplier,
+                        : this.ctx.dpr * this.ctx.resolutionMultiplier,
                     preserveAspectRatio: 'xMidYMid slice',
                     className: `${CoreAnimator.PREFIX} ${className} hidden`,
                 },

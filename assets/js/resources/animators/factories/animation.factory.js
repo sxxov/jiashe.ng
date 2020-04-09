@@ -4,15 +4,15 @@ export class AnimationFactory {
     constructor(thisArg) {
         this.ctx = thisArg;
     }
-    create(options, thisArg) {
+    create(options) {
         const baseObject = Object.assign({ type: undefined, index: undefined, data: undefined }, options);
-        const baseItemsObject = Object.assign({ __caller: thisArg.constructor, __container: options.type === 'null' || options.type === 'meta' ? null : this.createAndReturnNewContainerDom(options), uid: Math.round(performance.now()).toString(), domContent: null, offset: 0, object: {}, respectDevicePixelRatio: true, totalFrames: null, bezier: [0, 0, 1, 1], height: {
+        const baseItemsObject = Object.assign({ __caller: this.ctx.constructor, __container: options.type === 'null' || options.type === 'meta' ? null : this.createAndReturnNewContainerDom(options), __framesBeforeCurrent: this.ctx.getTotalFramesBeforeIndex(options.index || 0), uid: Math.round(performance.now()).toString(), domContent: null, offset: 0, disabled: false, object: {}, respectDevicePixelRatio: true, totalFrames: null, bezier: [0, 0, 1, 1], height: {
                 maximum: null,
                 minimum: null,
             }, width: {
                 maximum: null,
                 minimum: null,
-            }, fps: 120, onFrame: () => { }, onVisible: () => { }, onHidden: () => { }, onRedraw: () => { } }, options.items);
+            }, onFrame: () => { }, onVisible: () => { }, onHidden: () => { }, onRedraw: () => { } }, options.items);
         return Object.assign(Object.assign({}, baseObject), { items: baseItemsObject });
     }
     createAndReturnNewContainerDom(animationObject) {

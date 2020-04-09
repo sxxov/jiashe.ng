@@ -10,7 +10,7 @@ export class AnimationFactory {
 		this.ctx = thisArg;
 	}
 
-	create(options: AnimationObject, thisArg: CoreAnimator): AnimationObject {
+	create(options: AnimationObject): AnimationObject {
 		const baseObject: AnimationObject = {
 			type: undefined,
 			index: undefined,
@@ -19,11 +19,13 @@ export class AnimationFactory {
 		};
 
 		const baseItemsObject: AnimationObject['items'] = {
-			__caller: thisArg.constructor,
+			__caller: this.ctx.constructor,
 			__container: options.type === 'null' || options.type === 'meta' ? null : this.createAndReturnNewContainerDom(options),
+			__framesBeforeCurrent: this.ctx.getTotalFramesBeforeIndex(options.index || 0),
 			uid: Math.round(performance.now()).toString(),
 			domContent: null,
 			offset: 0,
+			disabled: false,
 			object: {},
 			respectDevicePixelRatio: true,
 			totalFrames: null,
@@ -36,7 +38,6 @@ export class AnimationFactory {
 				maximum: null,
 				minimum: null,
 			},
-			fps: 120,
 			onFrame: (): void => {},
 			onVisible: (): void => {},
 			onHidden: (): void => {},
