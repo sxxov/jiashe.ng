@@ -1,151 +1,167 @@
-import {
-	$,
-	WindowUtility,
-} from '../resources/utilities.js';
+import { $, $$, WindowUtility } from '../resources/utilities.js';
+import Swiper from '../raw/libraries/swiper/swiper.js';
+import { FrameAnimator } from '../resources/animators.js';
+import { $Object } from '../resources/utilities.types.js';
 
 export class TV {
+	private swiper: Swiper = null;
+	private screenDomSelector = '.screen';
+	private screenDom = $(this.screenDomSelector);
+	private clickFrameAnimator = new FrameAnimator();
+	private currentOnClickDom: $Object = null;
+	private mouseCatcherDom = $('.mouseCatcher');
 	private mWindowUtility = new WindowUtility();
-	public videoId = 'vwKtPoE6Ppg';
-	private screenElementId = 'screen';
-	private screenElementSelector = `#${this.screenElementId}`;
-	private tvElementSelector = '.tv';
-	private playerVars: YT.PlayerVars = {
-		loop: YT.Loop.Loop,
-		autoplay: YT.AutoPlay.AutoPlay,
-		autohide: YT.AutoHide.HideAllControls,
-		modestbranding: YT.ModestBranding.Modest,
-		rel: YT.RelatedVideos.Hide,
-		showinfo: YT.ShowInfo.Hide,
-		controls: YT.Controls.Hide,
-		disablekb: YT.KeyboardControls.Disable,
-		enablejsapi: YT.JsApi.Enable,
-	};
 
-	async init(): Promise<void> {
-		if (navigator.onLine === false) {
+	private cachedMousePosition: {
+		clientX: number;
+		clientY: number;
+	} = null;
+
+	private mouseCatcherScaleResetTimeoutId: number = null;
+	private mouseCatcherOverrideScale = false;
+
+	public async create(): Promise<void> {
+		$(window).on('load resize', () => this.onWindowResize.call(this));
+
+		if (document.readyState === 'loading') {
+			await new Promise((resolve) => $(window).on('load', resolve));
+		}
+
+		this.swiper = new Swiper(
+			this.screenDomSelector,
+			{
+				pagination: {
+					el: '.swiper-pagination',
+					clickable: true,
+				},
+				navigation: {
+					nextEl: '.swiper-button-next',
+					prevEl: '.swiper-button-prev',
+				},
+				loop: true,
+				autoplay: {
+					delay: 5000,
+				},
+				speed: 500,
+				hashNavigation: {
+					watchState: true,
+				},
+			},
+		);
+
+		this.clickFrameAnimator.add({
+			index: 0,
+			type: 'null',
+			items: {
+				totalFrames: 30,
+				onFrame: (animation, frame): void => {
+					const domContent = this.currentOnClickDom;
+					const {
+						totalFrames,
+					} = animation.items;
+
+					domContent.css({
+						opacity: Math.ceil((totalFrames - frame) / 3) % 4 ? 0 : 1,
+					});
+				},
+			},
+		});
+
+		$('.swiper-button-next').on('click', (event: MouseEvent) => this.onClick.call(this, event));
+		$('.swiper-button-prev').on('click', (event: MouseEvent) => this.onClick.call(this, event));
+
+		if (this.mWindowUtility.isMobile) {
 			return;
 		}
 
-		await this.loadApi();
+		this.mouseCatcherDom.removeClass('hidden');
 
-		const ctx = this;
+		$(document).on('mousemove', (event: MouseEvent) => this.onMouseMove.call(this, event));
 
-		new Promise((resolve) => {
-			new YT.Player(this.screenElementId, {
-				events: {
-					onReady(event: YT.PlayerEvent): void {
-						ctx.onPlayerReady.call(ctx, event);
-						resolve();
-					},
-					onStateChange(event: YT.OnStateChangeEvent): void {
-						ctx.onPlayerStateChange.call(ctx, event);
-					},
-				},
-				playerVars: this.playerVars,
-			});
+		$$('*').fastEach(
+			(node: $Object) => node
+				.on('mouseenter',
+					(event: MouseEvent) => {
+						if ($(event.target).css('cursor', { computed: true }) !== 'pointer') {
+							this.mouseCatcherOverrideScale = false;
 
-			$(window).on('load resize', () => {
-				this.onWindowResize();
-			});
-		});
+							return;
+						}
+
+						this.mouseCatcherOverrideScale = true;
+
+						clearTimeout(this.mouseCatcherScaleResetTimeoutId);
+
+						this.mouseCatcherDom.css({
+							transform: 'scale(1)',
+						});
+					}),
+		);
 	}
 
-	onWindowResize(): void {
-		const windowWidth = this.mWindowUtility.viewport.width;
-		const windowHeight = this.mWindowUtility.viewport.height;
-
-		let playerWidth = 0;
-		let playerHeight = 0;
-		let top = 0;
-		let left = 0;
-
-		// if the window is wider than 16:9 aspect ratio
-		if ((windowWidth / windowHeight) > 16 / 9) {
-			// have the height follow the width, crop the top and bottom
-			playerWidth = windowWidth;
-			playerHeight = windowWidth * (9 / 16);
-		} else {
-			// have the width follow the height, crop the sides
-			playerWidth = windowHeight * (16 / 9);
-			playerHeight = windowHeight;
-		}
-
-		// the values between the window and player
-		const heightOffset = windowHeight - playerHeight;
-		const widthOffset = windowWidth - playerWidth;
-
-		// divide by 2 to center them
-		top = heightOffset / 2;
-		left = widthOffset / 2;
-
-		const screenDom = $(this.screenElementSelector);
-		const tvDom = $(this.tvElementSelector);
-
-		// apply the 16 / 9 values onto the screen
-		screenDom.css({
-			width: playerWidth,
-			height: playerHeight,
-			top,
-			left,
-		});
-
-		// apply the window dimensions to the tv
-		tvDom.css({
-			width: playerWidth + widthOffset / 2,
-			height: playerHeight + heightOffset / 2,
-			top,
-			left,
-		});
-
+	private onWindowResize(): void {
 		const viewportHeight = this.mWindowUtility.viewport.height;
 		const innerHeight = this.mWindowUtility.inner.height;
 
 		if (viewportHeight === innerHeight) {
-			screenDom.removeClass('innerCenter');
-			tvDom.removeClass('innerCenter');
+			this.screenDom.removeClass('innerCenter');
 		} else {
-			screenDom.addClass('innerCenter');
-			tvDom.addClass('innerCenter');
+			this.screenDom.addClass('innerCenter');
 		}
 	}
 
-	onPlayerStateChange(event: YT.OnStateChangeEvent): void {
-		switch (event.data) {
-		case YT.PlayerState.PLAYING:
-			$(this.screenElementSelector).addClass('active');
-			return;
-		case YT.PlayerState.ENDED:
-			$(this.screenElementSelector).css({
-				display: 'none',
-			});
-			event.target.loadVideoById(this.videoId);
-			$(this.screenElementSelector).css({
-				display: '',
-			});
-			return;
-		default:
-			$(this.screenElementSelector).removeClass('active');
-		}
-	}
-
-	onPlayerReady(event: YT.PlayerEvent): void {
+	private onMouseMove(event: MouseEvent): void {
 		const {
-			target,
+			clientX,
+			clientY,
 		} = event;
 
-		// target.loadVideoById(this.videoId);
-		target.mute();
+		if (this.cachedMousePosition === null) {
+			this.cachedMousePosition = {
+				clientX,
+				clientY,
+			};
+		}
+
+		const {
+			clientX: cachedClientX,
+			clientY: cachedClientY,
+		} = this.cachedMousePosition;
+
+		this.mouseCatcherDom.css({
+			left: clientX - 64,
+			top: clientY - 64,
+			transform: this.mouseCatcherOverrideScale ? '' : `scale(${
+				Math.min(
+					Math.max(
+						Math.abs(clientX - cachedClientX),
+						Math.abs(clientY - cachedClientY),
+					) / 5,
+					5,
+				)})`,
+		});
+
+		this.cachedMousePosition = {
+			clientX,
+			clientY,
+		};
+
+		clearTimeout(this.mouseCatcherScaleResetTimeoutId);
+
+		this.mouseCatcherScaleResetTimeoutId = !this.mouseCatcherOverrideScale && setTimeout(() => {
+			this.mouseCatcherDom.css({
+				transform: 'scale(0.1)',
+			});
+		}, 500);
 	}
 
-	loadApi(): Promise<void> {
-		return new Promise((resolve) => {
-			(window as any).onYouTubePlayerAPIReady = resolve;
+	private onClick(event: MouseEvent): void {
+		const {
+			currentTarget,
+		} = event;
 
-			const tag = document.createElement('script');
+		this.currentOnClickDom = $(currentTarget);
 
-			tag.src = 'https://www.youtube.com/iframe_api';
-			const firstScriptTag = document.getElementsByTagName('script')[0];
-			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-		});
+		this.clickFrameAnimator.animate(0, 30);
 	}
 }
