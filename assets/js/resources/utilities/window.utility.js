@@ -8,6 +8,7 @@ export class WindowUtility {
                 inner: this.inner,
                 viewport: this.viewport,
                 client: this.client,
+                isMobile: this.isMobile,
             };
         });
     }
@@ -25,6 +26,7 @@ export class WindowUtility {
                 height: null,
                 width: null,
             },
+            isMobile: null,
         };
     }
     vh(amount) {
@@ -68,6 +70,15 @@ export class WindowUtility {
             height,
             width,
         };
+    }
+    get isMobile() {
+        if (this.cache.isMobile) {
+            return this.cache.isMobile;
+        }
+        const isMobile = window.matchMedia('(pointer: coarse)').matches
+            || window.matchMedia('(pointer: cnone)').matches;
+        this.cache.isMobile = isMobile;
+        return isMobile;
     }
 }
 //# sourceMappingURL=window.utility.js.map

@@ -1,10 +1,8 @@
 import { $Object } from '../resources/utilities.types.js';
+import { WindowUtility } from '../resources/utilities.js';
 
 export class Email {
-	get isMobile(): boolean {
-		return window.matchMedia('(pointer: coarse)').matches
-			|| window.matchMedia('(pointer: cnone)').matches;
-	}
+	private mWindowUtility = new WindowUtility();
 
 	create(options: {
 		domContent: $Object;
@@ -96,7 +94,7 @@ export class Email {
 			if (rgba.some((value) => value > 0)) {
 				isClickable = true;
 
-				if (!this.isMobile) {
+				if (!this.mWindowUtility.isMobile) {
 					domContent.css({
 						filter: 'brightness(0.5)',
 						cursor: 'pointer',

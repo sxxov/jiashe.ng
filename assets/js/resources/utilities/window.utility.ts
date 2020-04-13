@@ -14,6 +14,7 @@ export class WindowUtility {
 			height: number;
 			width: number;
 		};
+		isMobile: boolean;
 	};
 
 	constructor() {
@@ -25,6 +26,7 @@ export class WindowUtility {
 				inner: this.inner,
 				viewport: this.viewport,
 				client: this.client,
+				isMobile: this.isMobile,
 			};
 		});
 	}
@@ -43,6 +45,7 @@ export class WindowUtility {
 				height: null,
 				width: null,
 			},
+			isMobile: null,
 		};
 	}
 
@@ -105,5 +108,18 @@ export class WindowUtility {
 			height,
 			width,
 		};
+	}
+
+	get isMobile(): boolean {
+		if (this.cache.isMobile) {
+			return this.cache.isMobile;
+		}
+
+		const isMobile = window.matchMedia('(pointer: coarse)').matches
+			|| window.matchMedia('(pointer: cnone)').matches;
+
+		this.cache.isMobile = isMobile;
+
+		return isMobile;
 	}
 }

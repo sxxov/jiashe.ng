@@ -1,7 +1,7 @@
+import { WindowUtility } from '../resources/utilities.js';
 export class Email {
-    get isMobile() {
-        return window.matchMedia('(pointer: coarse)').matches
-            || window.matchMedia('(pointer: cnone)').matches;
+    constructor() {
+        this.mWindowUtility = new WindowUtility();
     }
     create(options) {
         const { domContent, dpr, resolutionMultiplier, } = options;
@@ -42,7 +42,7 @@ export class Email {
                 .data;
             if (rgba.some((value) => value > 0)) {
                 isClickable = true;
-                if (!this.isMobile) {
+                if (!this.mWindowUtility.isMobile) {
                     domContent.css({
                         filter: 'brightness(0.5)',
                         cursor: 'pointer',
