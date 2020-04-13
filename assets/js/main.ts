@@ -1,29 +1,29 @@
-import { TV } from './tv.js';
-import { Hamburger } from './hamburger.js';
+import { TV } from './core/tv.js';
+import { Hamburger } from './core/hamburger.js';
 import {
 	ScrollAnimator,
 	FrameAnimator,
-} from '../resources/animators.js';
+} from './resources/animators.js';
 import {
 	$,
 	WindowUtility,
 	ForUtility,
-} from '../resources/utilities.js';
+} from './resources/utilities.js';
 import {
 	SmoothScroll,
-} from '../raw/libraries/smoothscroll.js';
-import { Sign } from './sign.js';
-import { Email } from './email.js';
+} from './raw/libraries/smoothscroll.js';
+import { Sign } from './core/sign.js';
+import { Email } from './core/email.js';
 
 
 class Main {
 	private mTV = new TV();
 	private miscellaneousScrollingAnimator = new ScrollAnimator();
 	private scrollToContinueFrameAnimator = new FrameAnimator();
-	private hamburger = new Hamburger(this.miscellaneousScrollingAnimator);
+	private mHamburger = new Hamburger(this.miscellaneousScrollingAnimator);
 	private mWindowUtility = new WindowUtility();
-	private sign = new Sign();
-	private email = new Email();
+	private mSign = new Sign();
+	private mEmail = new Email();
 
 	constructor() {
 		ForUtility.addToArrayPrototype();
@@ -36,11 +36,13 @@ class Main {
 			pulseScale: 6,
 		});
 
-		await this.mTV.init();
+		await this.mTV.create();
+
 		await this.addScrollToContinueFrameAnimation();
 		await this.addHeaderFrameAnimation();
 		await this.addMiscellaneousScrollingAnimations();
-		this.sign.create();
+
+		this.mSign.create();
 	}
 
 	async addMiscellaneousScrollingAnimations(): Promise<void> {
@@ -178,9 +180,14 @@ class Main {
 			type: 'null',
 			items: {
 				uid: 'overlayController',
+				domContent: $('.overlay'),
 				totalFrames: 120,
 				onFrame: (animation, frame): void => {
-					$('.overlay').css({
+					const {
+						domContent,
+					} = animation.items;
+
+					domContent.css({
 						opacity: Math.min((frame / mScrollAnimator.totalFrames) * 2, 0.5),
 					});
 				},
@@ -280,7 +287,7 @@ class Main {
 			resolutionMultiplier,
 		} = mScrollAnimator;
 
-		this.email.create({
+		this.mEmail.create({
 			domContent: emailDomContent,
 			dpr,
 			resolutionMultiplier,
@@ -317,7 +324,7 @@ class Main {
 					} = animation.items;
 
 					domContent.css({
-						transform: `translateY(${this.mWindowUtility.viewport.height / 3}px)`,
+						transform: `translateY(${this.mWindowUtility.viewport.height / 3 / (window.devicePixelRatio / 2)}px)`,
 					});
 				},
 			},
@@ -335,6 +342,7 @@ class Main {
 			items: {
 				uid: 'logo',
 				totalFrames: 240,
+				offset: 80,
 				domContent: $('.logo'),
 				bezier: [0.77, 0, 0.175, 1],
 				onVisible: (animation): void => {
@@ -396,12 +404,12 @@ class Main {
 		await mFrameAnimator.add({
 			index: 0,
 			type: 'null',
-			data: await this.hamburger.getLottieData(),
+			data: await this.mHamburger.getLottieData(),
 			items: {
 				uid: 'hamburger',
 				totalFrames: 240,
-				offset: 80,
-				domContent: this.hamburger.hamburgerIconDom,
+				offset: 0,
+				domContent: this.mHamburger.hamburgerIconDom,
 				bezier: [0.77, 0, 0.175, 1],
 				onVisible: (animation): void => {
 					const {
@@ -418,7 +426,7 @@ class Main {
 						transform: 'translateY(-10000px)',
 					});
 
-					this.hamburger.create(data);
+					this.mHamburger.create(data);
 				},
 				onFrame: (animation, frame): void => {
 					const {

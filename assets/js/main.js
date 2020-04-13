@@ -7,22 +7,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { TV } from './tv.js';
-import { Hamburger } from './hamburger.js';
-import { ScrollAnimator, FrameAnimator, } from '../resources/animators.js';
-import { $, WindowUtility, ForUtility, } from '../resources/utilities.js';
-import { SmoothScroll, } from '../raw/libraries/smoothscroll.js';
-import { Sign } from './sign.js';
-import { Email } from './email.js';
+import { TV } from './core/tv.js';
+import { Hamburger } from './core/hamburger.js';
+import { ScrollAnimator, FrameAnimator, } from './resources/animators.js';
+import { $, WindowUtility, ForUtility, } from './resources/utilities.js';
+import { SmoothScroll, } from './raw/libraries/smoothscroll.js';
+import { Sign } from './core/sign.js';
+import { Email } from './core/email.js';
 class Main {
     constructor() {
         this.mTV = new TV();
         this.miscellaneousScrollingAnimator = new ScrollAnimator();
         this.scrollToContinueFrameAnimator = new FrameAnimator();
-        this.hamburger = new Hamburger(this.miscellaneousScrollingAnimator);
+        this.mHamburger = new Hamburger(this.miscellaneousScrollingAnimator);
         this.mWindowUtility = new WindowUtility();
-        this.sign = new Sign();
-        this.email = new Email();
+        this.mSign = new Sign();
+        this.mEmail = new Email();
         ForUtility.addToArrayPrototype();
     }
     init() {
@@ -32,11 +32,11 @@ class Main {
                 touchpadSupport: true,
                 pulseScale: 6,
             });
-            yield this.mTV.init();
+            yield this.mTV.create();
             yield this.addScrollToContinueFrameAnimation();
             yield this.addHeaderFrameAnimation();
             yield this.addMiscellaneousScrollingAnimations();
-            this.sign.create();
+            this.mSign.create();
         });
     }
     addMiscellaneousScrollingAnimations() {
@@ -151,9 +151,11 @@ class Main {
                 type: 'null',
                 items: {
                     uid: 'overlayController',
+                    domContent: $('.overlay'),
                     totalFrames: 120,
                     onFrame: (animation, frame) => {
-                        $('.overlay').css({
+                        const { domContent, } = animation.items;
+                        domContent.css({
                             opacity: Math.min((frame / mScrollAnimator.totalFrames) * 2, 0.5),
                         });
                     },
@@ -241,7 +243,7 @@ class Main {
             // email on hover
             const emailDomContent = email.items.domContent;
             const { dpr, resolutionMultiplier, } = mScrollAnimator;
-            this.email.create({
+            this.mEmail.create({
                 domContent: emailDomContent,
                 dpr,
                 resolutionMultiplier,
@@ -271,7 +273,7 @@ class Main {
                     onRedraw: (animation) => {
                         const { domContent, } = animation.items;
                         domContent.css({
-                            transform: `translateY(${this.mWindowUtility.viewport.height / 3}px)`,
+                            transform: `translateY(${this.mWindowUtility.viewport.height / 3 / (window.devicePixelRatio / 2)}px)`,
                         });
                     },
                 },
@@ -289,6 +291,7 @@ class Main {
                 items: {
                     uid: 'logo',
                     totalFrames: 240,
+                    offset: 80,
                     domContent: $('.logo'),
                     bezier: [0.77, 0, 0.175, 1],
                     onVisible: (animation) => {
@@ -334,12 +337,12 @@ class Main {
             yield mFrameAnimator.add({
                 index: 0,
                 type: 'null',
-                data: yield this.hamburger.getLottieData(),
+                data: yield this.mHamburger.getLottieData(),
                 items: {
                     uid: 'hamburger',
                     totalFrames: 240,
-                    offset: 80,
-                    domContent: this.hamburger.hamburgerIconDom,
+                    offset: 0,
+                    domContent: this.mHamburger.hamburgerIconDom,
                     bezier: [0.77, 0, 0.175, 1],
                     onVisible: (animation) => {
                         const { items, data, } = animation;
@@ -348,7 +351,7 @@ class Main {
                         domContent.css({
                             transform: 'translateY(-10000px)',
                         });
-                        this.hamburger.create(data);
+                        this.mHamburger.create(data);
                     },
                     onFrame: (animation, frame) => {
                         const { domContent, totalFrames, } = animation.items;
