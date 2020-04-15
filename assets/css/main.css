@@ -10,6 +10,7 @@
 @import url("/assets/css/core/sign.css");
 @import url("/assets/css/core/socials.css");
 @import url("/assets/css/core/tv.css");
+@import url("/assets/css/core/tv.channel.css");
 
 @import url("/assets/css/resources/animator.css");
 @import url("/assets/css/resources/utilities.css");
@@ -20,6 +21,12 @@
 	--easeSlowSlow: cubic-bezier(0.77, 0, 0.175, 1);
 
 	--headerPadding: calc(20px + 2vw);
+
+	--titleBottomMargin: 0.2em;
+	--titleLineHeight: 0.6em;
+	--titleFontSize: 16vw;
+	--titleLetterSpacing: -0.069em;
+	--descriptionFontSize: 0.8em;
 }
 
 body {
@@ -67,11 +74,12 @@ body {
 
 .hidden {
 	visibility: hidden !important;
+	pointer-events: none !important;
 }
 
 .height {
 	transform: translate(0px, 0px);
-	transition: transform .2s;
+	transition: transform .2s var(--easeFastSlow);
 }
 
 .innerCenter {
