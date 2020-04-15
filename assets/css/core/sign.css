@@ -1,9 +1,9 @@
 .sign > .whoAmI > .title.container > * {
-	top: calc(var(--textLineHeight) + (var(--textBottomMargin) / 2));
+	top: calc(var(--titleLineHeight) + (var(--titleBottomMargin) / 2));
 }
 
 .sign > .whatNow > .title.container > * {
-	top: calc(0px - (var(--textLineHeight) + (var(--textBottomMargin) / 2)));
+	top: calc(0px - (var(--titleLineHeight) + (var(--titleBottomMargin) / 2)));
 }
 
 .sign > .whatNow > .title.container {
@@ -32,8 +32,7 @@
 
 	pointer-events: none;
 
-	--textBottomMargin: 0.2em;
-	--textLineHeight: 0.6em;
+	overflow-x: hidden;
 }
 
 .sign > * {
@@ -63,17 +62,17 @@
 }
 
 .sign > * > .title.container > .title {
-	font-size: 16vw;
+	font-size: var(--titleFontSize);
 	font-family: "Space Mono", "Dank Mono", sans-serif;
 	font-weight: 800;
-	line-height: var(--textLineHeight);
-	letter-spacing: -0.069em;
+	line-height: var(--titleLineHeight);
+	letter-spacing: var(--titleLetterSpacing);
 
 	position: relative;
 
 	display: block;
 
-	margin: 0 0 var(--textBottomMargin) 0;
+	margin: 0 0 var(--titleBottomMargin) 0;
 }
 
 .sign > * > .title.container > .title.outline {
@@ -103,7 +102,7 @@
 	color: white;
 	background: black;
 
-	margin: 0 0 var(--textBottomMargin) 0;
+	margin: 0 0 var(--titleBottomMargin) 0;
 	padding: 40px;
 
 	box-sizing: border-box;
