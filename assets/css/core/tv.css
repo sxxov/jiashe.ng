@@ -28,7 +28,17 @@
 
 	margin: 0;
 
+	opacity: 0;
+
+	transition: 
+		opacity 0.5s var(--easeSlowSlow),
+		transform .2s var(--easeFastSlow);
+
 	z-index: inherit;
+}
+
+.tv > .screen.active {
+	opacity: 1;
 }
 
 .swiper-wrapper {
