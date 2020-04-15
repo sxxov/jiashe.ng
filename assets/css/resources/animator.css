@@ -36,6 +36,14 @@
 	-webkit-tap-highlight-color: transparent;
 }
 
+.__animate.container.active > * {
+	pointer-events: auto;
+}
+
+.__animate.container > .scrollToContinue {
+	pointer-events: none;
+}
+
 @media only screen and (max-width: 1024px) {
 	.__animate.containersWrapper > .container > * {
 		visibility: hidden;
