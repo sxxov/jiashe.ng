@@ -5,21 +5,13 @@ import {
 	$$,
 	WindowUtility,
 } from '../resources/utilities.js';
+import { Placeholderer } from './placeholderer.js';
 
 export class Sign {
 	public static PREFIX = '__sign';
+
+	private mPlaceholderer = new Placeholderer();
 	private mWindowUtility = new WindowUtility();
-
-	private placeholders = {
-		pixels: (): number => Math.floor(document.body.clientHeight
-			- this.mWindowUtility.viewport.height
-			- window.scrollY),
-	};
-
-	private descriptionDomCache: [{
-		domContent: $Object;
-		textContent: string;
-	}?] = [];
 
 	private totalFrames = 240;
 
@@ -29,13 +21,14 @@ export class Sign {
 		}
 
 		this.createAnimations();
-		this.createPlaceholderReplacers();
-	}
 
-	private createPlaceholderReplacers(): void {
-		this.cacheDescriptionPlaceholders();
-		this.updateDescriptionPlaceholders();
-		$(window).on('scroll', () => this.updateDescriptionPlaceholders.call(this));
+		this.mPlaceholderer.placeholders = {
+			pixels: (): number => Math.floor(document.body.clientHeight
+				- this.mWindowUtility.viewport.height
+				- window.scrollY),
+		};
+		this.mPlaceholderer.create();
+		$(window).on('scroll', () => this.mPlaceholderer.updateDescriptionPlaceholders());
 	}
 
 	private createAnimations(): void {
@@ -356,87 +349,6 @@ export class Sign {
 					},
 				});
 			});
-		});
-	}
-
-	private cacheDescriptionPlaceholders(): void {
-		const descriptionDoms = $$('.sign > * > .description.container > .description');
-
-		descriptionDoms.fastEach((descriptionDom: $Object) => {
-			(descriptionDom as unknown as HTMLParagraphElement)
-				.childNodes
-				.forEach((node) => {
-					const {
-						textContent,
-					} = node as HTMLElement;
-
-					if (textContent === '') {
-						return;
-					}
-
-					// +2 is to shift over '{{' & '}}' itself
-					const indexOfKeyword = textContent.indexOf('{{') + 2;
-					const indexOfRest = textContent.indexOf('}}') + 2;
-
-					// compare to 1 instead of -1 because of the +2 offset
-					if (indexOfKeyword === 1
-						|| indexOfRest === 1) {
-						return;
-					}
-
-					this.descriptionDomCache.push({
-						domContent: $(node),
-						textContent,
-					});
-				});
-		});
-	}
-
-	private updateDescriptionPlaceholders(): void {
-		this.descriptionDomCache.fastEach((descriptionDomCache: {
-			domContent: $Object;
-			textContent: string;
-		}) => {
-			const {
-				domContent,
-				textContent,
-			} = descriptionDomCache;
-
-			// +2 is to shift over '{{' & '}}' itself
-			const indexOfKeyword = textContent.indexOf('{{') + 2;
-			const indexOfRest = textContent.indexOf('}}') + 2;
-
-			if (indexOfKeyword === -1) {
-				return;
-			}
-
-			// substr is faster https://www.measurethat.net/Benchmarks/Show/2335/1/slice-vs-substr-vs-substring-with-no-end-index
-			const keyword = textContent
-				.substr(
-					indexOfKeyword,
-					indexOfRest - 2 - indexOfKeyword,
-				);
-			let result = null;
-
-			Object.keys(this.placeholders)
-				.fastEach((key: string) => {
-					if (key !== keyword) {
-						return;
-					}
-
-					const value = this.placeholders[key];
-
-					if (value
-						&& value.constructor === Function) {
-						result = value();
-
-						return;
-					}
-
-					result = value;
-				});
-
-			domContent.textContent = `${textContent.substr(0, indexOfKeyword - 2)}${result}${textContent.substr(indexOfRest)}`;
 		});
 	}
 
