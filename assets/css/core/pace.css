@@ -81,7 +81,7 @@
 	animation: pace-spinner 0.5s var(--easeSlowSlow) infinite;
 }
 
-.pace.inactive > .pace-activity::after {
+.pace.inactive > .pace-activity.deactivated::after {
 	opacity: 0;
 }
 
