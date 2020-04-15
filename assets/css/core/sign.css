@@ -141,6 +141,10 @@
 		top: 0;
 	}
 
+	.sign > .whatNow > .title.container > * {
+		top: calc((var(--titleLineHeight) + (var(--titleBottomMargin) / 2)));
+	}
+
 	.sign > .whatNow > .title.container > .title {
 		grid-row: 1 / 2;
 	}
