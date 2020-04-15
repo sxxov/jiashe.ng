@@ -10,10 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { TV } from './core/tv.js';
 import { Hamburger } from './core/hamburger.js';
 import { ScrollAnimator, FrameAnimator, } from './resources/animators.js';
-import { $, WindowUtility, ForUtility, } from './resources/utilities.js';
+import { $, $$, WindowUtility, ForUtility, } from './resources/utilities.js';
 import { SmoothScroll, } from './raw/libraries/smoothscroll.js';
 import { Sign } from './core/sign.js';
 import { Email } from './core/email.js';
+import { Lighter } from './core/lighter.js';
 class Main {
     constructor() {
         this.mTV = new TV();
@@ -23,6 +24,7 @@ class Main {
         this.mWindowUtility = new WindowUtility();
         this.mSign = new Sign();
         this.mEmail = new Email();
+        this.mLigher = new Lighter();
         ForUtility.addToArrayPrototype();
     }
     init() {
@@ -32,11 +34,12 @@ class Main {
                 touchpadSupport: true,
                 pulseScale: 6,
             });
-            yield this.mTV.create();
             yield this.addScrollToContinueFrameAnimation();
             yield this.addHeaderFrameAnimation();
             yield this.addMiscellaneousScrollingAnimations();
-            this.mSign.create();
+            yield this.mSign.create();
+            yield this.mLigher.create();
+            yield this.mTV.create(this.mLigher.docs);
         });
     }
     addMiscellaneousScrollingAnimations() {
@@ -97,6 +100,57 @@ class Main {
                 index: 0,
                 items: {
                     uid: 'who_am_i?',
+                },
+            });
+            yield mScrollAnimator.add({
+                type: null,
+                index: 0,
+                items: {
+                    uid: 'screen_controller',
+                    totalFrames: 120,
+                    bezier: [0.75, 0, 0.25, 1],
+                    onHidden: () => {
+                        $('.screen').css({
+                            transform: 'scale(1)',
+                        });
+                        $$('.splash').fastEach((node) => node
+                            .css({
+                            transform: 'scale(1)',
+                        }));
+                    },
+                    onFrame: (animation, frame) => {
+                        const { totalFrames, } = animation.items;
+                        $('.screen').css({
+                            transform: `scale(${1 + ((frame / totalFrames) / 2)})`,
+                        });
+                        $$('.splash').fastEach((node) => node
+                            .css({
+                            transform: `scale(${1 - ((frame / totalFrames) / 4)})`,
+                        }));
+                    },
+                },
+            });
+            yield mScrollAnimator.add({
+                index: 0,
+                type: 'null',
+                items: {
+                    totalFrames: 120,
+                    onFrame: (animation, frame) => {
+                        const { totalFrames, } = animation.items;
+                        let pointerEvents = 'none';
+                        if (frame > totalFrames / 2) {
+                            pointerEvents = 'auto';
+                        }
+                        mScrollAnimator.animations[0].fastEach((animationObject) => {
+                            const { domContent, } = animationObject.items;
+                            if (!domContent) {
+                                return;
+                            }
+                            domContent.css({
+                                pointerEvents,
+                            });
+                        });
+                    },
                 },
             });
             // blocks
@@ -273,7 +327,9 @@ class Main {
                     onRedraw: (animation) => {
                         const { domContent, } = animation.items;
                         domContent.css({
-                            transform: `translateY(${this.mWindowUtility.viewport.height / 3 / (window.devicePixelRatio / 2)}px)`,
+                            transform: `translateY(${this.mWindowUtility.viewport.height
+                                / 3
+                                / Math.max(window.devicePixelRatio / 2, 1)}px)`,
                         });
                     },
                 },

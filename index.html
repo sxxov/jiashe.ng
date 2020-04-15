@@ -1,8 +1,11 @@
 <!doctype html>
 <html lang="en-GB" itemscope itemtype="http://schema.org/WebPage">
 <head>
-    <script src="assets/js/raw/libraries/pace.js"></script>
+    <!-- load pace for a progress bar as soon as possible -->
+    <!-- ignore firestore requests -->
+    <script data-pace-options='{ "ajax": { "ignoreURLs": ["firestore.googleapis.com"] } }'' src="assets/js/raw/libraries/pace.js"></script>
     <link rel="stylesheet" href="/assets/css/core/pace.css">
+
 	<title>hello</title>
 	
     <!-- general meta data -->
@@ -41,10 +44,15 @@
     <meta property="og:url" content="url" />
     <meta property="og:image" content="IMAGE_TO_USE" />
     <meta property="og:description" content="DESCRIPTION">
-	<meta property="og:site_name" content="SITE_NAME" />
+    <meta property="og:site_name" content="SITE_NAME" />
+
+    <!-- doesn't support modules, load before main.js -->
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-firestore.js"></script>
     
     <link rel="stylesheet" href="assets/css/main.css">
-	<script async type="module" src="assets/js/main.js"></script>
+	<script type="module" src="assets/js/main.js"></script>
 </head>
 <body>
     <div class="__hamburgerMenu containersWrapper"></div>
@@ -71,16 +79,6 @@
                     <div class="screen height swiper-container">
                         <div class="mouseCatcher hidden"></div>
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide">Slide 1</div>
-                            <div class="swiper-slide">Slide 2</div>
-                            <div class="swiper-slide">Slide 3</div>
-                            <div class="swiper-slide">Slide 4</div>
-                            <div class="swiper-slide">Slide 5</div>
-                            <div class="swiper-slide">Slide 6</div>
-                            <div class="swiper-slide">Slide 7</div>
-                            <div class="swiper-slide">Slide 8</div>
-                            <div class="swiper-slide">Slide 9</div>
-                            <div class="swiper-slide">Slide 10</div>
                         </div>
                         <!-- Add Pagination -->
                         <div class="swiper-pagination"></div>
@@ -169,7 +167,7 @@
                 </h1>
             </div>
             <div class="whatNow description container">
-                <p class="whatNow description">
+                <p class="whatNow description replaceable">
                     Well, there isn't really a "now" or a "what".
                     <br>
                     <br>
