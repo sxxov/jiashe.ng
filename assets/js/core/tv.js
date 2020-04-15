@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { $, $$, WindowUtility } from '../resources/utilities.js';
 import Swiper from '../raw/libraries/swiper/swiper.js';
 import { FrameAnimator } from '../resources/animators.js';
+import { Placeholderer } from './placeholderer.js';
 export class TV {
     constructor() {
         this.swiper = null;
@@ -19,34 +20,19 @@ export class TV {
         this.currentOnClickDom = null;
         this.mouseCatcherDom = $('.mouseCatcher');
         this.mWindowUtility = new WindowUtility();
+        this.mPlaceholderer = new Placeholderer();
         this.cachedMousePosition = null;
         this.mouseCatcherScaleResetTimeoutId = null;
         this.mouseCatcherOverrideScale = false;
+        this.splashDoms = [];
     }
-    create() {
+    create(docs) {
         return __awaiter(this, void 0, void 0, function* () {
-            $(window).on('load resize', () => this.onWindowResize.call(this));
+            $(window).on('resize', () => this.onWindowResize.call(this));
+            this.onWindowResize();
             if (document.readyState === 'loading') {
                 yield new Promise((resolve) => $(window).on('load', resolve));
             }
-            this.swiper = new Swiper(this.screenDomSelector, {
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true,
-                },
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-                loop: true,
-                autoplay: {
-                    delay: 5000,
-                },
-                speed: 500,
-                hashNavigation: {
-                    watchState: true,
-                },
-            });
             this.clickFrameAnimator.add({
                 index: 0,
                 type: 'null',
@@ -63,24 +49,98 @@ export class TV {
             });
             $('.swiper-button-next').on('click', (event) => this.onClick.call(this, event));
             $('.swiper-button-prev').on('click', (event) => this.onClick.call(this, event));
+            yield this.createChannels(docs);
+            this.swiper = this.createSwiper();
             if (this.mWindowUtility.isMobile) {
                 return;
             }
-            this.mouseCatcherDom.removeClass('hidden');
+            this.createMouseChaser();
+            this.createSplash();
             $(document).on('mousemove', (event) => this.onMouseMove.call(this, event));
-            $$('*').fastEach((node) => node
-                .on('mouseenter', (event) => {
-                if ($(event.target).css('cursor', { computed: true }) !== 'pointer') {
-                    this.mouseCatcherOverrideScale = false;
-                    return;
-                }
-                this.mouseCatcherOverrideScale = true;
-                clearTimeout(this.mouseCatcherScaleResetTimeoutId);
-                this.mouseCatcherDom.css({
-                    transform: 'scale(1)',
-                });
-            }));
         });
+    }
+    createChannels(docs) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield docs.forAwait((doc, i) => __awaiter(this, void 0, void 0, function* () {
+                const { date, title, subtitle, images, description, } = doc.data();
+                const wrapperDom = $('.swiper-wrapper');
+                const containerDom = $(document.createElement('div'));
+                containerDom.addClass([
+                    'swiper-slide',
+                    'channel',
+                    'container',
+                ]);
+                containerDom.setAttribute('data-swiper-slide-index', i.toString());
+                containerDom.setAttribute('data-hash', title.replace(/\s/g, '_'));
+                const imageDom = $(document.createElement('img'));
+                imageDom.addClass([
+                    'channel',
+                    'splash',
+                ]);
+                [imageDom.src] = images;
+                const titleDom = $(document.createElement('h1'));
+                titleDom.addClass([
+                    'channel',
+                    'title',
+                    'white',
+                ]);
+                titleDom.textContent = title;
+                const subtitleDom = $(document.createElement('p'));
+                subtitleDom.addClass([
+                    'channel',
+                    'subtitle',
+                    'white',
+                ]);
+                subtitleDom.textContent = subtitle;
+                wrapperDom.appendChild(containerDom);
+                containerDom.appendChild(imageDom);
+                containerDom.appendChild(titleDom);
+                containerDom.appendChild(subtitleDom);
+                yield new Promise((resolve) => imageDom.on('load', resolve));
+                // activate the container after 100ms for the animation to kick in
+                setTimeout(() => this.screenDom.addClass('active'), 100);
+            }));
+            $('.pace > .pace-activity').addClass('deactivated');
+        });
+    }
+    createSplash() {
+        this.splashDoms = $$('.channel.container > .splash');
+    }
+    createSwiper() {
+        return new Swiper(this.screenDomSelector, {
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            loop: true,
+            // if the page was refered with a #, disable autoplay
+            autoplay: !window.location.href.includes('#') && {
+                delay: 5000,
+            },
+            speed: 500,
+            hashNavigation: {
+                watchState: true,
+            },
+        });
+    }
+    createMouseChaser() {
+        this.mouseCatcherDom.removeClass('hidden');
+        $$('*').fastEach((node) => node
+            .on('mouseenter', (event) => {
+            if ($(event.target).css('cursor', { computed: true }) !== 'pointer') {
+                this.mouseCatcherOverrideScale = false;
+                return;
+            }
+            this.mouseCatcherOverrideScale = true;
+            clearTimeout(this.mouseCatcherScaleResetTimeoutId);
+            this.mouseCatcherDom.css({
+                transform: 'scale(1)',
+            });
+        }));
     }
     onWindowResize() {
         const viewportHeight = this.mWindowUtility.viewport.height;
@@ -116,6 +176,11 @@ export class TV {
                 transform: 'scale(0.1)',
             });
         }, 500);
+        this.splashDoms.fastEach((splashDom) => {
+            splashDom.css({
+                transform: `translate(${(clientX - this.mWindowUtility.vw(50)) / 10}px, ${(clientY - this.mWindowUtility.vh(50)) / 10}px)`,
+            });
+        });
     }
     onClick(event) {
         const { currentTarget, } = event;

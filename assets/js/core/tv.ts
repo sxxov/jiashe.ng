@@ -2,6 +2,8 @@ import { $, $$, WindowUtility } from '../resources/utilities.js';
 import Swiper from '../raw/libraries/swiper/swiper.js';
 import { FrameAnimator } from '../resources/animators.js';
 import { $Object } from '../resources/utilities.types.js';
+import { QueryDocumentSnapshot } from '../raw/libraries/firebase/types/firestore.js';
+import { Placeholderer } from './placeholderer.js';
 
 export class TV {
 	private swiper: Swiper = null;
@@ -11,6 +13,7 @@ export class TV {
 	private currentOnClickDom: $Object = null;
 	private mouseCatcherDom = $('.mouseCatcher');
 	private mWindowUtility = new WindowUtility();
+	private mPlaceholderer = new Placeholderer();
 
 	private cachedMousePosition: {
 		clientX: number;
@@ -20,34 +23,15 @@ export class TV {
 	private mouseCatcherScaleResetTimeoutId: number = null;
 	private mouseCatcherOverrideScale = false;
 
-	public async create(): Promise<void> {
-		$(window).on('load resize', () => this.onWindowResize.call(this));
+	private splashDoms: $Object[] = [];
+
+	public async create(docs: QueryDocumentSnapshot[]): Promise<void> {
+		$(window).on('resize', () => this.onWindowResize.call(this));
+		this.onWindowResize();
 
 		if (document.readyState === 'loading') {
 			await new Promise((resolve) => $(window).on('load', resolve));
 		}
-
-		this.swiper = new Swiper(
-			this.screenDomSelector,
-			{
-				pagination: {
-					el: '.swiper-pagination',
-					clickable: true,
-				},
-				navigation: {
-					nextEl: '.swiper-button-next',
-					prevEl: '.swiper-button-prev',
-				},
-				loop: true,
-				autoplay: {
-					delay: 5000,
-				},
-				speed: 500,
-				hashNavigation: {
-					watchState: true,
-				},
-			},
-		);
 
 		this.clickFrameAnimator.add({
 			index: 0,
@@ -70,16 +54,112 @@ export class TV {
 		$('.swiper-button-next').on('click', (event: MouseEvent) => this.onClick.call(this, event));
 		$('.swiper-button-prev').on('click', (event: MouseEvent) => this.onClick.call(this, event));
 
+		await this.createChannels(docs);
+
+		this.swiper = this.createSwiper();
+
 		if (this.mWindowUtility.isMobile) {
 			return;
 		}
 
-		this.mouseCatcherDom.removeClass('hidden');
+		this.createMouseChaser();
+		this.createSplash();
 
 		$(document).on('mousemove', (event: MouseEvent) => this.onMouseMove.call(this, event));
+	}
+
+	private async createChannels(docs: QueryDocumentSnapshot[]): Promise<void> {
+		await docs.forAwait(async (doc: QueryDocumentSnapshot, i) => {
+			const {
+				date,
+				title,
+				subtitle,
+				images,
+				description,
+			} = doc.data();
+
+			const wrapperDom = $('.swiper-wrapper');
+
+			const containerDom = $(document.createElement('div'));
+			containerDom.addClass([
+				'swiper-slide',
+				'channel',
+				'container',
+			]);
+			containerDom.setAttribute('data-swiper-slide-index', i.toString());
+			containerDom.setAttribute('data-hash', title.replace(/\s/g, '_'));
+
+			const imageDom = $(document.createElement('img'));
+			imageDom.addClass([
+				'channel',
+				'splash',
+			]);
+			[(imageDom as unknown as HTMLImageElement).src] = images;
+
+			const titleDom = $(document.createElement('h1'));
+			titleDom.addClass([
+				'channel',
+				'title',
+				'white',
+			]);
+			titleDom.textContent = title;
+
+			const subtitleDom = $(document.createElement('p'));
+			subtitleDom.addClass([
+				'channel',
+				'subtitle',
+				'white',
+			]);
+			subtitleDom.textContent = subtitle;
+
+			wrapperDom.appendChild(containerDom);
+			containerDom.appendChild(imageDom);
+			containerDom.appendChild(titleDom);
+			containerDom.appendChild(subtitleDom);
+
+			await new Promise((resolve) => imageDom.on('load', resolve));
+
+			// activate the container after 100ms for the animation to kick in
+			setTimeout(() => this.screenDom.addClass('active'), 100);
+		});
+
+		$('.pace > .pace-activity').addClass('deactivated');
+	}
+
+	private createSplash(): void {
+		this.splashDoms = $$('.channel.container > .splash');
+	}
+
+	private createSwiper(): Swiper {
+		return new Swiper(
+			this.screenDomSelector,
+			{
+				pagination: {
+					el: '.swiper-pagination',
+					clickable: true,
+				},
+				navigation: {
+					nextEl: '.swiper-button-next',
+					prevEl: '.swiper-button-prev',
+				},
+				loop: true,
+				// if the page was refered with a #, disable autoplay
+				autoplay: !window.location.href.includes('#') && {
+					delay: 5000,
+				},
+				speed: 500,
+				hashNavigation: {
+					watchState: true,
+				},
+			},
+		);
+	}
+
+	private createMouseChaser(): void {
+		this.mouseCatcherDom.removeClass('hidden');
 
 		$$('*').fastEach(
-			(node: $Object) => node
+			(node) => node
 				.on('mouseenter',
 					(event: MouseEvent) => {
 						if ($(event.target).css('cursor', { computed: true }) !== 'pointer') {
@@ -153,6 +233,12 @@ export class TV {
 				transform: 'scale(0.1)',
 			});
 		}, 500);
+
+		this.splashDoms.fastEach((splashDom) => {
+			splashDom.css({
+				transform: `translate(${(clientX - this.mWindowUtility.vw(50)) / 10}px, ${(clientY - this.mWindowUtility.vh(50)) / 10}px)`,
+			});
+		});
 	}
 
 	private onClick(event: MouseEvent): void {
