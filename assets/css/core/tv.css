@@ -122,16 +122,19 @@
 .mouseCatcher {
 	position: absolute;
 
-	height: 128px;
-	width: 128px;
+	height: 0;
+	width: 0;
+
+	margin: 0;
 
 	background: white;
 	border-radius: 100%;
 
 	z-index: -1;
 
-	transform: scale(0);
-
 	transition: 
+		height 0.2s cubic-bezier(0.5, 0, 0, 1),
+		width 0.2s cubic-bezier(0.5, 0, 0, 1),
+		margin 0.2s cubic-bezier(0.5, 0, 0, 1),
 		transform 0.2s cubic-bezier(0.5, 0, 0, 1);
 }

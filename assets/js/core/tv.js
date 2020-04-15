@@ -137,8 +137,11 @@ export class TV {
             }
             this.mouseCatcherOverrideScale = true;
             clearTimeout(this.mouseCatcherScaleResetTimeoutId);
+            const magic = 256;
             this.mouseCatcherDom.css({
-                transform: 'scale(1)',
+                margin: `${-magic / 2}px 0px 0px ${-magic / 2}px`,
+                height: magic,
+                width: magic,
             });
         }));
     }
@@ -161,11 +164,20 @@ export class TV {
             };
         }
         const { clientX: cachedClientX, clientY: cachedClientY, } = this.cachedMousePosition;
-        this.mouseCatcherDom.css({
-            left: clientX - 64,
-            top: clientY - 64,
-            transform: this.mouseCatcherOverrideScale ? '' : `scale(${Math.min(Math.max(Math.abs(clientX - cachedClientX), Math.abs(clientY - cachedClientY)) / 5, 5)})`,
-        });
+        const unit = 128;
+        const differenceX = Math.abs(clientX - cachedClientX);
+        const differenceY = Math.abs(clientY - cachedClientY);
+        const scaleFactor = 30;
+        const magic = Math.max(Math.min(Math.max(differenceX, differenceY) * scaleFactor, unit * 3), unit / 2);
+        if (!this.mouseCatcherOverrideScale) {
+            this.mouseCatcherDom.css({
+                left: clientX,
+                top: clientY,
+                margin: `${-magic / 2}px 0px 0px ${-magic / 2}px`,
+                height: magic,
+                width: magic,
+            });
+        }
         this.cachedMousePosition = {
             clientX,
             clientY,
@@ -173,7 +185,9 @@ export class TV {
         clearTimeout(this.mouseCatcherScaleResetTimeoutId);
         this.mouseCatcherScaleResetTimeoutId = !this.mouseCatcherOverrideScale && setTimeout(() => {
             this.mouseCatcherDom.css({
-                transform: 'scale(0.1)',
+                margin: `${-unit / 4}px 0px 0px ${-unit / 4}px`,
+                height: unit / 2,
+                width: unit / 2,
             });
         }, 500);
         this.splashDoms.fastEach((splashDom) => {
