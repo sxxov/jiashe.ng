@@ -1,10 +1,10 @@
 /* eslint-disable no-extend-native */
 declare global {
 	interface Array<T> {
-		fastEach: Function;
-		forAwait: Function;
-		getAll: Function;
-		getSome: Function;
+		fastEach: (callback: (item: T, i: number) => void, ctx?: any) => void;
+		forAwait: (callback: (item: T, i: number) => Promise<void>, ctx?: any) => Promise<void>;
+		getAll: (callback: (item: T, i: number) => void, ctx?: any) => T[];
+		getSome: (callback: (item: T, i: number) => void, ctx?: any) => T;
 	}
 }
 
