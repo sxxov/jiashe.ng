@@ -20,8 +20,8 @@
 	--headerPadding: calc(20px + 2vw);
 
 	--titleBottomMargin: 0.2em;
-	--titleLineHeight: 8vw;
-	--titleFontSize: 8vw;
+	--titleLineHeight: 8vmax;
+	--titleFontSize: 8vmax;
 	--titleLetterSpacing: -0.069em;
 	--descriptionFontSize: 0.8em;
 }
@@ -35,7 +35,6 @@ body {
 .skin {
 	padding: calc(var(--headerPadding) * 2);
 	padding-right: 0;
-	/* padding-top: calc(var(--headerPadding) * 4); */
 
 	column-width: calc((1024px / 2) + 1px);
 	column-gap: 0;
@@ -54,6 +53,8 @@ body {
 
 	.skin {
 		height: auto;
+
+		padding-top: calc(var(--headerPadding) * 4);
 	}
 }
 
@@ -69,7 +70,9 @@ body {
 .skin > h1::after,
 .skin > h2::after {
 	content: "";
-    display: block;
+	display: block;
+	
+	padding-bottom: 16px;
     border-bottom: 1px solid #eaecef;
 }
 
@@ -81,6 +84,7 @@ body {
 .skin > h6 {
 	font-family: 'Space Mono';
 	font-weight: 800;
+	letter-spacing: var(--titleLetterSpacing);
 }
 
 .skin > h1 {
@@ -94,6 +98,7 @@ body {
 	font-family: 'Dank Mono';
 	font-style: italic;
 	font-size: var(--descriptionFontSize);
+	text-align: justify;
 
 	margin-bottom: 48px;
 }
