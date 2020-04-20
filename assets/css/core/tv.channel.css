@@ -39,6 +39,8 @@
 	-webkit-text-stroke: 1px white;
 	-webkit-text-fill-color: transparent;
 
+	-webkit-tap-highlight-color: transparent;
+
 	pointer-events: auto;
 	cursor: pointer;
 

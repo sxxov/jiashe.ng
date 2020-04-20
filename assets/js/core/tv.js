@@ -51,12 +51,12 @@ export class TV {
             $('.swiper-button-prev').on('click', (event) => this.onClick.call(this, event));
             yield this.createChannels(docs);
             this.swiper = this.createSwiper();
+            this.createTitleClicks();
             if (this.mWindowUtility.isMobile) {
                 return;
             }
-            this.createTitleClicks();
             this.createMouseChaser();
-            this.createSplash();
+            this.createSplashParallax();
             $(document).on('mousemove', (event) => this.onMouseMove.call(this, event));
         });
     }
@@ -115,9 +115,10 @@ export class TV {
                 this.onClick.call(this, event);
                 this.redirectToMarkdownViewer(url);
             });
+            console.log(titleDom);
         });
     }
-    createSplash() {
+    createSplashParallax() {
         this.splashDoms = $$('.channel.container > .splash');
     }
     createSwiper() {
