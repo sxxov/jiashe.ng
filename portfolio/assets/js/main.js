@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { $, $$, BezierUtility } from '../../../assets/js/resources/utilities.js';
 import { FrameAnimator } from '../../../assets/js/resources/animators.js';
+import { SmoothScroll, } from '../../../assets/js/raw/libraries/smoothscroll.js';
 const { marked, Darkmode, } = window;
 class Main {
     constructor() {
@@ -29,6 +30,11 @@ class Main {
     create() {
         return __awaiter(this, void 0, void 0, function* () {
             this.skinDom.innerHTML = marked(yield (yield fetch(this.uri)).text());
+            SmoothScroll.init({
+                animationTime: 500,
+                touchpadSupport: true,
+                pulseScale: 6,
+            });
             $(document.scrollingElement || document.documentElement)
                 .on('wheel', (event) => this.onVerticalScroll.call(this, event));
             $(window)

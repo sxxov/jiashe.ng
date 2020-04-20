@@ -2,6 +2,9 @@ import { MarkedNamespace } from './raw/libraries/marked/types/marked.js';
 import { $, $$, BezierUtility } from '../../../assets/js/resources/utilities.js';
 import { FrameAnimator } from '../../../assets/js/resources/animators.js';
 import { $Object } from '../../../assets/js/resources/utilities.types.js';
+import {
+	SmoothScroll,
+} from '../../../assets/js/raw/libraries/smoothscroll.js';
 
 const {
 	marked,
@@ -36,6 +39,12 @@ class Main {
 
 	public async create(): Promise<void> {
 		this.skinDom.innerHTML = marked(await (await fetch(this.uri)).text());
+
+		SmoothScroll.init({
+			animationTime: 500,
+			touchpadSupport: true,
+			pulseScale: 6,
+		});
 
 		$(document.scrollingElement || document.documentElement)
 			.on(
