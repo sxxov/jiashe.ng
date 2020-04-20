@@ -8,11 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { $, BezierUtility } from '../../../assets/js/resources/utilities.js';
+import { FrameAnimator } from '../../../assets/js/resources/animators.js';
 const { marked } = window;
 class Main {
     constructor() {
         this.skinDom = $('.skin');
         this.scrollRafId = null;
+        this.clickFrameAnimator = new FrameAnimator();
+        this.currentOnClickDom = null;
         this.mBezierUtility = new BezierUtility(0.075, 0.82, 0.165, 1);
     }
     create() {
@@ -20,6 +23,25 @@ class Main {
             this.skinDom.innerHTML = marked(yield (yield fetch(this.uri)).text());
             $(document.scrollingElement || document.documentElement)
                 .on('wheel', (event) => this.onVerticalScroll.call(this, event));
+            this.clickFrameAnimator.add({
+                index: 0,
+                type: 'null',
+                items: {
+                    totalFrames: 30,
+                    onFrame: (animation, frame) => {
+                        const domContent = this.currentOnClickDom;
+                        const { totalFrames, } = animation.items;
+                        domContent.css({
+                            opacity: Math.ceil((totalFrames - frame) / 3) % 4 ? 0 : 1,
+                        });
+                    },
+                },
+            });
+            $('.header.container.logo').on('click', (event) => __awaiter(this, void 0, void 0, function* () {
+                this.currentOnClickDom = $(event.currentTarget);
+                yield this.clickFrameAnimator.animate(0, 10);
+                window.location.href = '/';
+            }));
         });
     }
     get uri() {

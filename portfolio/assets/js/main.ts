@@ -1,5 +1,7 @@
 import { MarkedNamespace } from './raw/libraries/marked/types/marked.js';
 import { $, BezierUtility } from '../../../assets/js/resources/utilities.js';
+import { FrameAnimator } from '../../../assets/js/resources/animators.js';
+import { $Object } from '../../../assets/js/resources/utilities.types.js';
 
 const { marked }: { marked: MarkedNamespace['marked'] } = window as any;
 
@@ -9,6 +11,9 @@ class Main {
 	private expectedScrollLeft: number;
 	private cachedScrollLeft: number;
 	private scrollRafId: number = null;
+
+	private clickFrameAnimator = new FrameAnimator();
+	private currentOnClickDom: $Object = null;
 
 	private mBezierUtility = new BezierUtility(0.075, 0.82, 0.165, 1);
 
@@ -20,6 +25,32 @@ class Main {
 				'wheel',
 				(event: MouseWheelEvent) => this.onVerticalScroll.call(this, event),
 			);
+
+		this.clickFrameAnimator.add({
+			index: 0,
+			type: 'null',
+			items: {
+				totalFrames: 30,
+				onFrame: (animation, frame): void => {
+					const domContent = this.currentOnClickDom;
+					const {
+						totalFrames,
+					} = animation.items;
+
+					domContent.css({
+						opacity: Math.ceil((totalFrames - frame) / 3) % 4 ? 0 : 1,
+					});
+				},
+			},
+		});
+
+		$('.header.container.logo').on('click', async (event: MouseEvent) => {
+			this.currentOnClickDom = $(event.currentTarget);
+
+			await this.clickFrameAnimator.animate(0, 10);
+
+			window.location.href = '/';
+		});
 	}
 
 	private get uri(): string {
