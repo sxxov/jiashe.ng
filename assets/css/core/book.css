@@ -1,0 +1,33 @@
+.book.containerWrapper {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr;
+
+	align-items: center;
+
+	height: 100%;
+	width: 100%;
+
+	position: absolute;
+
+	background: white;
+
+	visibility: hidden;
+
+	z-index: 1;
+
+	transform: translateX(-200vw);
+	transition: transform 1s var(--easeSlowSlow);
+}
+
+.book.containerWrapper  > .book.container {
+	position: absolute;
+
+	width: 100%;
+	columns: 1;
+	
+	justify-self: start;
+	
+	padding: 128px;
+	box-sizing: border-box;
+}

@@ -40,6 +40,7 @@ class Main {
             yield this.mSign.create();
             yield this.mLigher.create();
             yield this.mTV.create(this.mLigher.docs);
+            window.addEventListener('headerClick', () => this.mTV.closeAllBooks());
         });
     }
     addMiscellaneousScrollingAnimations() {

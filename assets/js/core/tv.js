@@ -11,6 +11,7 @@ import { $, $$, WindowUtility } from '../resources/utilities.js';
 import Swiper from '../raw/libraries/swiper/swiper.js';
 import { FrameAnimator } from '../resources/animators.js';
 import { Placeholderer } from './placeholderer.js';
+import { Book } from './book.js';
 export class TV {
     constructor() {
         this.swiper = null;
@@ -25,6 +26,7 @@ export class TV {
         this.mouseCatcherScaleResetTimeoutId = null;
         this.mouseCatcherOverrideScale = false;
         this.splashDoms = [];
+        this.bookClosers = [];
     }
     create(docs) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -56,13 +58,14 @@ export class TV {
             }
             this.createMouseChaser();
             this.createSplash();
+            this.createBooks();
             $(document).on('mousemove', (event) => this.onMouseMove.call(this, event));
         });
     }
     createChannels(docs) {
         return __awaiter(this, void 0, void 0, function* () {
             yield docs.forAwait((doc, i) => __awaiter(this, void 0, void 0, function* () {
-                const { date, title, subtitle, images, description, } = doc.data();
+                const { date, title, subtitle, splash, markdown, } = doc.data();
                 const wrapperDom = $('.swiper-wrapper');
                 const containerDom = $(document.createElement('div'));
                 containerDom.addClass([
@@ -72,12 +75,13 @@ export class TV {
                 ]);
                 containerDom.setAttribute('data-swiper-slide-index', i.toString());
                 containerDom.setAttribute('data-hash', title.replace(/\s/g, '_'));
+                containerDom.setAttribute('data-markdown-url', markdown);
                 const imageDom = $(document.createElement('img'));
                 imageDom.addClass([
                     'channel',
                     'splash',
                 ]);
-                [imageDom.src] = images;
+                imageDom.src = splash;
                 const titleDom = $(document.createElement('h1'));
                 titleDom.addClass([
                     'channel',
@@ -96,11 +100,29 @@ export class TV {
                 containerDom.appendChild(imageDom);
                 containerDom.appendChild(titleDom);
                 containerDom.appendChild(subtitleDom);
-                yield new Promise((resolve) => imageDom.on('load', resolve));
+                if (!imageDom.complete) {
+                    yield new Promise((resolve) => imageDom.on('load', resolve));
+                }
                 // activate the container after 100ms for the animation to kick in
                 setTimeout(() => this.screenDom.addClass('active'), 100);
             }));
             $('.pace > .pace-activity').addClass('deactivated');
+        });
+    }
+    closeAllBooks() {
+        this.bookClosers.fastEach((bookCloser) => bookCloser());
+    }
+    createBooks() {
+        return __awaiter(this, void 0, void 0, function* () {
+            $$('.channel.container').fastEach((containerDom) => __awaiter(this, void 0, void 0, function* () {
+                const markdown = containerDom.getAttribute('data-markdown-url');
+                const mBook = new Book();
+                yield mBook.create(markdown, containerDom);
+                containerDom.on('click', () => {
+                    mBook.open.call(mBook);
+                });
+                this.bookClosers.push(() => mBook.close.call(mBook));
+            }));
         });
     }
     createSplash() {
@@ -169,15 +191,13 @@ export class TV {
         const differenceY = Math.abs(clientY - cachedClientY);
         const scaleFactor = 30;
         const magic = Math.max(Math.min(Math.max(differenceX, differenceY) * scaleFactor, unit * 3), unit / 2);
-        if (!this.mouseCatcherOverrideScale) {
-            this.mouseCatcherDom.css({
-                left: clientX,
-                top: clientY,
-                margin: `${-magic / 2}px 0px 0px ${-magic / 2}px`,
-                height: magic,
-                width: magic,
-            });
-        }
+        this.mouseCatcherDom.css({
+            left: clientX,
+            top: clientY,
+            margin: !this.mouseCatcherOverrideScale && `${-magic / 2}px 0px 0px ${-magic / 2}px`,
+            height: !this.mouseCatcherOverrideScale && magic,
+            width: !this.mouseCatcherOverrideScale && magic,
+        });
         this.cachedMousePosition = {
             clientX,
             clientY,

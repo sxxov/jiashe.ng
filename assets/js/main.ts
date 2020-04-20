@@ -47,6 +47,8 @@ class Main {
 
 		await this.mLigher.create();
 		await this.mTV.create(this.mLigher.docs);
+
+		window.addEventListener('headerClick', () => this.mTV.closeAllBooks());
 	}
 
 	async addMiscellaneousScrollingAnimations(): Promise<void> {

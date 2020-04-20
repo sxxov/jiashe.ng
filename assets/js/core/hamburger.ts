@@ -94,6 +94,9 @@ export class Hamburger {
 				this.currentOnClickDom = $(event.currentTarget);
 				this.clickFrameAnimator.animate(0, 30);
 
+				dispatchEvent(new Event('headerClick'));
+				console.log('sdkfjsdh');
+
 				return;
 			}
 
@@ -130,6 +133,8 @@ export class Hamburger {
 
 			return;
 		}
+
+		dispatchEvent(new Event('headerClick'));
 
 		const {
 			newState,
@@ -259,7 +264,7 @@ export class Hamburger {
 		// programatically generate css grid
 		this.hamburgerMenuContainersWrapperDom.css({
 			// add 1 if there's a pre animation (index of -1)
-			'grid-template-rows': `auto repeat(${this.ctx.animations.length + Number(!!this.ctx.animations[-1])}, min-content) auto`,
+			gridTemplateRows: `auto repeat(${this.ctx.animations.length + Number(!!this.ctx.animations[-1])}, min-content) auto`,
 		});
 
 		// append dom nodes and create animator instances for each first animation
@@ -292,8 +297,8 @@ export class Hamburger {
 			}
 
 			menuContainerDom.css({
-				'grid-row': `${processedIndex + 2} / ${processedIndex + 3}`,
-				'grid-column': '2 / 3',
+				gridRow: `${processedIndex + 2} / ${processedIndex + 3}`,
+				gridColumn: '2 / 3',
 			});
 
 			const revealFrameAnimator = new FrameAnimator();

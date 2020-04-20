@@ -86,6 +86,8 @@
 
 .swiper-button-next {
 	right: var(--headerPadding);
+
+	transition: right 1s var(--easeSlowSlow);
 }
 
 .swiper-button-next::after,
@@ -102,14 +104,18 @@
 
 .swiper-button-prev {
 	left: var(--headerPadding);
+
+	transition: left 1s var(--easeSlowSlow);
 }
 
 .swiper-button-prev:hover::after {
 	transform: translateX(-16px);
 }
 
-.swiper-container-horizontal>.swiper-pagination-bullets {
+.swiper-container-horizontal>.swiper-pagination {
 	bottom: var(--headerPadding);
+
+	transition: bottom 1s var(--easeSlowSlow);
 }
 
 @media (pointer: coarse), (pointer: cnone) {

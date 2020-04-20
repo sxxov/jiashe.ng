@@ -4,6 +4,8 @@ import { FrameAnimator } from '../resources/animators.js';
 import { $Object } from '../resources/utilities.types.js';
 import { QueryDocumentSnapshot } from '../raw/libraries/firebase/types/firestore.js';
 import { Placeholderer } from './placeholderer.js';
+import { Book } from './book.js';
+
 
 export class TV {
 	private swiper: Swiper = null;
@@ -24,6 +26,8 @@ export class TV {
 	private mouseCatcherOverrideScale = false;
 
 	private splashDoms: $Object[] = [];
+
+	private bookClosers: Function[] = [];
 
 	public async create(docs: QueryDocumentSnapshot[]): Promise<void> {
 		$(window).on('resize', () => this.onWindowResize.call(this));
@@ -64,6 +68,7 @@ export class TV {
 
 		this.createMouseChaser();
 		this.createSplash();
+		this.createBooks();
 
 		$(document).on('mousemove', (event: MouseEvent) => this.onMouseMove.call(this, event));
 	}
@@ -74,8 +79,8 @@ export class TV {
 				date,
 				title,
 				subtitle,
-				images,
-				description,
+				splash,
+				markdown,
 			} = doc.data();
 
 			const wrapperDom = $('.swiper-wrapper');
@@ -88,13 +93,14 @@ export class TV {
 			]);
 			containerDom.setAttribute('data-swiper-slide-index', i.toString());
 			containerDom.setAttribute('data-hash', title.replace(/\s/g, '_'));
+			containerDom.setAttribute('data-markdown-url', markdown);
 
 			const imageDom = $(document.createElement('img'));
 			imageDom.addClass([
 				'channel',
 				'splash',
 			]);
-			[(imageDom as unknown as HTMLImageElement).src] = images;
+			(imageDom as unknown as HTMLImageElement).src = splash;
 
 			const titleDom = $(document.createElement('h1'));
 			titleDom.addClass([
@@ -117,13 +123,33 @@ export class TV {
 			containerDom.appendChild(titleDom);
 			containerDom.appendChild(subtitleDom);
 
-			await new Promise((resolve) => imageDom.on('load', resolve));
+			if (!(imageDom as unknown as HTMLImageElement).complete) {
+				await new Promise((resolve) => imageDom.on('load', resolve));
+			}
 
 			// activate the container after 100ms for the animation to kick in
 			setTimeout(() => this.screenDom.addClass('active'), 100);
 		});
 
 		$('.pace > .pace-activity').addClass('deactivated');
+	}
+
+	public closeAllBooks(): void {
+		this.bookClosers.fastEach((bookCloser) => bookCloser());
+	}
+
+	private async createBooks(): Promise<void> {
+		$$('.channel.container').fastEach(async (containerDom) => {
+			const markdown = containerDom.getAttribute('data-markdown-url');
+
+			const mBook = new Book();
+			await mBook.create(markdown, containerDom);
+
+			containerDom.on('click', () => {
+				mBook.open.call(mBook);
+			});
+			this.bookClosers.push(() => mBook.close.call(mBook));
+		});
 	}
 
 	private createSplash(): void {
@@ -228,15 +254,13 @@ export class TV {
 			unit / 2,
 		);
 
-		if (!this.mouseCatcherOverrideScale) {
-			this.mouseCatcherDom.css({
-				left: clientX,
-				top: clientY,
-				margin: `${-magic / 2}px 0px 0px ${-magic / 2}px`,
-				height: magic,
-				width: magic,
-			});
-		}
+		this.mouseCatcherDom.css({
+			left: clientX,
+			top: clientY,
+			margin: !this.mouseCatcherOverrideScale && `${-magic / 2}px 0px 0px ${-magic / 2}px`,
+			height: !this.mouseCatcherOverrideScale && magic,
+			width: !this.mouseCatcherOverrideScale && magic,
+		});
 
 		this.cachedMousePosition = {
 			clientX,
