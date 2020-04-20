@@ -83,8 +83,10 @@ export class $Factory {
 
 				const unitlessProperties = [
 					'opacity',
-					'grid-row-start',
-					'grid-row-end',
+					'gridRowStart',
+					'gridRowEnd',
+					'columns',
+					'columnCount',
 				];
 				const stackableProperties = [{
 					name: 'transition',
@@ -326,6 +328,55 @@ export class $Factory {
 
 				events.fastEach((eventStr) => {
 					this.addEventListener(eventStr, (event: Event) => {
+						const processedEvent: Record<string, any> = event;
+
+						if (!event) {
+							return handler(undefined);
+						}
+
+						const { target } = processedEvent;
+
+						if (!target) {
+							return null;
+						}
+
+						if (selector !== null
+							&& target.matches(selector) === false) {
+							return null;
+						}
+
+						return handler.call(target, processedEvent);
+					});
+				});
+
+				return this;
+			},
+			off(eventsStr: string, ...options) {
+				const events: string[] = eventsStr.split(' ');
+				let selector: string = null;
+				let handler: (event: Event) => unknown = null;
+
+				options.fastEach((option: string | string[] | ((event: Event) => unknown), i) => {
+					switch (option.constructor) {
+					case String:
+						if (selector !== null) {
+							break;
+						}
+						selector = option as string;
+						break;
+					case Function:
+						if (i !== options.length - 1) {
+							break;
+						}
+						handler = option as (event: Event) => unknown;
+						break;
+					default:
+						break;
+					}
+				});
+
+				events.fastEach((eventStr) => {
+					this.removeEventListener(eventStr, (event: Event) => {
 						const processedEvent: Record<string, any> = event;
 
 						if (!event) {

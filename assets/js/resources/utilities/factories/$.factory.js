@@ -74,8 +74,10 @@ export class $Factory {
                 let stackable = null;
                 const unitlessProperties = [
                     'opacity',
-                    'grid-row-start',
-                    'grid-row-end',
+                    'gridRowStart',
+                    'gridRowEnd',
+                    'columns',
+                    'columnCount',
                 ];
                 const stackableProperties = [{
                         name: 'transition',
@@ -247,6 +249,47 @@ export class $Factory {
                 });
                 events.fastEach((eventStr) => {
                     this.addEventListener(eventStr, (event) => {
+                        const processedEvent = event;
+                        if (!event) {
+                            return handler(undefined);
+                        }
+                        const { target } = processedEvent;
+                        if (!target) {
+                            return null;
+                        }
+                        if (selector !== null
+                            && target.matches(selector) === false) {
+                            return null;
+                        }
+                        return handler.call(target, processedEvent);
+                    });
+                });
+                return this;
+            },
+            off(eventsStr, ...options) {
+                const events = eventsStr.split(' ');
+                let selector = null;
+                let handler = null;
+                options.fastEach((option, i) => {
+                    switch (option.constructor) {
+                        case String:
+                            if (selector !== null) {
+                                break;
+                            }
+                            selector = option;
+                            break;
+                        case Function:
+                            if (i !== options.length - 1) {
+                                break;
+                            }
+                            handler = option;
+                            break;
+                        default:
+                            break;
+                    }
+                });
+                events.fastEach((eventStr) => {
+                    this.removeEventListener(eventStr, (event) => {
                         const processedEvent = event;
                         if (!event) {
                             return handler(undefined);
