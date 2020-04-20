@@ -54,6 +54,7 @@ export class TV {
             if (this.mWindowUtility.isMobile) {
                 return;
             }
+            this.createTitleClicks();
             this.createMouseChaser();
             this.createSplash();
             $(document).on('mousemove', (event) => this.onMouseMove.call(this, event));
@@ -62,7 +63,7 @@ export class TV {
     createChannels(docs) {
         return __awaiter(this, void 0, void 0, function* () {
             yield docs.forAwait((doc, i) => __awaiter(this, void 0, void 0, function* () {
-                const { date, title, subtitle, images, description, } = doc.data();
+                const { date, title, subtitle, splash, markdown, } = doc.data();
                 const wrapperDom = $('.swiper-wrapper');
                 const containerDom = $(document.createElement('div'));
                 containerDom.addClass([
@@ -72,12 +73,13 @@ export class TV {
                 ]);
                 containerDom.setAttribute('data-swiper-slide-index', i.toString());
                 containerDom.setAttribute('data-hash', title.replace(/\s/g, '_'));
+                containerDom.setAttribute('data-markdown-url', markdown);
                 const imageDom = $(document.createElement('img'));
                 imageDom.addClass([
                     'channel',
                     'splash',
                 ]);
-                [imageDom.src] = images;
+                imageDom.src = splash;
                 const titleDom = $(document.createElement('h1'));
                 titleDom.addClass([
                     'channel',
@@ -96,11 +98,23 @@ export class TV {
                 containerDom.appendChild(imageDom);
                 containerDom.appendChild(titleDom);
                 containerDom.appendChild(subtitleDom);
-                yield new Promise((resolve) => imageDom.on('load', resolve));
+                if (!imageDom.complete) {
+                    yield new Promise((resolve) => imageDom.on('load', resolve));
+                }
                 // activate the container after 100ms for the animation to kick in
                 setTimeout(() => this.screenDom.addClass('active'), 100);
             }));
             $('.pace > .pace-activity').addClass('deactivated');
+        });
+    }
+    createTitleClicks() {
+        $$('.channel.title')
+            .fastEach((titleDom) => {
+            titleDom.on('click', (event) => {
+                const url = titleDom.parentElement.getAttribute('data-markdown-url');
+                this.onClick.call(this, event);
+                this.redirectToMarkdownViewer(url);
+            });
         });
     }
     createSplash() {
@@ -144,6 +158,14 @@ export class TV {
                 width: magic,
             });
         }));
+    }
+    redirectToMarkdownViewer(url) {
+        let uri = url;
+        // narrow down to filename only if possible
+        uri = uri.substr(uri.indexOf('jiashe.ng') + 9);
+        uri = uri.substr(uri.indexOf('/assets/md/') + 11);
+        uri = uri.substr(0, uri.indexOf('.md'));
+        window.location.href = `/portfolio#${encodeURIComponent(uri)}`;
     }
     onWindowResize() {
         const viewportHeight = this.mWindowUtility.viewport.height;

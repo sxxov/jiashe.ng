@@ -62,6 +62,7 @@ export class TV {
 			return;
 		}
 
+		this.createTitleClicks();
 		this.createMouseChaser();
 		this.createSplash();
 
@@ -74,8 +75,8 @@ export class TV {
 				date,
 				title,
 				subtitle,
-				images,
-				description,
+				splash,
+				markdown,
 			} = doc.data();
 
 			const wrapperDom = $('.swiper-wrapper');
@@ -88,13 +89,14 @@ export class TV {
 			]);
 			containerDom.setAttribute('data-swiper-slide-index', i.toString());
 			containerDom.setAttribute('data-hash', title.replace(/\s/g, '_'));
+			containerDom.setAttribute('data-markdown-url', markdown);
 
 			const imageDom = $(document.createElement('img'));
 			imageDom.addClass([
 				'channel',
 				'splash',
 			]);
-			[(imageDom as unknown as HTMLImageElement).src] = images;
+			(imageDom as unknown as HTMLImageElement).src = splash;
 
 			const titleDom = $(document.createElement('h1'));
 			titleDom.addClass([
@@ -117,13 +119,27 @@ export class TV {
 			containerDom.appendChild(titleDom);
 			containerDom.appendChild(subtitleDom);
 
-			await new Promise((resolve) => imageDom.on('load', resolve));
+			if (!(imageDom as unknown as HTMLImageElement).complete) {
+				await new Promise((resolve) => imageDom.on('load', resolve));
+			}
 
 			// activate the container after 100ms for the animation to kick in
 			setTimeout(() => this.screenDom.addClass('active'), 100);
 		});
 
 		$('.pace > .pace-activity').addClass('deactivated');
+	}
+
+	private createTitleClicks(): void {
+		$$('.channel.title')
+			.fastEach((titleDom) => {
+				titleDom.on('click', (event: MouseEvent) => {
+					const url = titleDom.parentElement.getAttribute('data-markdown-url');
+
+					this.onClick.call(this, event);
+					this.redirectToMarkdownViewer(url);
+				});
+			});
 	}
 
 	private createSplash(): void {
@@ -181,6 +197,17 @@ export class TV {
 						});
 					}),
 		);
+	}
+
+	private redirectToMarkdownViewer(url: string): void {
+		let uri = url;
+
+		// narrow down to filename only if possible
+		uri = uri.substr(uri.indexOf('jiashe.ng') + 9);
+		uri = uri.substr(uri.indexOf('/assets/md/') + 11);
+		uri = uri.substr(0, uri.indexOf('.md'));
+
+		window.location.href = `/portfolio#${encodeURIComponent(uri)}`;
 	}
 
 	private onWindowResize(): void {
