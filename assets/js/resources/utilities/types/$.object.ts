@@ -19,13 +19,13 @@ export interface $Object extends HTMLUnknownElement {
 		selector?: string | unknown | ((event: Event) => unknown),
 		data?: string | unknown | ((event: Event) => unknown),
 		handler?: string | unknown | ((event: Event) => unknown),
-	) => unknown;
+	) => $Object;
 	off: (
 		events: string,
 		selector?: string | unknown | ((event: Event) => unknown),
 		data?: string | unknown | ((event: Event) => unknown),
 		handler?: string | unknown | ((event: Event) => unknown),
-	) => unknown;
+	) => $Object;
 	getJSON: (
 		url: string,
 		callback?: (json: Record<string, any>) => unknown,
