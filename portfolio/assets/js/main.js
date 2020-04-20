@@ -55,7 +55,7 @@ class Main {
             });
             $('.header.container.logo').on('click', (event) => __awaiter(this, void 0, void 0, function* () {
                 yield this.onClick(event);
-                window.location.href = '/';
+                window.location.href = `/${window.location.href.substr(window.location.href.indexOf('#'))}`;
             }));
             $('.header.container.night').on('click', (event) => __awaiter(this, void 0, void 0, function* () {
                 this.onClick(event);

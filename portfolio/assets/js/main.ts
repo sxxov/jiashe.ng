@@ -78,7 +78,7 @@ class Main {
 		$('.header.container.logo').on('click', async (event: MouseEvent) => {
 			await this.onClick(event);
 
-			window.location.href = '/';
+			window.location.href = `/${window.location.href.substr(window.location.href.indexOf('#'))}`;
 		});
 
 		$('.header.container.night').on('click', async (event: MouseEvent) => {
