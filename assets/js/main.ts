@@ -32,7 +32,7 @@ class Main {
 		ForUtility.addToArrayPrototype();
 	}
 
-	async init(): Promise<void> {
+	async create(): Promise<void> {
 		SmoothScroll.init({
 			animationTime: 500,
 			touchpadSupport: true,
@@ -548,5 +548,5 @@ class Main {
 }
 
 (async (): Promise<void> => {
-	await (new Main()).init();
+	await (new Main()).create();
 })();

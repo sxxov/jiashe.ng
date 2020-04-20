@@ -27,7 +27,7 @@ class Main {
         this.mLigher = new Lighter();
         ForUtility.addToArrayPrototype();
     }
-    init() {
+    create() {
         return __awaiter(this, void 0, void 0, function* () {
             SmoothScroll.init({
                 animationTime: 500,
@@ -448,6 +448,6 @@ class Main {
     }
 }
 (() => __awaiter(void 0, void 0, void 0, function* () {
-    yield (new Main()).init();
+    yield (new Main()).create();
 }))();
 //# sourceMappingURL=main.js.map
