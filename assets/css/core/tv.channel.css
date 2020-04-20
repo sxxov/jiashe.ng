@@ -2,7 +2,7 @@
 	display: grid;
 
 	grid-template-columns: 1fr;
-	grid-template-rows: auto min-content min-content auto;
+	grid-template-rows: auto repeat(3, min-content) auto;
 	column-gap: 0;
 	row-gap: 0;
 	align-items: center;
@@ -26,7 +26,7 @@
 	grid-row: 2/3;
 	grid-column: 1/2;
 	
-	margin: 48px 64px 48px 64px;
+	margin: 0 64px 32px 64px;
 
 	font-family: 'Space Mono', sans-serif;
 	font-size: 10vmax;
@@ -34,22 +34,32 @@
 	letter-spacing: var(--titleLetterSpacing);
 	word-break: break-all;
 	text-align: center;
+	font-weight: 800;
 
 	-webkit-text-stroke: 1px white;
 	-webkit-text-fill-color: transparent;
 
+	pointer-events: auto;
+	cursor: pointer;
+
 	mix-blend-mode: difference;
+
+	transition: transform 0.5s var(--easeFastSlow);
+}
+
+.channel.container > .title:hover {
+	transform: scale(0.95);
 }
 
 .channel.container > .subtitle {
 	grid-row: 3/4;
 	grid-column: 1/2;
 
-	margin: 0;
+	margin: 0 0 32px 0;
 
 	font-family: 'Dank Mono', sans-serif;
 	font-style: italic;
-	font-size:var(--descriptionFontSize);
+	font-size: var(--descriptionFontSize);
 	
 	margin: 0;
 }
