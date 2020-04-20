@@ -72,7 +72,6 @@ export class TV {
 	private async createChannels(docs: QueryDocumentSnapshot[]): Promise<void> {
 		await docs.forAwait(async (doc: QueryDocumentSnapshot, i) => {
 			const {
-				date,
 				title,
 				subtitle,
 				splash,

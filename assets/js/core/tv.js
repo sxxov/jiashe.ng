@@ -63,7 +63,7 @@ export class TV {
     createChannels(docs) {
         return __awaiter(this, void 0, void 0, function* () {
             yield docs.forAwait((doc, i) => __awaiter(this, void 0, void 0, function* () {
-                const { date, title, subtitle, splash, markdown, } = doc.data();
+                const { title, subtitle, splash, markdown, } = doc.data();
                 const wrapperDom = $('.swiper-wrapper');
                 const containerDom = $(document.createElement('div'));
                 containerDom.addClass([
