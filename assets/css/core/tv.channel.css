@@ -49,6 +49,12 @@
 	transition: transform 0.5s var(--easeFastSlow);
 }
 
+@media only screen and (max-width: 1024px) {
+	.channel.container > .title {
+		user-select: none;
+	}
+}
+
 .channel.container > .title:hover {
 	transform: scale(0.95);
 }
