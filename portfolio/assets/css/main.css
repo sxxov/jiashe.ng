@@ -3,6 +3,7 @@
 
 @import url("/assets/css/resources/utilities.css");
 @import url("/assets/css/core/header.css");
+@import url("/assets/css/core/scrollBar.css");
 
 @import url("/portfolio/assets/css/core/dark.css");
 
@@ -22,8 +23,8 @@
 	--headerPadding: calc(20px + 2vw);
 
 	--titleBottomMargin: 0.2em;
-	--titleLineHeight: 8vmax;
-	--titleFontSize: 8vmax;
+	--titleLineHeight: 1em;
+	--titleFontSize: 6em;
 	--titleLetterSpacing: -0.069em;
 	--descriptionFontSize: 0.8em;
 }
@@ -32,6 +33,10 @@ body {
 	margin: 0;
 
 	overflow: scroll hidden;
+}
+
+body::-webkit-scrollbar-thumb {
+	background-color: #0b0c0d;
 }
 
 .skin {
@@ -91,7 +96,7 @@ body {
 .skin > h4,
 .skin > h5,
 .skin > h6 {
-	font-family: 'Space Mono';
+	font-family: 'Space Mono', sans-serif;
 	font-weight: 800;
 	letter-spacing: var(--titleLetterSpacing);
 }
@@ -104,7 +109,7 @@ body {
 }
 
 .skin > p {
-	font-family: 'Dank Mono';
+	font-family: 'Dank Mono', sans-serif;
 	font-style: italic;
 	font-size: var(--descriptionFontSize);
 	text-align: justify;
