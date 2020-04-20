@@ -110,12 +110,11 @@ export class TV {
     createTitleClicks() {
         $$('.channel.title')
             .fastEach((titleDom) => {
-            titleDom.on('click', (event) => {
+            titleDom.on('click', (event) => __awaiter(this, void 0, void 0, function* () {
                 const url = titleDom.parentElement.getAttribute('data-markdown-url');
-                this.onClick.call(this, event);
+                yield this.onClick.call(this, event);
                 this.redirectToMarkdownViewer(url);
-            });
-            console.log(titleDom);
+            }));
         });
     }
     createSplashParallax() {
@@ -218,9 +217,11 @@ export class TV {
         });
     }
     onClick(event) {
-        const { currentTarget, } = event;
-        this.currentOnClickDom = $(currentTarget);
-        this.clickFrameAnimator.animate(0, 30);
+        return __awaiter(this, void 0, void 0, function* () {
+            const { currentTarget, } = event;
+            this.currentOnClickDom = $(currentTarget);
+            yield this.clickFrameAnimator.animate(0, 30);
+        });
     }
 }
 //# sourceMappingURL=tv.js.map

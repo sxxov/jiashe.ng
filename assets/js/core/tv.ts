@@ -132,14 +132,13 @@ export class TV {
 	private createTitleClicks(): void {
 		$$('.channel.title')
 			.fastEach((titleDom) => {
-				titleDom.on('click', (event: MouseEvent) => {
+				titleDom.on('click', async (event: MouseEvent) => {
 					const url = titleDom.parentElement.getAttribute('data-markdown-url');
 
-					this.onClick.call(this, event);
+					await this.onClick.call(this, event);
+
 					this.redirectToMarkdownViewer(url);
 				});
-
-				console.log(titleDom);
 			});
 	}
 
@@ -286,13 +285,13 @@ export class TV {
 		});
 	}
 
-	private onClick(event: MouseEvent): void {
+	private async onClick(event: MouseEvent): Promise<void> {
 		const {
 			currentTarget,
 		} = event;
 
 		this.currentOnClickDom = $(currentTarget);
 
-		this.clickFrameAnimator.animate(0, 30);
+		await this.clickFrameAnimator.animate(0, 30);
 	}
 }
