@@ -228,15 +228,13 @@ export class TV {
 			unit / 2,
 		);
 
-		if (!this.mouseCatcherOverrideScale) {
-			this.mouseCatcherDom.css({
-				left: clientX,
-				top: clientY,
-				margin: `${-magic / 2}px 0px 0px ${-magic / 2}px`,
-				height: magic,
-				width: magic,
-			});
-		}
+		this.mouseCatcherDom.css({
+			left: clientX,
+			top: clientY,
+			margin: !this.mouseCatcherOverrideScale && `${-magic / 2}px 0px 0px ${-magic / 2}px`,
+			height: !this.mouseCatcherOverrideScale && magic,
+			width: !this.mouseCatcherOverrideScale && magic,
+		});
 
 		this.cachedMousePosition = {
 			clientX,
