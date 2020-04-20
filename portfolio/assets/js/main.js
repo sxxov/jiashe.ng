@@ -18,6 +18,8 @@ class Main {
     create() {
         return __awaiter(this, void 0, void 0, function* () {
             this.skinDom.innerHTML = marked(yield (yield fetch(this.uri)).text());
+            $(document.scrollingElement || document.documentElement)
+                .on('wheel', (event) => this.onVerticalScroll.call(this, event));
         });
     }
     get uri() {

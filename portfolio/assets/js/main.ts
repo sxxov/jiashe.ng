@@ -14,6 +14,12 @@ class Main {
 
 	public async create(): Promise<void> {
 		this.skinDom.innerHTML = marked(await (await fetch(this.uri)).text());
+
+		$(document.scrollingElement || document.documentElement)
+			.on(
+				'wheel',
+				(event: MouseWheelEvent) => this.onVerticalScroll.call(this, event),
+			);
 	}
 
 	private get uri(): string {
