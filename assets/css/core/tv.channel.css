@@ -60,6 +60,9 @@
 	font-family: 'Dank Mono', sans-serif;
 	font-style: italic;
 	font-size: var(--descriptionFontSize);
+	text-align: center;
 	
 	margin: 0;
+
+	max-width: 50%;
 }
