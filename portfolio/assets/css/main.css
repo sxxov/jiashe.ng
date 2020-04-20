@@ -1,0 +1,87 @@
+@import url("/assets/css/raw/fonts/spaceMono.css");
+@import url("/assets/css/raw/fonts/dankMono.css");
+
+@import url("/assets/css/core/header.css");
+
+:root {
+	--easeFastSlow: cubic-bezier(0.075, 0.82, 0.165, 1);
+	--easeSlowSlow: cubic-bezier(0.77, 0, 0.175, 1);
+
+	--headerPadding: calc(20px + 2vw);
+
+	--titleBottomMargin: 0.2em;
+	--titleLineHeight: 8vw;
+	--titleFontSize: 8vw;
+	--titleLetterSpacing: -0.069em;
+	--descriptionFontSize: 0.8em;
+}
+
+body {
+	margin: 0;
+
+	overflow: scroll hidden;
+}
+
+.skin {
+	padding: calc(var(--headerPadding) * 2);
+	padding-right: 0;
+	padding-top: calc(var(--headerPadding) * 4);
+
+	column-width: calc((1024px / 2) + 1px);
+	column-gap: 0;
+
+	box-sizing: border-box;
+
+	height: 100vh;
+}
+
+@media only screen and (max-width: 1024px) {
+	body {
+		overflow: hidden scroll;
+	}
+
+	.skin {
+		height: auto;
+	}
+}
+
+.skin > * {
+	padding-right: calc(var(--headerPadding) * 2);
+}
+
+.skin > h1,
+.skin > h2 {
+    border-bottom: 0px solid grey;
+}
+
+.skin > h1::after,
+.skin > h2::after {
+	content: "";
+    display: block;
+    border-bottom: 1px solid #eaecef;
+}
+
+.skin > h1,
+.skin > h2,
+.skin > h3,
+.skin > h4,
+.skin > h5,
+.skin > h6 {
+	font-family: 'Space Mono';
+	font-weight: 800;
+}
+
+.skin > h1 {
+	font-size: var(--titleFontSize);
+	line-height: var(--titleLineHeight);
+
+	margin-bottom: 36px;
+}
+
+.skin > p {
+	font-family: 'Dank Mono';
+	font-style: italic;
+	font-size: var(--descriptionFontSize);
+
+	margin-bottom: 48px;
+}
