@@ -1,7 +1,17 @@
 @import url("/assets/css/raw/fonts/spaceMono.css");
 @import url("/assets/css/raw/fonts/dankMono.css");
 
+@import url("/assets/css/resources/utilities.css");
 @import url("/assets/css/core/header.css");
+
+@keyframes fadeIn {
+	0% {
+	  	opacity: 0;
+	}
+	100% {
+	  	opacity: 1;
+	}
+}
 
 :root {
 	--easeFastSlow: cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -25,7 +35,7 @@ body {
 .skin {
 	padding: calc(var(--headerPadding) * 2);
 	padding-right: 0;
-	padding-top: calc(var(--headerPadding) * 4);
+	/* padding-top: calc(var(--headerPadding) * 4); */
 
 	column-width: calc((1024px / 2) + 1px);
 	column-gap: 0;
@@ -33,6 +43,8 @@ body {
 	box-sizing: border-box;
 
 	height: 100vh;
+
+	animation: 0.5s var(--easeSlowSlow) 0s 1 fadeIn;
 }
 
 @media only screen and (max-width: 1024px) {
@@ -84,4 +96,8 @@ body {
 	font-size: var(--descriptionFontSize);
 
 	margin-bottom: 48px;
+}
+
+.header.containersWrapper {
+	height: 100%;
 }
