@@ -7,22 +7,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { $, BezierUtility } from '../../../assets/js/resources/utilities.js';
+import { $, $$, BezierUtility } from '../../../assets/js/resources/utilities.js';
 import { FrameAnimator } from '../../../assets/js/resources/animators.js';
-const { marked } = window;
+const { marked, Darkmode, } = window;
 class Main {
     constructor() {
         this.skinDom = $('.skin');
+        this.expectedScrollLeft = window.scrollX;
+        this.cachedScrollLeft = null;
         this.scrollRafId = null;
+        this.preventScrollEvent = false;
+        this.cachedScroll = {
+            x: 0,
+            y: 0,
+        };
         this.clickFrameAnimator = new FrameAnimator();
         this.currentOnClickDom = null;
         this.mBezierUtility = new BezierUtility(0.075, 0.82, 0.165, 1);
+        this.darkMode = new Darkmode();
     }
     create() {
         return __awaiter(this, void 0, void 0, function* () {
             this.skinDom.innerHTML = marked(yield (yield fetch(this.uri)).text());
             $(document.scrollingElement || document.documentElement)
                 .on('wheel', (event) => this.onVerticalScroll.call(this, event));
+            $(window)
+                .on('scroll', () => {
+                this.onScroll.call(this);
+                if (this.preventScrollEvent) {
+                    return;
+                }
+                this.expectedScrollLeft = window.scrollX;
+            });
             this.clickFrameAnimator.add({
                 index: 0,
                 type: 'null',
@@ -38,9 +54,12 @@ class Main {
                 },
             });
             $('.header.container.logo').on('click', (event) => __awaiter(this, void 0, void 0, function* () {
-                this.currentOnClickDom = $(event.currentTarget);
-                yield this.clickFrameAnimator.animate(0, 10);
+                yield this.onClick(event);
                 window.location.href = '/';
+            }));
+            $('.header.container.night').on('click', (event) => __awaiter(this, void 0, void 0, function* () {
+                this.onClick(event);
+                this.darkMode.toggle();
             }));
         });
     }
@@ -50,6 +69,26 @@ class Main {
         uri += uri.substr(-3) === '.md' ? '' : '.md';
         uri = `/assets/md/${uri}`;
         return uri;
+    }
+    onClick(event) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.currentOnClickDom = $(event.currentTarget);
+            yield this.clickFrameAnimator.animate(0, 30);
+        });
+    }
+    onScroll() {
+        const { scrollY, scrollX, } = window;
+        const { x, y, } = this.cachedScroll;
+        this.cachedScroll = {
+            x: scrollX,
+            y: scrollY,
+        };
+        if (scrollX - x > 0
+            || scrollY - y > 0) {
+            $$('.header.container.logo, .header.container.night').fastEach((node) => node.removeClass('active'));
+            return;
+        }
+        $$('.header.container.logo, .header.container.night').fastEach((node) => node.addClass('active'));
     }
     onVerticalScroll(event) {
         if (!event.deltaY) {
@@ -61,6 +100,7 @@ class Main {
         currentTarget.scrollLeft = this.expectedScrollLeft;
         if (currentTarget.scrollLeft !== this.expectedScrollLeft) {
             this.expectedScrollLeft = Number(currentTarget.scrollLeft);
+            this.preventScrollEvent = false;
             return;
         }
         this.cachedScrollLeft = this.expectedScrollLeft;
@@ -69,9 +109,11 @@ class Main {
         const handler = () => {
             const magic = this.mBezierUtility.getValue((Math.abs(i))
                 / Math.abs(delta)) * delta;
+            this.preventScrollEvent = true;
             switch (true) {
                 case delta < 0: {
                     if (i < delta) {
+                        this.preventScrollEvent = false;
                         return;
                     }
                     i -= 2;
@@ -79,6 +121,7 @@ class Main {
                 }
                 case delta > 0: {
                     if (i > delta) {
+                        this.preventScrollEvent = false;
                         return;
                     }
                     i += 2;
