@@ -21,3 +21,11 @@
 	background: none;
 	mix-blend-mode: normal;
 }
+
+body.darkmode--activated {
+	background-color: #0b0c0d;
+}
+
+body.darkmode--activated::-webkit-scrollbar-thumb {
+	background-color: #eaecef;  
+}
