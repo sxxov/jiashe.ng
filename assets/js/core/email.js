@@ -7,7 +7,8 @@ export class Email {
         const { domContent, dpr, resolutionMultiplier, } = options;
         const resolutionModifier = dpr * resolutionMultiplier;
         let isClickable = false;
-        domContent.on('mousemove touchmove', (event) => {
+        domContent
+            .on('mousemove touchmove', (event) => {
             const { clientX, clientY, } = event;
             if (!clientX
                 || !clientY) {
@@ -55,7 +56,7 @@ export class Email {
                 filter: 'brightness(1)',
                 cursor: '',
             });
-        });
+        }, { passive: true });
         domContent.on('click', () => isClickable && window.open('mailto:_@jiashe.ng'));
     }
 }
