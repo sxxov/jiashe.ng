@@ -17,8 +17,8 @@ export interface $Object extends HTMLUnknownElement {
 	on: (
 		events: string,
 		selector?: string | unknown | ((event: Event) => unknown),
-		data?: string | unknown | ((event: Event) => unknown),
 		handler?: string | unknown | ((event: Event) => unknown),
+		eventOptions?: EventListenerOptions,
 	) => $Object;
 	off: (
 		events: string,

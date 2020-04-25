@@ -229,19 +229,23 @@ export class $Factory {
                 const events = eventsStr.split(' ');
                 let selector = null;
                 let handler = null;
-                options.fastEach((option, i) => {
+                let eventOptions = {};
+                options.fastEach((option) => {
                     switch (option.constructor) {
                         case String:
-                            if (selector !== null) {
-                                break;
+                            if (selector === null) {
+                                selector = option;
                             }
-                            selector = option;
                             break;
                         case Function:
-                            if (i !== options.length - 1) {
-                                break;
+                            if (handler === null) {
+                                handler = option;
                             }
-                            handler = option;
+                            break;
+                        case Object:
+                            if (Object.keys(eventOptions).length === 0) {
+                                eventOptions = option;
+                            }
                             break;
                         default:
                             break;
@@ -262,7 +266,7 @@ export class $Factory {
                             return null;
                         }
                         return handler.call(target, processedEvent);
-                    });
+                    }, eventOptions);
                 });
                 return this;
             },

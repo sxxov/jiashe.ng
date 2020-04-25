@@ -306,20 +306,24 @@ export class $Factory {
 				const events: string[] = eventsStr.split(' ');
 				let selector: string = null;
 				let handler: (event: Event) => unknown = null;
+				let eventOptions: EventListenerOptions = {};
 
-				options.fastEach((option: string | string[] | ((event: Event) => unknown), i) => {
+				options.fastEach((option: string | string[] | ((event: Event) => unknown)) => {
 					switch (option.constructor) {
 					case String:
-						if (selector !== null) {
-							break;
+						if (selector === null) {
+							selector = option as string;
 						}
-						selector = option as string;
 						break;
 					case Function:
-						if (i !== options.length - 1) {
-							break;
+						if (handler === null) {
+							handler = option as (event: Event) => unknown;
 						}
-						handler = option as (event: Event) => unknown;
+						break;
+					case Object:
+						if (Object.keys(eventOptions).length === 0) {
+							eventOptions = option as EventListenerOptions;
+						}
 						break;
 					default:
 						break;
@@ -327,26 +331,30 @@ export class $Factory {
 				});
 
 				events.fastEach((eventStr) => {
-					this.addEventListener(eventStr, (event: Event) => {
-						const processedEvent: Record<string, any> = event;
+					this.addEventListener(
+						eventStr,
+						(event: Event) => {
+							const processedEvent: Record<string, any> = event;
 
-						if (!event) {
-							return handler(undefined);
-						}
+							if (!event) {
+								return handler(undefined);
+							}
 
-						const { target } = processedEvent;
+							const { target } = processedEvent;
 
-						if (!target) {
-							return null;
-						}
+							if (!target) {
+								return null;
+							}
 
-						if (selector !== null
+							if (selector !== null
 							&& target.matches(selector) === false) {
-							return null;
-						}
+								return null;
+							}
 
-						return handler.call(target, processedEvent);
-					});
+							return handler.call(target, processedEvent);
+						},
+						eventOptions,
+					);
 				});
 
 				return this;
