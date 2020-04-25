@@ -29,8 +29,18 @@ export class Lighter {
             });
             this.analytics = firebase.analytics();
             this.firestore = firebase.firestore();
-            this.docs = (yield this.firestore.collection('portfolio').get()).docs;
+            this.docs = (yield this.firestore.collection(this.collection).get()).docs;
         });
+    }
+    // use the first subdomain to figure out which collection to browse to
+    get collection() {
+        const { href, } = window.location;
+        const subdomain = href.substring(href.indexOf('://') + 3, href.indexOf('.'));
+        if (!Number.isNaN(Number(subdomain))
+            || subdomain === 'jiashe') {
+            return 'portfolio';
+        }
+        return subdomain;
     }
 }
 //# sourceMappingURL=lighter.js.map
