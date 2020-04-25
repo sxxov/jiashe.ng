@@ -122,11 +122,11 @@ export class TV {
 				await new Promise((resolve) => imageDom.on('load', resolve));
 			}
 
+			$('.pace > .pace-activity').addClass('deactivated');
+
 			// activate the container after 100ms for the animation to kick in
 			setTimeout(() => this.screenDom.addClass('active'), 100);
 		});
-
-		$('.pace > .pace-activity').addClass('deactivated');
 	}
 
 	private createTitleClicks(): void {
