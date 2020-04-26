@@ -87,7 +87,7 @@ class Main {
 		$('.header.container.logo').on('click', async (event: MouseEvent) => {
 			await this.onClick(event);
 
-			window.location.href = `/${window.location.href.substr(window.location.href.indexOf('#'))}`;
+			window.history.back();
 		});
 
 		$('.header.container.night').on('click', async (event: MouseEvent) => {
@@ -102,7 +102,7 @@ class Main {
 
 		uri = uri.substr(uri.indexOf('#') + 1);
 		uri += uri.substr(-3) === '.md' ? '' : '.md';
-		uri = `/assets/md/${uri}`;
+		uri = `/assets/md/${decodeURIComponent(uri)}`;
 
 		return uri;
 	}

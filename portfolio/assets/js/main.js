@@ -61,7 +61,7 @@ class Main {
             });
             $('.header.container.logo').on('click', (event) => __awaiter(this, void 0, void 0, function* () {
                 yield this.onClick(event);
-                window.location.href = `/${window.location.href.substr(window.location.href.indexOf('#'))}`;
+                window.history.back();
             }));
             $('.header.container.night').on('click', (event) => __awaiter(this, void 0, void 0, function* () {
                 this.onClick(event);
@@ -73,7 +73,7 @@ class Main {
         let uri = String(window.location.href);
         uri = uri.substr(uri.indexOf('#') + 1);
         uri += uri.substr(-3) === '.md' ? '' : '.md';
-        uri = `/assets/md/${uri}`;
+        uri = `/assets/md/${decodeURIComponent(uri)}`;
         return uri;
     }
     onClick(event) {
