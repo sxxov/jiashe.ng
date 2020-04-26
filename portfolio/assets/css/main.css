@@ -2,9 +2,9 @@
 @import url("/assets/css/raw/fonts/dankMono.css");
 
 @import url("/assets/css/resources/utilities.css");
-@import url("/assets/css/core/header.css");
 @import url("/assets/css/core/scrollBar.css");
 
+@import url("/portfolio/assets/css/core/header.css");
 @import url("/portfolio/assets/css/core/dark.css");
 
 @keyframes fadeIn {
@@ -43,7 +43,7 @@ body::-webkit-scrollbar-thumb {
 	padding: calc(var(--headerPadding) * 3);
 	padding-right: 0;
 
-	column-width: calc((1024px - (var(--headerPadding) * 2)) / 2);
+	column-width: calc((1024px - (var(--headerPadding) * 3)) / 1.5);
 	column-gap: 0;
 
 	box-sizing: border-box;
@@ -62,6 +62,8 @@ body::-webkit-scrollbar-thumb {
 	.skin {
 		height: auto;
 
+		column-width: unset;
+
 		padding: calc(var(--headerPadding) * 2);
 		padding-right: 0;
 		padding-top: calc(var(--headerPadding) * 4);
@@ -76,13 +78,13 @@ body::-webkit-scrollbar-thumb {
 	padding-right: calc(var(--headerPadding) * 3);
 }
 
-.skin > h1,
-.skin > h2 {
+.skin h1,
+.skin h2 {
     border-bottom: 0px solid grey;
 }
 
-.skin > h1::after,
-.skin > h2::after {
+.skin h1::after,
+.skin h2::after {
 	content: "";
 	display: block;
 	
@@ -90,67 +92,181 @@ body::-webkit-scrollbar-thumb {
     border-bottom: 1px solid #eaecef;
 }
 
-.skin > h1,
-.skin > h2,
-.skin > h3,
-.skin > h4,
-.skin > h5,
-.skin > h6 {
-	font-family: 'Space Mono', sans-serif;
+.skin h1,
+.skin h2,
+.skin h3,
+.skin h4,
+.skin h5,
+.skin h6 {
+	font-family: 'Space Mono', sans-serif, Apple Color Emoji, Segoe UI Emoji;
 	font-weight: 800;
 	letter-spacing: var(--titleLetterSpacing);
 }
 
-.skin > h1 {
+.skin h1 {
 	font-size: var(--titleFontSize);
 	line-height: var(--titleLineHeight);
 
 	margin-bottom: 36px;
 }
 
-.skin > p {
-	font-family: 'Dank Mono', sans-serif;
+.skin p {
+	font-family: 'Dank Mono', sans-serif, Apple Color Emoji, Segoe UI Emoji;
 	font-style: italic;
 	font-size: var(--descriptionFontSize);
 	text-align: justify;
-
-	margin-bottom: 48px;
 }
 
-.header.containersWrapper {
+.skin li > p {
+	font-size: unset;
+}
+
+.skin li {
+	font-family: 'Dank Mono', sans-serif, Apple Color Emoji, Segoe UI Emoji;
+	font-style: italic;
+	text-align: justify;
+	font-size: var(--descriptionFontSize);
+
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+
+.skin ol, 
+.skin ul {
+	padding-left: 1em;
+}
+
+.skin a {
+	color: grey;
+
+	display: block;
+
+	transform: matrix(1, 0, 0, 1, 0, 0);
+}
+
+.skin a:hover {
+	text-decoration: none;
+}
+
+.skin a::before {
+	content: "← ";
+}
+
+.skin a::after {
+	background: none repeat scroll 0 0 transparent;
+	left: 0;
+	bottom: -9px;
+	content: "";
+	display: block;
+	height: 1px;
+	position: absolute;
+	background: grey;
+	transition: width 0.3s var(--easeSlowSlow);
+	width: 0;
+}
+
+.skin a:hover::after {
+	width: 100%;
+}
+
+.skin x {
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 100%;
 	height: 100%;
 }
 
-.header.container {
-	transition: transform 0.5s var(--easeSlowSlow);
-}
-
-.header.container.night {
-	cursor: pointer;
-}
-
-.header.container.active {
-	transform: translate(0px, 0px) !important;
-}
-
-@media only screen and (max-width: 1024px) {
-	.header.container.logo,
-	.header.container.night {
-		transform: translateY(calc(-8px - var(--headerPadding) * 2));
+/* firefox doesn't correctly set height %'s with columns */
+@-moz-document url-prefix() {
+	.skin x {
+	  	height: calc(100vh - 48px - 48px - 48px - var(--headerPadding) * 3);
 	}
 }
 
-.header.container.night {
-	grid-column-start: preRightCorner;
-    grid-column-end: rightCorner;
-    grid-row-start: preHeader;
-	grid-row-end: header;
-	
+.skin x.hs-left * {
 	align-self: flex-start;
-	justify-self: end;
+	text-align: left;
+}
 
-	width: 66.666666667%;
-	height: 56.666666667%;
+.skin x.hs-centre * {
+	align-self: center;
+	text-align: center;
+}
+
+.skin x.hs-right * {
+	align-self: flex-end;
+	text-align: end;
+}
+
+.skin x > * {
+	height: calc(100% - 16px);
+	width: max-content;
+	max-width: 100%;
+	max-height: max-content;
+}
+
+/* firefox treats 100% as the absolute container size even with display: inline-flex, 
+	instead of scaling them down like chrome,
+	but, it doesn't have the image-slicing & disappearing bugs in chrome,
+	so we can just make it so that it's in the correct position */
+@-moz-document url-prefix() {
+	.skin x > * {
+		height: unset;
+
+		margin-bottom: 0;
+		padding-bottom: 16px;
+	}
+}
+
+.skin img {
+	max-height: 100%;
+}
+
+@media only screen and (max-width: 1024px) {
+	.skin img {
+		padding-top: 48px;
+		padding-bottom: 48px;
+		
+		background-color: transparent;
+	}
+}
+
+.skin iframe {
+	padding-bottom: 24px;
+}
+
+@media only screen and (max-width: 1024px) {
+	.skin x.hs-left *,
+	.skin x.hs-centre *,
+	.skin x.hs-right * {
+		align-self: unset;
+		text-align: unset;
+	}
+
+	.skin x.vs-left * {
+		align-self: flex-start;
+		text-align: left;
+	}
+	
+	.skin x.vs-centre * {
+		align-self: center;
+		text-align: center;
+	}
+	
+	.skin x.vs-right * {
+		align-self: flex-end;
+		text-align: end;
+	}
+}
+
+@media only screen and (max-width: 1024px) {
+	.skin bruh {
+		height: 96px;
+		display: block;
+	}
 }
 
 .white {
