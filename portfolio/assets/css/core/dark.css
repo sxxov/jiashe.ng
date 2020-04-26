@@ -12,8 +12,8 @@
 	color: #eaecef;
 }
 
-.darkmode--activated > .skin > h1::after, 
-.darkmode--activated > .skin > h2::after {
+.darkmode--activated > .skin h1::after, 
+.darkmode--activated > .skin h2::after {
 	border-bottom: 1px solid #24292e;
 }
 
