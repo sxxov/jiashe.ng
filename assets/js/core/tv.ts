@@ -127,6 +127,8 @@ export class TV {
 			// activate the container after 100ms for the animation to kick in
 			setTimeout(() => this.screenDom.addClass('active'), 100);
 		});
+
+		$('.pace > .pace-activity').addClass('deactivated');
 	}
 
 	private createTitleClicks(): void {
@@ -203,9 +205,9 @@ export class TV {
 		let uri = url;
 
 		// narrow down to filename only if possible
-		uri = uri.substr(uri.indexOf('jiashe.ng') + 9);
-		uri = uri.substr(uri.indexOf('/assets/md/') + 11);
-		uri = uri.substr(0, uri.indexOf('.md'));
+		// uri = !uri.includes('jiashe.ng') ? uri : uri.substr(uri.indexOf('jiashe.ng') + 9);
+		// uri = !uri.includes('/assets/md/') ? uri : uri.substr(uri.indexOf('/assets/md/') + 11);
+		uri = !uri.includes('.md') ? uri : uri.substr(0, uri.indexOf('.md'));
 
 		window.location.href = `/portfolio#${encodeURIComponent(uri)}`;
 	}
