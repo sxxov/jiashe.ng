@@ -35,16 +35,28 @@ export class Lighter {
 			href,
 		} = window.location;
 
-		const subdomain = href.substring(
-			href.indexOf('://') + 3,
-			href.indexOf('.'),
-		);
+		const urlParts = href.split('/');
 
-		if (!Number.isNaN(Number(subdomain))
-			|| subdomain === 'jiashe') {
+		// remove the empty string at the end of array
+		if (urlParts[urlParts.length - 1] === '') {
+			urlParts.pop();
+		}
+
+		// remove the # items at the end of array
+		if (/#|\?/.test(urlParts[urlParts.length - 1])) {
+			urlParts.pop();
+		}
+
+		const collection = urlParts.pop();
+
+		let domain = href;
+		domain = domain.substr(domain.indexOf('//') + 2);
+		domain = domain.substr(0, domain.indexOf('/'));
+
+		if (collection.includes(domain)) {
 			return 'portfolio';
 		}
 
-		return subdomain;
+		return collection;
 	}
 }

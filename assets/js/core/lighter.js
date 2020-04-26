@@ -35,12 +35,23 @@ export class Lighter {
     // use the first subdomain to figure out which collection to browse to
     get collection() {
         const { href, } = window.location;
-        const subdomain = href.substring(href.indexOf('://') + 3, href.indexOf('.'));
-        if (!Number.isNaN(Number(subdomain))
-            || subdomain === 'jiashe') {
+        const urlParts = href.split('/');
+        // remove the empty string at the end of array
+        if (urlParts[urlParts.length - 1] === '') {
+            urlParts.pop();
+        }
+        // remove the # items at the end of array
+        if (/#|\?/.test(urlParts[urlParts.length - 1])) {
+            urlParts.pop();
+        }
+        const collection = urlParts.pop();
+        let domain = href;
+        domain = domain.substr(domain.indexOf('//') + 2);
+        domain = domain.substr(0, domain.indexOf('/'));
+        if (collection.includes(domain)) {
             return 'portfolio';
         }
-        return subdomain;
+        return collection;
     }
 }
 //# sourceMappingURL=lighter.js.map
