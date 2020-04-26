@@ -1,4 +1,4 @@
-import { MarkedNamespace } from './raw/libraries/marked/types/marked.js';
+import { OhHiMark } from './core/ohHiMark.js';
 import { $, $$, BezierUtility } from '../../../assets/js/resources/utilities.js';
 import { FrameAnimator } from '../../../assets/js/resources/animators.js';
 import { $Object } from '../../../assets/js/resources/utilities.types.js';
@@ -7,10 +7,8 @@ import {
 } from '../../../assets/js/raw/libraries/smoothscroll.js';
 
 const {
-	marked,
 	Darkmode,
 }: {
-	marked: MarkedNamespace['marked'];
 	Darkmode: any;
 } = window as any;
 
@@ -29,16 +27,17 @@ class Main {
 		x: 0,
 		y: 0,
 	};
+	private scrollVelocity = 1;
 
 	private clickFrameAnimator = new FrameAnimator();
 	private currentOnClickDom: $Object = null;
 
-	private mBezierUtility = new BezierUtility(0.075, 0.82, 0.165, 1);
+	private mBezierUtility = new BezierUtility(0, 0.55, 0.45, 1);
 
 	private darkMode = new Darkmode();
 
 	public async create(): Promise<void> {
-		this.skinDom.innerHTML = marked(await (await fetch(this.uri)).text());
+		this.skinDom.innerHTML = await OhHiMark.createFromUrl(this.uri);
 
 		SmoothScroll.init({
 			animationTime: 500,
@@ -102,7 +101,7 @@ class Main {
 
 		uri = uri.substr(uri.indexOf('#') + 1);
 		uri += uri.substr(-3) === '.md' ? '' : '.md';
-		uri = `/assets/md/${decodeURIComponent(uri)}`;
+		uri = decodeURIComponent(uri);
 
 		return uri;
 	}
@@ -144,7 +143,16 @@ class Main {
 			return;
 		}
 
-		const delta = event.deltaY + event.deltaX;
+		if (Math.sign(this.scrollVelocity) !== Math.sign(event.deltaY)) {
+			this.scrollVelocity = 0;
+		}
+
+		this.scrollVelocity += Math.sign(event.deltaY) / 10;
+		this.scrollVelocity = Math.sign(this.scrollVelocity)
+			* Math.max(Math.min(Math.abs(this.scrollVelocity), 5), 1);
+
+		// firefox has deltas of like 6-9, so just use chrome's current behaviour of snapping every 100
+		const delta = Math.sign(event.deltaY) * 100 * Math.abs(this.scrollVelocity) + event.deltaX;
 
 		cancelAnimationFrame(this.scrollRafId);
 
@@ -171,28 +179,43 @@ class Main {
 				/ Math.abs(delta),
 			) * delta;
 
+			const absoluteScrollVelocity = Math.abs(this.scrollVelocity);
+
+			if (Math.floor(absoluteScrollVelocity) === 0) {
+				return;
+			}
 
 			this.preventScrollEvent = true;
 
 			switch (true) {
 			case delta < 0: {
 				if (i < delta) {
+					this.scrollVelocity = 1;
 					this.preventScrollEvent = false;
 
 					return;
 				}
 
-				i -= 2;
+				i -= 2 * absoluteScrollVelocity;
+
+				if (i <= Math.floor(delta / 2)) {
+					this.scrollVelocity -= Math.sign(this.scrollVelocity) / 2;
+				}
 				break;
 			}
 			case delta > 0: {
 				if (i > delta) {
+					this.scrollVelocity = 1;
 					this.preventScrollEvent = false;
 
 					return;
 				}
 
-				i += 2;
+				i += 2 * absoluteScrollVelocity;
+
+				if (i >= Math.floor(delta / 2)) {
+					this.scrollVelocity -= Math.sign(this.scrollVelocity) / 2;
+				}
 				break;
 			}
 			default: {

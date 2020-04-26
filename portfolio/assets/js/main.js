@@ -7,10 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { OhHiMark } from './core/ohHiMark.js';
 import { $, $$, BezierUtility } from '../../../assets/js/resources/utilities.js';
 import { FrameAnimator } from '../../../assets/js/resources/animators.js';
 import { SmoothScroll, } from '../../../assets/js/raw/libraries/smoothscroll.js';
-const { marked, Darkmode, } = window;
+const { Darkmode, } = window;
 class Main {
     constructor() {
         this.skinDom = $('.skin');
@@ -22,14 +23,15 @@ class Main {
             x: 0,
             y: 0,
         };
+        this.scrollVelocity = 1;
         this.clickFrameAnimator = new FrameAnimator();
         this.currentOnClickDom = null;
-        this.mBezierUtility = new BezierUtility(0.075, 0.82, 0.165, 1);
+        this.mBezierUtility = new BezierUtility(0, 0.55, 0.45, 1);
         this.darkMode = new Darkmode();
     }
     create() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.skinDom.innerHTML = marked(yield (yield fetch(this.uri)).text());
+            this.skinDom.innerHTML = yield OhHiMark.createFromUrl(this.uri);
             SmoothScroll.init({
                 animationTime: 500,
                 touchpadSupport: true,
@@ -73,7 +75,7 @@ class Main {
         let uri = String(window.location.href);
         uri = uri.substr(uri.indexOf('#') + 1);
         uri += uri.substr(-3) === '.md' ? '' : '.md';
-        uri = `/assets/md/${decodeURIComponent(uri)}`;
+        uri = decodeURIComponent(uri);
         return uri;
     }
     onClick(event) {
@@ -100,7 +102,14 @@ class Main {
         if (!event.deltaY) {
             return;
         }
-        const delta = event.deltaY + event.deltaX;
+        if (Math.sign(this.scrollVelocity) !== Math.sign(event.deltaY)) {
+            this.scrollVelocity = 0;
+        }
+        this.scrollVelocity += Math.sign(event.deltaY) / 10;
+        this.scrollVelocity = Math.sign(this.scrollVelocity)
+            * Math.max(Math.min(Math.abs(this.scrollVelocity), 5), 1);
+        // firefox has deltas of like 6-9, so just use chrome's current behaviour of snapping every 100
+        const delta = Math.sign(event.deltaY) * 100 * Math.abs(this.scrollVelocity) + event.deltaX;
         cancelAnimationFrame(this.scrollRafId);
         const currentTarget = $(event.currentTarget);
         currentTarget.scrollLeft = this.expectedScrollLeft;
@@ -115,22 +124,34 @@ class Main {
         const handler = () => {
             const magic = this.mBezierUtility.getValue((Math.abs(i))
                 / Math.abs(delta)) * delta;
+            const absoluteScrollVelocity = Math.abs(this.scrollVelocity);
+            if (Math.floor(absoluteScrollVelocity) === 0) {
+                return;
+            }
             this.preventScrollEvent = true;
             switch (true) {
                 case delta < 0: {
                     if (i < delta) {
+                        this.scrollVelocity = 1;
                         this.preventScrollEvent = false;
                         return;
                     }
-                    i -= 2;
+                    i -= 2 * absoluteScrollVelocity;
+                    if (i <= Math.floor(delta / 2)) {
+                        this.scrollVelocity -= Math.sign(this.scrollVelocity) / 2;
+                    }
                     break;
                 }
                 case delta > 0: {
                     if (i > delta) {
+                        this.scrollVelocity = 1;
                         this.preventScrollEvent = false;
                         return;
                     }
-                    i += 2;
+                    i += 2 * absoluteScrollVelocity;
+                    if (i >= Math.floor(delta / 2)) {
+                        this.scrollVelocity -= Math.sign(this.scrollVelocity) / 2;
+                    }
                     break;
                 }
                 default: {
