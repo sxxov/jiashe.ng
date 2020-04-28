@@ -141,13 +141,13 @@ Something went wrong!
 One of these could've happened:
 * the url is invalid
 * I did something wrong in the code
-* google is offline (???)
-* the world is ending (!!!)
+* you are offline
+* the world is ending
 /
 [You can use me as a button to go back to safety!](javascript:history.back())
 		`;
 
-		if (fetched.ok) {
+		if (fetched?.ok) {
 			md = await fetched.text();
 		}
 
