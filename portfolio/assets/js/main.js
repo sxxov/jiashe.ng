@@ -74,6 +74,8 @@ class Main {
     get uri() {
         let uri = String(window.location.href);
         uri = uri.substr(uri.indexOf('#') + 1);
+        uri = !uri.includes('_') ? uri : uri.replace(/_/g, '/');
+        uri = !uri.includes('//') ? uri : uri.replace(/\/\//g, '_');
         uri += uri.substr(-3) === '.md' ? '' : '.md';
         uri = decodeURIComponent(uri);
         return uri;

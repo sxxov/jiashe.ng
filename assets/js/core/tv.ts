@@ -205,8 +205,8 @@ export class TV {
 		let uri = url;
 
 		// narrow down to filename only if possible
-		// uri = !uri.includes('jiashe.ng') ? uri : uri.substr(uri.indexOf('jiashe.ng') + 9);
-		// uri = !uri.includes('/assets/md/') ? uri : uri.substr(uri.indexOf('/assets/md/') + 11);
+		uri = !uri.includes('_') ? uri : uri.replace(/_/g, '__');
+		uri = !uri.includes('/') ? uri : uri.replace(/\//g, '_');
 		uri = !uri.includes('.md') ? uri : uri.substr(0, uri.indexOf('.md'));
 
 		window.location.href = `/portfolio#${encodeURIComponent(uri)}`;
