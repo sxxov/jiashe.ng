@@ -308,7 +308,7 @@ _
 _
 
 
-/{ hs-centre }
+/{ hs-centre vs-centre }
 
 <iframe src="https://docs.google.com/gview?url=https://jiashe.ng/fid/photo/assets/others/assignment1.pdf&embedded=true"  frameborder='0' style="height: 540px; width: 100%; max-height: 100%; max-width: 100%;"></iframe>
 <br>
