@@ -74,7 +74,8 @@ body::-webkit-scrollbar-thumb {
 	}
 }
 
-.skin > * {
+.skin > *,
+.skin > blockquote {
 	padding-right: calc(var(--headerPadding) * 3);
 }
 
@@ -117,10 +118,6 @@ body::-webkit-scrollbar-thumb {
 	text-align: justify;
 }
 
-.skin li > p {
-	font-size: unset;
-}
-
 .skin li {
 	font-family: 'Dank Mono', sans-serif, Apple Color Emoji, Segoe UI Emoji;
 	font-style: italic;
@@ -131,6 +128,10 @@ body::-webkit-scrollbar-thumb {
     margin-block-end: 1em;
     margin-inline-start: 0px;
     margin-inline-end: 0px;
+}
+
+.skin li > p, * > li > ul * {
+	font-size: unset !important;
 }
 
 .skin ol, 
