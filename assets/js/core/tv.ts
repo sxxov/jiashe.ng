@@ -56,7 +56,7 @@ export class TV {
 
 		await this.createChannels(docs);
 
-		this.swiper = this.createSwiper();
+		this.swiper = this.createSwiper(docs.length);
 		this.createTitleClicks();
 
 		if (this.mWindowUtility.isMobile) {
@@ -148,7 +148,7 @@ export class TV {
 		this.splashDoms = $$('.channel.container > .splash');
 	}
 
-	private createSwiper(): Swiper {
+	private createSwiper(length): Swiper {
 		return new Swiper(
 			this.screenDomSelector,
 			{
@@ -162,7 +162,7 @@ export class TV {
 				},
 				loop: true,
 				// if the page was refered with a #, disable autoplay
-				autoplay: !window.location.href.includes('#') && {
+				autoplay: !(window.location.href.includes('#') || length <= 1) && {
 					delay: 5000,
 				},
 				speed: 500,

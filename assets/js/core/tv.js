@@ -50,7 +50,7 @@ export class TV {
             $('.swiper-button-next').on('click', (event) => this.onClick.call(this, event));
             $('.swiper-button-prev').on('click', (event) => this.onClick.call(this, event));
             yield this.createChannels(docs);
-            this.swiper = this.createSwiper();
+            this.swiper = this.createSwiper(docs.length);
             this.createTitleClicks();
             if (this.mWindowUtility.isMobile) {
                 return;
@@ -121,7 +121,7 @@ export class TV {
     createSplashParallax() {
         this.splashDoms = $$('.channel.container > .splash');
     }
-    createSwiper() {
+    createSwiper(length) {
         return new Swiper(this.screenDomSelector, {
             pagination: {
                 el: '.swiper-pagination',
@@ -133,7 +133,7 @@ export class TV {
             },
             loop: true,
             // if the page was refered with a #, disable autoplay
-            autoplay: !window.location.href.includes('#') && {
+            autoplay: !(window.location.href.includes('#') || length <= 1) && {
                 delay: 5000,
             },
             speed: 500,
