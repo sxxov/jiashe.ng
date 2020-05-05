@@ -87,8 +87,16 @@ class Main {
 			await this.onClick(event);
 
 			// if is on domain or access through an ip
-			if (!document.referrer.includes('jiashe.ng')
-				|| !parseInt(document.referrer, 10)) {
+			if (!(document.referrer.includes('jiashe.ng')
+				|| parseInt(
+					document.referrer.substring(
+						// start from http://
+						document.referrer.indexOf('//') + 2,
+						// end at first /
+						document.referrer.replace('//', '__').indexOf('/'),
+					),
+					10,
+				))) {
 				// temp solution for sub-domains
 				const indexOfAssets = this.uri.indexOf('assets');
 				let subdomain = '';
