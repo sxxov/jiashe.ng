@@ -337,7 +337,7 @@ _
 
 ​	To conclude, this assignment might just push me to capture more slices of the world for myself, through photography.
 
-
+_
 /{ hs-right }
 
 Lim Jia Sheng
