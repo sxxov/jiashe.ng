@@ -86,6 +86,27 @@ class Main {
 		$('.header.container.logo').on('click', async (event: MouseEvent) => {
 			await this.onClick(event);
 
+			// if is on domain or access through an ip
+			if (!document.referrer.includes('jiashe.ng')
+				|| !parseInt(document.referrer, 10)) {
+				// temp solution for sub-domains
+				const indexOfAssets = this.uri.indexOf('assets');
+				let subdomain = '';
+
+				if (indexOfAssets > 1) {
+					subdomain = this.uri
+						.substr(0, indexOfAssets)
+						.split('/')
+						.filter((substring) => substring.length !== 0)
+						.reverse()
+						.join('.');
+				}
+
+				window.location.href = `https://${subdomain}${subdomain ? '.' : ''}jiashe.ng`;
+
+				return;
+			}
+
 			window.history.back();
 		});
 
