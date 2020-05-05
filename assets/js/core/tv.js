@@ -62,6 +62,10 @@ export class TV {
     }
     createChannels(docs) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (docs.length === 0) {
+                $('.pace > .pace-activity').addClass('deactivated');
+                return;
+            }
             yield docs.forAwait((doc, i) => __awaiter(this, void 0, void 0, function* () {
                 const { title, subtitle, splash, markdown, } = doc.data();
                 const wrapperDom = $('.swiper-wrapper');
@@ -101,11 +105,9 @@ export class TV {
                 // activate the container after 100ms for the animation to kick in
                 setTimeout(() => this.screenDom.addClass('active'), 100);
                 if (!imageDom.complete) {
-                    yield new Promise((resolve) => imageDom.on('load', resolve));
+                    imageDom.on('load', () => $('.pace > .pace-activity').addClass('deactivated'));
                 }
-                $('.pace > .pace-activity').addClass('deactivated');
             }));
-            $('.pace > .pace-activity').addClass('deactivated');
         });
     }
     createTitleClicks() {

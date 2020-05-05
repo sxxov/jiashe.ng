@@ -70,6 +70,12 @@ export class TV {
 	}
 
 	private async createChannels(docs: QueryDocumentSnapshot[]): Promise<void> {
+		if (docs.length === 0) {
+			$('.pace > .pace-activity').addClass('deactivated');
+
+			return;
+		}
+
 		await docs.forAwait(async (doc: QueryDocumentSnapshot, i) => {
 			const {
 				title,
@@ -122,13 +128,9 @@ export class TV {
 			setTimeout(() => this.screenDom.addClass('active'), 100);
 
 			if (!(imageDom as unknown as HTMLImageElement).complete) {
-				await new Promise((resolve) => imageDom.on('load', resolve));
+				imageDom.on('load', () => $('.pace > .pace-activity').addClass('deactivated'));
 			}
-
-			$('.pace > .pace-activity').addClass('deactivated');
 		});
-
-		$('.pace > .pace-activity').addClass('deactivated');
 	}
 
 	private createTitleClicks(): void {
