@@ -11,6 +11,7 @@ import {
 	ForUtility,
 } from './resources/utilities.js';
 import {
+	// @dependent: 11052020/6
 	SmoothScroll,
 } from './raw/libraries/smoothscroll.js';
 import { Sign } from './core/sign.js';
@@ -33,6 +34,7 @@ class Main {
 	}
 
 	async create(): Promise<void> {
+		// @dependent: 11052020/6
 		SmoothScroll({
 			animationTime: 500,
 			touchpadSupport: true,

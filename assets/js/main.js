@@ -11,7 +11,9 @@ import { TV } from './core/tv.js';
 import { Hamburger } from './core/hamburger.js';
 import { ScrollAnimator, FrameAnimator, } from './resources/animators.js';
 import { $, $$, WindowUtility, ForUtility, } from './resources/utilities.js';
-import { SmoothScroll, } from './raw/libraries/smoothscroll.js';
+import { 
+// @dependent: 11052020/6
+SmoothScroll, } from './raw/libraries/smoothscroll.js';
 import { Sign } from './core/sign.js';
 import { Email } from './core/email.js';
 import { Lighter } from './core/lighter.js';
@@ -29,6 +31,7 @@ class Main {
     }
     create() {
         return __awaiter(this, void 0, void 0, function* () {
+            // @dependent: 11052020/6
             SmoothScroll({
                 animationTime: 500,
                 touchpadSupport: true,

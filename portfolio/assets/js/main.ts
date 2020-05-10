@@ -1,9 +1,14 @@
 import { OhHiMark } from './core/ohHiMark.js';
-import { $, $$, BezierUtility } from '../../../assets/js/resources/utilities.js';
+import { $, $$ } from '../../../assets/js/resources/utilities.js';
 import { FrameAnimator } from '../../../assets/js/resources/animators.js';
 import { $Object } from '../../../assets/js/resources/utilities.types.js';
 import {
+	// @dependent: 11052020/6
 	SmoothScroll,
+	// @dependent: 11052020/1
+	wheel,
+	// @dependent: 11052020/5
+	wheelEvent,
 } from '../../../assets/js/raw/libraries/smoothscroll.js';
 
 const {
@@ -15,11 +20,6 @@ const {
 class Main {
 	private skinDom = $('.skin');
 
-	private expectedScrollLeft: number = window.scrollX;
-	private cachedScrollLeft: number = null;
-	private scrollRafId: number = null;
-
-	private preventScrollEvent = false;
 	private cachedScroll: {
 		x: number;
 		y: number;
@@ -27,28 +27,33 @@ class Main {
 		x: 0,
 		y: 0,
 	};
-	private scrollVelocity = 1;
 
 	private clickFrameAnimator = new FrameAnimator();
 	private currentOnClickDom: $Object = null;
 
-	private mBezierUtility = new BezierUtility(0, 0.55, 0.45, 1);
-
 	private darkMode = new Darkmode();
+
+	private isHorizontallyScrolling = null;
 
 	public async create(): Promise<void> {
 		this.skinDom.innerHTML = await OhHiMark.createFromUrl(this.uri);
 
+		// @dependent: 11052020/6
 		SmoothScroll({
 			animationTime: 500,
 			touchpadSupport: true,
 			pulseScale: 6,
 		});
 
-		$(document.scrollingElement || document.documentElement)
+		// @dependent: 11052020/1, 11052020/5
+		window.removeEventListener(wheelEvent, wheel);
+
+		$(window)
 			.on(
-				'wheel',
+				// @dependent: 11052020/5
+				wheelEvent,
 				(event: MouseWheelEvent) => this.onVerticalScroll.call(this, event),
+				{ passive: false },
 			);
 
 		$(window)
@@ -56,12 +61,13 @@ class Main {
 				'scroll',
 				() => {
 					this.onScroll.call(this);
-
-					if (this.preventScrollEvent) {
-						return;
-					}
-
-					this.expectedScrollLeft = window.scrollX;
+				},
+			);
+		$(window)
+			.on(
+				'load resize',
+				() => {
+					this.isHorizontallyScrolling = getComputedStyle(document.body).overflowY === 'hidden';
 				},
 			);
 
@@ -170,95 +176,27 @@ class Main {
 	}
 
 	public onVerticalScroll(event: MouseWheelEvent): void {
-		if (!event.deltaY) {
-			return;
-		}
+		const deltaX = -(event as any).wheelDeltaX;
+		const deltaY = -(event as any).wheelDeltaY;
 
-		if (Math.sign(this.scrollVelocity) !== Math.sign(event.deltaY)) {
-			this.scrollVelocity = 0;
-		}
-
-		this.scrollVelocity += Math.sign(event.deltaY) / 10;
-		this.scrollVelocity = Math.sign(this.scrollVelocity)
-			* Math.max(Math.min(Math.abs(this.scrollVelocity), 5), 1);
-
-		// firefox has deltas of like 6-9, so just use chrome's current behaviour of snapping every 100
-		const delta = Math.sign(event.deltaY) * 100 * Math.abs(this.scrollVelocity) + event.deltaX;
-
-		cancelAnimationFrame(this.scrollRafId);
-
-		const currentTarget = $(event.currentTarget);
-
-		currentTarget.scrollLeft = this.expectedScrollLeft;
-
-		if (currentTarget.scrollLeft !== this.expectedScrollLeft) {
-			this.expectedScrollLeft = Number(currentTarget.scrollLeft);
-			this.preventScrollEvent = false;
+		// invert deltas when the page is horizonal
+		if (this.isHorizontallyScrolling) {
+			// @dependent: 11052020/1, 11052020/2, 11052020/3
+			wheel(
+				event,
+				deltaY || deltaX,
+				-0,
+			);
 
 			return;
 		}
 
-		this.cachedScrollLeft = this.expectedScrollLeft;
-		this.expectedScrollLeft += delta;
-
-		let i = 0;
-		const handler = (): void => {
-			const magic = this.mBezierUtility.getValue(
-				(
-					Math.abs(i)
-				)
-				/ Math.abs(delta),
-			) * delta;
-
-			const absoluteScrollVelocity = Math.abs(this.scrollVelocity);
-
-			if (Math.floor(absoluteScrollVelocity) === 0) {
-				return;
-			}
-
-			this.preventScrollEvent = true;
-
-			switch (true) {
-			case delta < 0: {
-				if (i < delta) {
-					this.scrollVelocity = 1;
-					this.preventScrollEvent = false;
-
-					return;
-				}
-
-				i -= 2 * absoluteScrollVelocity;
-
-				if (i <= Math.floor(delta / 2)) {
-					this.scrollVelocity -= Math.sign(this.scrollVelocity) / 2;
-				}
-				break;
-			}
-			case delta > 0: {
-				if (i > delta) {
-					this.scrollVelocity = 1;
-					this.preventScrollEvent = false;
-
-					return;
-				}
-
-				i += 2 * absoluteScrollVelocity;
-
-				if (i >= Math.floor(delta / 2)) {
-					this.scrollVelocity -= Math.sign(this.scrollVelocity) / 2;
-				}
-				break;
-			}
-			default: {
-				return;
-			}
-			}
-
-			currentTarget.scrollLeft = magic + this.cachedScrollLeft;
-
-			this.scrollRafId = requestAnimationFrame(() => handler());
-		};
-		this.scrollRafId = requestAnimationFrame(() => handler());
+		// @dependent: 11052020/1, 11052020/2, 11052020/3
+		wheel(
+			event,
+			-0,
+			deltaY,
+		);
 	}
 }
 
