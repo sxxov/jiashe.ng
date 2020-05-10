@@ -2,7 +2,6 @@ import { $Object } from '../resources/utilities.types.js';
 import {
 	$,
 	$$,
-	WindowUtility,
 } from '../resources/utilities.js';
 
 export class Placeholderer {

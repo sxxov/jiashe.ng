@@ -3,7 +3,6 @@ import Swiper from '../raw/libraries/swiper/swiper.js';
 import { FrameAnimator } from '../resources/animators.js';
 import { $Object } from '../resources/utilities.types.js';
 import { QueryDocumentSnapshot } from '../raw/libraries/firebase/types/firestore.js';
-import { Placeholderer } from './placeholderer.js';
 
 export class TV {
 	private swiper: Swiper = null;
@@ -13,7 +12,6 @@ export class TV {
 	private currentOnClickDom: $Object = null;
 	private mouseCatcherDom = $('.mouseCatcher');
 	private mWindowUtility = new WindowUtility();
-	private mPlaceholderer = new Placeholderer();
 
 	private cachedMousePosition: {
 		clientX: number;

@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { $, $$, WindowUtility } from '../resources/utilities.js';
 import Swiper from '../raw/libraries/swiper/swiper.js';
 import { FrameAnimator } from '../resources/animators.js';
-import { Placeholderer } from './placeholderer.js';
 export class TV {
     constructor() {
         this.swiper = null;
@@ -20,7 +19,6 @@ export class TV {
         this.currentOnClickDom = null;
         this.mouseCatcherDom = $('.mouseCatcher');
         this.mWindowUtility = new WindowUtility();
-        this.mPlaceholderer = new Placeholderer();
         this.cachedMousePosition = null;
         this.mouseCatcherScaleResetTimeoutId = null;
         this.mouseCatcherOverrideScale = false;
