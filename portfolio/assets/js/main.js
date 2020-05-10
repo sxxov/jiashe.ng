@@ -36,7 +36,7 @@ class Main {
             // @dependent: 11052020/6
             SmoothScroll({
                 animationTime: 500,
-                touchpadSupport: true,
+                touchpadSupport: false,
                 pulseScale: 6,
             });
             // @dependent: 11052020/1, 11052020/5
@@ -128,12 +128,11 @@ class Main {
         $$('.header.container.logo, .header.container.night').fastEach((node) => node.addClass('active'));
     }
     onVerticalScroll(event) {
-        const deltaX = -event.wheelDeltaX;
         const deltaY = -event.wheelDeltaY;
         // invert deltas when the page is horizonal
         if (this.isHorizontallyScrolling) {
             // @dependent: 11052020/1, 11052020/2, 11052020/3
-            wheel(event, deltaY || deltaX, -0);
+            wheel(event, deltaY, -0);
             return;
         }
         // @dependent: 11052020/1, 11052020/2, 11052020/3

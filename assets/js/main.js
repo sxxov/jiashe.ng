@@ -34,7 +34,7 @@ class Main {
             // @dependent: 11052020/6
             SmoothScroll({
                 animationTime: 500,
-                touchpadSupport: true,
+                touchpadSupport: false,
                 pulseScale: 6,
             });
             yield this.addScrollToContinueFrameAnimation();

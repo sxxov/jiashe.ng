@@ -41,7 +41,7 @@ class Main {
 		// @dependent: 11052020/6
 		SmoothScroll({
 			animationTime: 500,
-			touchpadSupport: true,
+			touchpadSupport: false,
 			pulseScale: 6,
 		});
 
@@ -176,7 +176,6 @@ class Main {
 	}
 
 	public onVerticalScroll(event: MouseWheelEvent): void {
-		const deltaX = -(event as any).wheelDeltaX;
 		const deltaY = -(event as any).wheelDeltaY;
 
 		// invert deltas when the page is horizonal
@@ -184,7 +183,7 @@ class Main {
 			// @dependent: 11052020/1, 11052020/2, 11052020/3
 			wheel(
 				event,
-				deltaY || deltaX,
+				deltaY,
 				-0,
 			);
 
