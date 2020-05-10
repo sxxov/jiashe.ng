@@ -29,7 +29,7 @@ class Main {
     }
     create() {
         return __awaiter(this, void 0, void 0, function* () {
-            SmoothScroll.init({
+            SmoothScroll({
                 animationTime: 500,
                 touchpadSupport: true,
                 pulseScale: 6,

@@ -33,7 +33,7 @@ class Main {
 	}
 
 	async create(): Promise<void> {
-		SmoothScroll.init({
+		SmoothScroll({
 			animationTime: 500,
 			touchpadSupport: true,
 			pulseScale: 6,
