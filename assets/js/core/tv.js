@@ -106,7 +106,9 @@ export class TV {
                 setTimeout(() => this.screenDom.addClass('active'), 100);
                 if (!imageDom.complete) {
                     imageDom.on('load', () => $('.pace > .pace-activity').addClass('deactivated'));
+                    return;
                 }
+                $('.pace > .pace-activity').addClass('deactivated');
             }));
         });
     }

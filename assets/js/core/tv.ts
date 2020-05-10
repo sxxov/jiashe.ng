@@ -129,7 +129,11 @@ export class TV {
 
 			if (!(imageDom as unknown as HTMLImageElement).complete) {
 				imageDom.on('load', () => $('.pace > .pace-activity').addClass('deactivated'));
+
+				return;
 			}
+
+			$('.pace > .pace-activity').addClass('deactivated');
 		});
 	}
 
