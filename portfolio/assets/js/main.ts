@@ -63,13 +63,13 @@ class Main {
 					this.onScroll.call(this);
 				},
 			);
+
 		$(window)
 			.on(
 				'load resize',
-				() => {
-					this.isHorizontallyScrolling = getComputedStyle(document.body).overflowY === 'hidden';
-				},
+				() => this.onResize.call(this),
 			);
+		this.updateIsHorizontallyScrolling();
 
 		this.clickFrameAnimator.add({
 			index: 0,
@@ -141,6 +141,14 @@ class Main {
 		uri = decodeURIComponent(uri);
 
 		return uri;
+	}
+
+	private onResize(): void {
+		this.updateIsHorizontallyScrolling();
+	}
+
+	private updateIsHorizontallyScrolling(): void {
+		this.isHorizontallyScrolling = getComputedStyle(document.body).overflowY === 'hidden';
 	}
 
 	private async onClick(event: MouseEvent): Promise<void> {

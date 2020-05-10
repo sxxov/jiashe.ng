@@ -50,9 +50,8 @@ class Main {
                 this.onScroll.call(this);
             });
             $(window)
-                .on('load resize', () => {
-                this.isHorizontallyScrolling = getComputedStyle(document.body).overflowY === 'hidden';
-            });
+                .on('load resize', () => this.onResize.call(this));
+            this.updateIsHorizontallyScrolling();
             this.clickFrameAnimator.add({
                 index: 0,
                 type: 'null',
@@ -106,6 +105,12 @@ class Main {
         uri += uri.substr(-3) === '.md' ? '' : '.md';
         uri = decodeURIComponent(uri);
         return uri;
+    }
+    onResize() {
+        this.updateIsHorizontallyScrolling();
+    }
+    updateIsHorizontallyScrolling() {
+        this.isHorizontallyScrolling = getComputedStyle(document.body).overflowY === 'hidden';
     }
     onClick(event) {
         return __awaiter(this, void 0, void 0, function* () {
