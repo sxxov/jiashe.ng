@@ -209,6 +209,14 @@ body::-webkit-scrollbar-thumb {
 	max-height: max-content;
 }
 
+.skin x.long {
+	display: inline-block;
+}
+
+.skin x.long p {
+	height: unset;
+}
+
 /* firefox treats 100% as the absolute container size even with display: inline-flex, 
 	instead of scaling them down like chrome,
 	but, it doesn't have the image-slicing & disappearing bugs in chrome,
