@@ -325,7 +325,7 @@ _
 
 
 
-!/
+/{ long }
 
 ​	Through this assignment, I have found myself a new view on the photographs taken by others and myself. I came into the work thinking that it was just about translating the story the photographer was trying to express through their work; I came out realising that there's always more to how the picture is composed, shot, colour graded, etc. 
 

@@ -64,6 +64,8 @@ _
   * **Cap**, which was just a quick way to restrict access to the reservoir from the top.
 * **Output catcher**, which caught the candy coming out of the dispenser.
 
+/
+
 
 ​	The modelling of the melon candy dispenser was the first item in the agenda. This was done in Blender 2.8 with my very limited modelling skill and experience. A downloaded 3D model was used as reference to make sure some parts were 3D printable. The final model ended up with major topology changes and reworks in every model to make it more friendly to 3D print and render.
 
