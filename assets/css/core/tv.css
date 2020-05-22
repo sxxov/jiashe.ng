@@ -85,6 +85,8 @@
 }
 
 .swiper-button-next {
+	color: white;
+	
 	right: var(--headerPadding);
 }
 
@@ -101,6 +103,8 @@
 }
 
 .swiper-button-prev {
+	color: white;
+	
 	left: var(--headerPadding);
 }
 
