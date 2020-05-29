@@ -206,7 +206,7 @@ body::-webkit-scrollbar-thumb {
 	/* height: calc(100% - 16px); */
 	width: max-content;
 	max-width: 100%;
-	max-height: max-content;
+	max-height: calc(100% - 16px);
 }
 
 .skin x.long {
