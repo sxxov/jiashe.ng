@@ -30,11 +30,11 @@ _
 
 /{ hs-centre vs-centre }
 
-![](/fid/photo/assets/img/assignment2/IMG_1442.jpg)
+![](/fid/photo/assets/img/assignment2/IMG_1442.1.jpg)
 
 /
 
-This photo was taken with the lamp relatively, directly pointing onto the subject. The extra light and the tighter zoom gives the viewer another perspective on how different people process sadness. Some want to be attended to; some want to be left.
+This photo was taken a little ways away. It paints a clear distance between the viewer and the subject, portraying the feeling of helplessness. As the viewer looks from afar, they get to realize they are unable to lend a hand to the angry subject.
 
 _
 
@@ -60,11 +60,11 @@ _
 
 /{ hs-centre vs-centre }
 
-![](/fid/photo/assets/img/assignment2/IMG_1414.jpg)
+![](/fid/photo/assets/img/assignment2/IMG_1414.1.jpg)
 
 /
 
-This photo was taken up close with deep contrasts. It basically only shows the viewer the face. The subject’s stern and viscous stare catches the viewer’s eyes, enabling the emotion of the moment to be captured and expressed.
+This photo was taken with the subtle magic of the sun, shining on to the subject and their surroundings. The directional shadows only add to the strong and fierce subject. Their glare stares into the viewer, almost like the subject intended to shoot them.
 
 _
 
@@ -128,7 +128,7 @@ _
 
 /{ hs-centre vs-centre }
 
-![](/fid/photo/assets/img/assignment2/IMG_1490-2.jpg)
+![](/fid/photo/assets/img/assignment2/IMG_1490-2.1.jpg)
 
 /
 
@@ -149,10 +149,10 @@ _
 
 /{ hs-centre vs-centre }
 
-<iframe src="https://docs.google.com/gview?url=https://jiashe.ng/fid/photo/assets/others/assignment2.pdf&embedded=true"  frameborder='0' style="height: 540px; width: 100%; max-height: 100%; max-width: 100%;"></iframe>
+<iframe src="https://docs.google.com/gview?url=https://jiashe.ng/fid/photo/assets/others/assignment2.1.pdf&embedded=true"  frameborder='0' style="height: 540px; width: 100%; max-height: 100%; max-width: 100%;"></iframe>
 <br>
 
-<a href="https://docs.google.com/gview?url=https://jiashe.ng/fid/photo/assets/others/assignment2.pdf&embedded=true" target="_blank">if you don't see the pdf, click me to open the iframe in a new tab</a>
+<a href="https://docs.google.com/gview?url=https://jiashe.ng/fid/photo/assets/others/assignment2.1.pdf&embedded=true" target="_blank">if you don't see the pdf, click me to open the iframe in a new tab</a>
 _
 
 

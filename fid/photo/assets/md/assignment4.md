@@ -58,13 +58,17 @@ _
 
 /{ hs-centre  vs-centre }
 
-![](/fid/photo/assets/img/assignment4/3.jpg)
+![](/fid/photo/assets/img/assignment4/3.1.jpg)
 
 /
 
-​	Here the subject offers the toy as almost like a peace treaty. Her attention on the toy instead of the camera acts as pseudo proxy of eye contact. The ping pong effect is also observed here, albeit in a more subtle way. A very laid back and unguarded view of a person just goofing around is captured very effectively too.
-  	
-​	A subtle blur and pixel sort were added using the same methods and for the same reasons. The photo was taken in low light with a small sensor, producing noisy results which were denoised.
+[//]:  # "Here the subject offers the toy as almost like a peace treaty. Her attention on the toy instead of the camera acts as pseudo proxy of eye contact. The ping pong effect is also observed here, albeit in a more subtle way. A very laid back and unguarded view of a person just goofing around is captured very effectively too."
+
+[//]: # "A subtle blur and pixel sort were added using the same methods and for the same reasons. The photo was taken in low light with a small sensor, producing noisy results which were denoised."
+
+​	The two people in the picture laughing it out, unaware of their surroundings. The viewer is placed straight into the scene, fully feeling the laid back and unguarded atmosphere. The composition drags the viewers eyes across the photo. As the viewer tries to find out what the two are laughing about, it is cut off. It can be anything, up to the viewer’s imagination.
+
+​	Only a colour grade was applied to the image, as the subjects stand out enough from their surroundings. The creates a very natural and clear feeling photo.
 
 _
 
@@ -212,10 +216,10 @@ _
 
 /{ hs-centre vs-centre }
 
-<iframe src="https://docs.google.com/gview?url=https://jiashe.ng/fid/photo/assets/others/assignment4.pdf&embedded=true"  frameborder='0' style="height: 540px; width: 100%; max-height: 100%; max-width: 100%;"></iframe>
+<iframe src="https://docs.google.com/gview?url=https://jiashe.ng/fid/photo/assets/others/assignment4.1.pdf&embedded=true"  frameborder='0' style="height: 540px; width: 100%; max-height: 100%; max-width: 100%;"></iframe>
 <br>
 
-<a href="https://docs.google.com/gview?url=https://jiashe.ng/fid/photo/assets/others/assignment4.pdf&embedded=true" target="_blank">if you don't see the pdf, click me to open the iframe in a new tab</a>
+<a href="https://docs.google.com/gview?url=https://jiashe.ng/fid/photo/assets/others/assignment4.1.pdf&embedded=true" target="_blank">if you don't see the pdf, click me to open the iframe in a new tab</a>
 _
 
 
