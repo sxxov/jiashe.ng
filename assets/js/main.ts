@@ -15,7 +15,7 @@ import {
 	SmoothScroll,
 } from './raw/libraries/smoothscroll.js';
 import { Sign } from './core/sign.js';
-import { Email } from './core/email.js';
+import { LottieButton } from './core/lottieButton.js';
 import { Lighter } from './core/lighter.js';
 
 
@@ -26,7 +26,7 @@ class Main {
 	private mHamburger = new Hamburger(this.miscellaneousScrollingAnimator);
 	private mWindowUtility = new WindowUtility();
 	private mSign = new Sign();
-	private mEmail = new Email();
+	private mLottieButton = new LottieButton();
 	private mLigher = new Lighter();
 
 	constructor() {
@@ -103,7 +103,7 @@ class Main {
 			index: -1,
 			type: 'null',
 			items: {
-				uid: 'welcome',
+				uid: 'portfolio',
 				onVisible: (): void => {
 					this.scrollToContinueFrameAnimator.animatorContainers.forEach(
 						(animatorContainer) => this.scrollToContinueFrameAnimator.activate(
@@ -121,7 +121,7 @@ class Main {
 			},
 		});
 
-		// custom uid for index 0
+		// custom uid for index 0 (who_am_i)
 		await mScrollAnimator.add({
 			type: null,
 			index: 0,
@@ -130,6 +130,7 @@ class Main {
 			},
 		});
 
+		// scale 'screen' up as user scrolls
 		await mScrollAnimator.add({
 			type: null,
 			index: 0,
@@ -163,6 +164,7 @@ class Main {
 			},
 		});
 
+		// disable pointer events for index -1 (portfolio) when user is halfway to index 0 (who_am_i)
 		await mScrollAnimator.add({
 			index: 0,
 			type: 'null',
@@ -340,28 +342,32 @@ class Main {
 			},
 		});
 
-		// email
-		const email = await mScrollAnimator.add({
+		// lottie button
+		const lottieButton = await mScrollAnimator.add({
 			index: 2,
 			type: 'lottie',
-			data: await $().getJSON('/assets/js/raw/lottie/email.json'),
+			data: await $().getJSON(
+				(window as any).lottieButtonJsonUrl
+				?? '/assets/js/raw/lottie/email.json',
+			),
 			items: {
-				uid: 'email',
+				uid: 'lottieButton',
 				invert: true,
 				totalFrames: 120,
 			},
 		});
 
-		// email on hover
-		const emailDomContent = email.items.domContent;
+		// glow lottie button on hover
+		const lottieButtonDomContent = lottieButton.items.domContent;
 		const {
 			dpr,
 			resolutionMultiplier,
 		} = mScrollAnimator;
 
-		this.mEmail.create({
-			domContent: emailDomContent,
+		this.mLottieButton.create({
+			domContent: lottieButtonDomContent,
 			dpr,
+			intent: (window as any).lottieButtonIntent,
 			resolutionMultiplier,
 		});
 	}

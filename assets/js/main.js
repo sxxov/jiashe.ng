@@ -15,7 +15,7 @@ import {
 // @dependent: 11052020/6
 SmoothScroll, } from './raw/libraries/smoothscroll.js';
 import { Sign } from './core/sign.js';
-import { Email } from './core/email.js';
+import { LottieButton } from './core/lottieButton.js';
 import { Lighter } from './core/lighter.js';
 class Main {
     constructor() {
@@ -25,7 +25,7 @@ class Main {
         this.mHamburger = new Hamburger(this.miscellaneousScrollingAnimator);
         this.mWindowUtility = new WindowUtility();
         this.mSign = new Sign();
-        this.mEmail = new Email();
+        this.mLottieButton = new LottieButton();
         this.mLigher = new Lighter();
         ForUtility.addToArrayPrototype();
     }
@@ -46,6 +46,7 @@ class Main {
         });
     }
     addMiscellaneousScrollingAnimations() {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const mScrollAnimator = this.miscellaneousScrollingAnimator;
             // meta
@@ -88,7 +89,7 @@ class Main {
                 index: -1,
                 type: 'null',
                 items: {
-                    uid: 'welcome',
+                    uid: 'portfolio',
                     onVisible: () => {
                         this.scrollToContinueFrameAnimator.animatorContainers.forEach((animatorContainer) => this.scrollToContinueFrameAnimator.activate(animatorContainer));
                     },
@@ -97,7 +98,7 @@ class Main {
                     },
                 },
             });
-            // custom uid for index 0
+            // custom uid for index 0 (who_am_i)
             yield mScrollAnimator.add({
                 type: null,
                 index: 0,
@@ -105,6 +106,7 @@ class Main {
                     uid: 'who_am_i?',
                 },
             });
+            // scale 'screen' up as user scrolls
             yield mScrollAnimator.add({
                 type: null,
                 index: 0,
@@ -133,6 +135,7 @@ class Main {
                     },
                 },
             });
+            // disable pointer events for index -1 (portfolio) when user is halfway to index 0 (who_am_i)
             yield mScrollAnimator.add({
                 index: 0,
                 type: 'null',
@@ -286,23 +289,24 @@ class Main {
                     totalFrames: 120,
                 },
             });
-            // email
-            const email = yield mScrollAnimator.add({
+            // lottie button
+            const lottieButton = yield mScrollAnimator.add({
                 index: 2,
                 type: 'lottie',
-                data: yield $().getJSON('/assets/js/raw/lottie/email.json'),
+                data: yield $().getJSON((_a = window.lottieButtonJsonUrl) !== null && _a !== void 0 ? _a : '/assets/js/raw/lottie/email.json'),
                 items: {
-                    uid: 'email',
+                    uid: 'lottieButton',
                     invert: true,
                     totalFrames: 120,
                 },
             });
-            // email on hover
-            const emailDomContent = email.items.domContent;
+            // glow lottie button on hover
+            const lottieButtonDomContent = lottieButton.items.domContent;
             const { dpr, resolutionMultiplier, } = mScrollAnimator;
-            this.mEmail.create({
-                domContent: emailDomContent,
+            this.mLottieButton.create({
+                domContent: lottieButtonDomContent,
                 dpr,
+                intent: window.lottieButtonIntent,
                 resolutionMultiplier,
             });
         });
