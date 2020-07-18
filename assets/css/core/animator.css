@@ -29,7 +29,7 @@
 	opacity: 1 !important;
 }
 
-.__animate.email {
+.__animate.lottieButton {
 	pointer-events: auto;
 
 	transition: 0.5s filter var(--easeFastSlow);

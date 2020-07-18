@@ -1,10 +1,10 @@
 import { WindowUtility } from '../resources/utilities.js';
-export class Email {
+export class LottieButton {
     constructor() {
         this.mWindowUtility = new WindowUtility();
     }
     create(options) {
-        const { domContent, dpr, resolutionMultiplier, } = options;
+        const { domContent, dpr, intent, resolutionMultiplier, } = options;
         const resolutionModifier = dpr * resolutionMultiplier;
         let isClickable = false;
         domContent
@@ -57,7 +57,10 @@ export class Email {
                 cursor: '',
             });
         }, { passive: true });
-        domContent.on('click', () => isClickable && window.open('mailto:_@jiashe.ng'));
+        // enable overriding intent of this button on other html files (bodge on bodge, kill me)
+        domContent.on('click', () => isClickable && (typeof intent !== 'string'
+            ? intent()
+            : window.open(intent !== null && intent !== void 0 ? intent : 'mailto:_@jiashe.ng')));
     }
 }
-//# sourceMappingURL=email.js.map
+//# sourceMappingURL=lottieButton.js.map

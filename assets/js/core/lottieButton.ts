@@ -1,17 +1,19 @@
 import { $Object } from '../resources/utilities.types.js';
 import { WindowUtility } from '../resources/utilities.js';
 
-export class Email {
+export class LottieButton {
 	private mWindowUtility = new WindowUtility();
 
 	create(options: {
 		domContent: $Object;
 		dpr: number;
+		intent: string | (() => void);
 		resolutionMultiplier: number;
 	}): void {
 		const {
 			domContent,
 			dpr,
+			intent,
 			resolutionMultiplier,
 		} = options;
 
@@ -116,6 +118,11 @@ export class Email {
 				{ passive: true },
 			);
 
-		domContent.on('click', () => isClickable && window.open('mailto:_@jiashe.ng'));
+		// enable overriding intent of this button on other html files (bodge on bodge, kill me)
+		domContent.on('click', () => isClickable && (
+			typeof intent !== 'string'
+				? intent()
+				: window.open(intent ?? 'mailto:_@jiashe.ng')
+		));
 	}
 }
