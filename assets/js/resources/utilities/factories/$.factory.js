@@ -316,8 +316,7 @@ export class $Factory {
                     const response = yield fetch(url);
                     return callback ? callback(yield response.json()) : response.json();
                 });
-            },
-            $,
+            }, $,
             $$ }, {});
         // ...spread doesn't work directly on dom objects apparently
         Object.assign(objectToCreateFrom, object);
