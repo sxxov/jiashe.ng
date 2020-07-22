@@ -1,4 +1,4 @@
-/
+/{ h-fixed }
 
 # Assignment 1
 
@@ -6,7 +6,7 @@
 
 _
 
-/{ hs-centre vs-centre}
+/{ hs-centre vs-centre }
 
 ## introduction:
 
@@ -26,7 +26,7 @@ _
 
 /
 
-##### Empathy
+##### Empathize
 
 ​	In light of this assignment being the first, there were pronounced stumbles in the process of working around the idea of "empathy". Even with that said, this part of the assignment went on relatively hitch-less after the main concepts were grasped. The result was a clearer view of what was to be expected moving forward.
 
@@ -34,7 +34,7 @@ _
 
 /
 
-##### Definition
+##### Define
 
 ​	This was the part where the target's interests were broken down into chunks and then further elaborated. This part was relatively painless as well, since we had a solid foundation coming into it.
 
@@ -42,21 +42,21 @@ _
 
 /
 
-##### Ideation
+##### Ideate
 
-​	Going through this process, the concept of ideas as jewellery presented itself overtly. This was when the freedom of infinite choice became a double edged sword. It was a challenge separating good ideas from regular shower thoughts. The final ideas were ideas derived from what was explored in the definition stage and then subsequently cherry picked to narrow down to the most intriguing and memorable gifts. A "melon candy dispenser" was the idea that survived flowing down the funnel.
+​	Going through this process, the concept of ideas as jewelry presented itself overtly. This was when the freedom of infinite choice became a double edged sword. It was a challenge separating good ideas from regular shower thoughts. The final ideas were ideas derived from what was explored in the definition stage and then subsequently cherry picked to narrow down to the most intriguing and memorable gifts. A "melon candy dispenser" was the idea that survived flowing down the funnel.
 
 _
 
 /
 
-##### Prototyping
+##### Prototype
 
 ​	The idea was split into three parts and a few sub-parts:
 
 /
 
-* **Base**, which handled the funnelling, housing/supporting other parts, and contained some heft to keep the centre of gravity low.
+* **Base**, which handled the funneling, housing/supporting other parts, and contained some heft to keep the centre of gravity low.
   * **Internal spinning mechanism**, which was what portioned off the sweets
   * **Internal spinning mechanism axle**, which played a part to keep the mechanism from staying in place. 
   * **Handle**, which let the user spin the internal mechanism and let candy be dispensed.
@@ -87,23 +87,23 @@ _
 
 _
 
-/
+/{ hs-centre vs-grid h-fixed }
 
 ![](/fid/ccts/assets/img/assignment1/20200504_222502.jpg)
 
-/
+/{ hs-centre vs-grid h-fixed }
 
 ![](/fid/ccts/assets/img/assignment1/20200504_222614.jpg)
 
-/
+/{ hs-centre vs-grid h-fixed }
 
 ![](/fid/ccts/assets/img/assignment1/20200504_222953.jpg)
 
-/
+/{ hs-centre vs-grid h-fixed }
 
 ![](/fid/ccts/assets/img/assignment1/20200504_223545.jpg)
 
-/
+/{ hs-centre vs-grid h-fixed }
 
 ![](/fid/ccts/assets/img/assignment1/20200504_223743.jpg)
 
@@ -111,7 +111,7 @@ _
 
 _
 
-##### Presentation
+##### Present
 
 ​	The final product was presented to Manfred, the chosen subject. This was done through a video call on the chatting app "Messenger". At first he was made known that the call was being recorded through screenshots. When first shown the final product, he expressed surprise and was ecstatic with what it looked like on first glance. As he was shown the logo part of the melon candy dispenser, he noted that it was "cool" and he "wanted it right now". 
 
@@ -126,7 +126,8 @@ _
 ​	A few "posters" were also created as advertisement to be presented. The typography was using a font face that was frequently used by him.
 
 _
-/{ hs-centre vs-centre }
+
+/{ hs-centre vs-centre h-fixed }
 
 <iframe src="https://docs.google.com/gview?url=https://jiashe.ng/fid/ccts/assets/others/assignment1.pdf&embedded=true"  frameborder='0' style="height: 540px; width: 100%; max-height: 100%; max-width: 100%;"></iframe>
 <br>
@@ -134,7 +135,7 @@ _
 <a href="https://docs.google.com/gview?url=https://jiashe.ng/fid/ccts/assets/others/assignment1.pdf&embedded=true" target="_blank">if you don't see the pdf, click me to open the iframe in a new tab</a>
 _
 
-/{ hs-centre vs-centre}
+/{ hs-centre vs-centre }
 
 ## reflection:
 _
