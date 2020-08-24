@@ -1,0 +1,104 @@
+@import url("./raw/fonts/spaceMono.css");
+@import url("./raw/fonts/dankMono.css");
+
+@import url("./core/footer.css");
+@import url("./core/header.css");
+@import url("./core/hamburgerMenu.css");
+@import url("./core/overlay.css");
+@import url("./core/sign.css");
+@import url("./core/socials.css");
+@import url("./core/tv.css");
+@import url("./core/tv.channel.css");
+@import url("./core/scrollBar.css");
+@import url("./core/animator.css");
+
+@import url("./resources/utilities.css");
+
+
+:root {
+	--easeFastSlow: cubic-bezier(0.075, 0.82, 0.165, 1);
+	--easeSlowSlow: cubic-bezier(0.77, 0, 0.175, 1);
+
+	--headerPadding: calc(20px + 2vw);
+
+	--titleBottomMargin: 0.2em;
+	--titleLineHeight: 0.6em;
+	--titleFontSize: 16vw;
+	--titleLetterSpacing: -0.069em;
+	--descriptionFontSize: 0.8em;
+}
+
+body {
+	position: absolute;
+	height: 100vh;
+	width: 100%;
+
+	background-color: black;
+	margin: 0px;
+	overflow-x: hidden;
+}
+
+.skin {
+	position: fixed;
+
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+
+	transition: 
+		height 0.5s var(--easeFastSlow), 
+		width 1s var(--easeSlowSlow), 
+		top 0.5s var(--easeFastSlow), 
+		left 1s var(--easeSlowSlow), 
+		filter 1s var(--easeFastSlow),
+		transform 1s var(--easeFastSlow),
+		opacity 1s var(--easeFastSlow);
+
+	overflow: hidden;
+}
+
+.organs {
+	position: absolute;
+
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+
+	transition: inherit;
+
+	pointer-events: none;
+}
+
+.hidden {
+	visibility: hidden !important;
+	pointer-events: none !important;
+}
+
+.height {
+	transform: translate(0px, 0px);
+	transition: transform .2s var(--easeFastSlow);
+}
+
+.innerCenter {
+	height: 100vh;
+	transform: translate(0px, -52px) !important;
+}
+
+.white {
+	fill: white;
+	color: white;
+}
+
+.char {
+	display: inline-block;
+}
+
+.invert {
+	mix-blend-mode: difference;
+}
+
+img {
+	object-fit: cover;
+}

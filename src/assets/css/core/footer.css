@@ -1,0 +1,28 @@
+footer {
+	height: calc(80px + 4vw);
+    width: 100vw;
+    background: black;
+	position: relative;
+}
+
+footer > .skin {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr;
+	column-gap: 0;
+	row-gap: 0;
+
+	align-items: center;
+	justify-items: center;
+}
+
+@media only screen and (max-width: 1024px) {
+	footer > .skin {
+		width: calc(100% - var(--headerPadding));
+		justify-items: right;
+	}
+}

@@ -1,0 +1,31 @@
+.darkmode-background {
+	background-color: white;
+
+	transition: background-color 0.5s var(--easeFastSlow);
+}
+
+.darkmode--activated > .darkmode-background {
+	background-color: #0b0c0d;
+}
+
+.darkmode--activated > .markdown-body {
+	color: #eaecef;
+}
+
+.darkmode--activated > .skin h1::after, 
+.darkmode--activated > .skin h2::after {
+	border-bottom: 1px solid #24292e;
+}
+
+.darkmode--activated > .darkmode-layer {
+	background: none;
+	mix-blend-mode: normal;
+}
+
+body.darkmode--activated {
+	background-color: #0b0c0d;
+}
+
+body.darkmode--activated::-webkit-scrollbar-thumb {
+	background-color: #eaecef;  
+}

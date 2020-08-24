@@ -1,0 +1,305 @@
+@import url("../../../assets/css/raw/fonts/spaceMono.css");
+@import url("../../../assets/css/raw/fonts/dankMono.css");
+
+@import url("../../../assets/css/resources/utilities.css");
+@import url("../../../assets/css/core/scrollBar.css");
+
+@import url("./core/header.css");
+@import url("./core/dark.css");
+
+@import url("https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css");
+
+@keyframes fadeIn {
+	0% {
+	  	opacity: 0;
+	}
+	100% {
+	  	opacity: 1;
+	}
+}
+
+:root {
+	--easeFastSlow: cubic-bezier(0.075, 0.82, 0.165, 1);
+	--easeSlowSlow: cubic-bezier(0.77, 0, 0.175, 1);
+
+	--headerPadding: calc(20px + 2vw);
+
+	--titleBottomMargin: 0.2em;
+	--titleLineHeight: 1em;
+	--titleFontSize: 6em;
+	--titleLetterSpacing: -0.069em;
+	--descriptionFontSize: 0.8em;
+}
+
+body {
+	margin: 0;
+
+	overflow: scroll hidden;
+}
+
+body::-webkit-scrollbar-thumb {
+	background-color: #0b0c0d;
+}
+
+.skin {
+	padding: calc(var(--headerPadding) * 3);
+	padding-right: 0;
+
+	column-width: calc((1024px - (var(--headerPadding) * 3)) / 1.5);
+	column-gap: 0;
+
+	box-sizing: border-box;
+
+	height: 100vh;
+
+	animation: 0.5s var(--easeSlowSlow) 0s 1 fadeIn;
+	transition: padding 0.5s var(--easeFastSlow);
+}
+
+@media only screen and (max-width: 1024px), (max-height: 544px) {
+	body {
+		overflow: hidden scroll;
+	}
+
+	.skin {
+		height: auto;
+
+		column-width: unset;
+
+		padding: calc(var(--headerPadding) * 2);
+		padding-right: 0;
+		padding-top: calc(var(--headerPadding) * 4);
+	}
+
+	.skin > * {
+		padding-right: calc(var(--headerPadding) * 2) !important;
+	}
+}
+
+.skin > *,
+.skin > blockquote {
+	padding-right: calc(var(--headerPadding) * 3);
+}
+
+.skin h1,
+.skin h2 {
+    border-bottom: 0px solid grey;
+}
+
+.skin h1::after,
+.skin h2::after {
+	content: "";
+	display: block;
+	
+	padding-bottom: 16px;
+    border-bottom: 1px solid #eaecef;
+}
+
+.skin h1,
+.skin h2,
+.skin h3,
+.skin h4,
+.skin h5,
+.skin h6 {
+	font-family: 'Space Mono', sans-serif, Apple Color Emoji, Segoe UI Emoji;
+	font-weight: 800;
+	letter-spacing: var(--titleLetterSpacing);
+}
+
+.skin h1 {
+	font-size: var(--titleFontSize);
+	line-height: var(--titleLineHeight);
+
+	margin-bottom: 36px;
+}
+
+.skin p {
+	font-family: 'Dank Mono', sans-serif, Apple Color Emoji, Segoe UI Emoji;
+	font-style: italic;
+	font-size: var(--descriptionFontSize);
+	text-align: justify;
+}
+
+.skin li {
+	font-family: 'Dank Mono', sans-serif, Apple Color Emoji, Segoe UI Emoji;
+	font-style: italic;
+	text-align: justify;
+	font-size: var(--descriptionFontSize);
+
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+
+.skin li > p, * > li > ul * {
+	font-size: unset !important;
+}
+
+.skin ol, 
+.skin ul {
+	padding-left: 1em;
+}
+
+.skin a {
+	color: grey;
+
+	display: block;
+
+	transform: matrix(1, 0, 0, 1, 0, 0);
+}
+
+.skin a:hover {
+	text-decoration: none;
+}
+
+.skin a::before {
+	content: "← ";
+}
+
+.skin a::after {
+	background: none repeat scroll 0 0 transparent;
+	left: 0;
+	bottom: -9px;
+	content: "";
+	display: block;
+	height: 1px;
+	position: absolute;
+	background: grey;
+	transition: width 0.3s var(--easeSlowSlow);
+	width: 0;
+}
+
+.skin a:hover::after {
+	width: 100%;
+}
+
+.skin x {
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 100%;
+	min-height: 100%;
+}
+
+/* firefox doesn't correctly set height %'s with columns */
+@-moz-document url-prefix() {
+	.skin x {
+	  	height: calc(100vh - 48px - 48px - 48px - var(--headerPadding) * 3);
+	}
+}
+
+.skin x.h-fixed {
+	height: 100%;
+}
+
+.skin x.hs-left * {
+	align-self: flex-start;
+	text-align: left;
+}
+
+.skin x.hs-centre * {
+	align-self: center;
+	text-align: center;
+}
+
+.skin x.hs-right * {
+	align-self: flex-end;
+	text-align: end;
+}
+
+.skin x > * {
+	/* height: calc(100% - 16px); */
+	width: max-content;
+	max-width: 100%;
+	max-height: calc(100% - 16px);
+}
+
+.skin x.long {
+	display: inline-block;
+}
+
+.skin x.long p {
+	height: unset;
+}
+
+/* firefox treats 100% as the absolute container size even with display: inline-flex, 
+	instead of scaling them down like chrome,
+	but, it doesn't have the image-slicing & disappearing bugs in chrome,
+	so we can just make it so that it's in the correct position */
+@-moz-document url-prefix() {
+	.skin x > * {
+		height: unset;
+
+		margin-bottom: 0;
+		padding-bottom: 16px;
+	}
+}
+
+.skin img {
+	max-height: 100%;
+
+	object-fit: cover;
+}
+
+@media only screen and (max-width: 1024px), (max-height: 544px) {
+	.skin img {
+		padding-top: 48px;
+		padding-bottom: 48px;
+
+		max-height: 540px;
+
+		box-sizing: border-box;
+		
+		background-color: transparent;
+	}
+}
+
+.skin iframe {
+	padding-bottom: 24px;
+}
+
+@media only screen and (max-width: 1024px), (max-height: 544px) {
+	.skin x.hs-left *,
+	.skin x.hs-centre *,
+	.skin x.hs-right * {
+		align-self: unset;
+		text-align: unset;
+	}
+
+	.skin x.vs-left * {
+		align-self: flex-start;
+		text-align: left;
+	}
+	
+	.skin x.vs-centre * {
+		align-self: center;
+		text-align: center;
+	}
+	
+	.skin x.vs-right * {
+		align-self: flex-end;
+		text-align: end;
+	}
+
+	.skin x.vs-grid {
+		width: fit-content;
+		max-width: 100%;
+	}
+}
+
+@media only screen and (max-width: 1024px), (max-height: 544px) {
+	.skin bruh {
+		height: 96px;
+		display: block;
+	}
+}
+
+.white {
+	color: white;
+	fill: white;
+}
+
+.invert {
+	mix-blend-mode: difference;
+}

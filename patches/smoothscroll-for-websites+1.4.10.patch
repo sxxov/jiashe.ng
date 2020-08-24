@@ -1,0 +1,198 @@
+diff --git a/node_modules/smoothscroll-for-websites/SmoothScroll.js b/node_modules/smoothscroll-for-websites/SmoothScroll.js
+index d1b308a..dc825b9 100644
+--- a/node_modules/smoothscroll-for-websites/SmoothScroll.js
++++ b/node_modules/smoothscroll-for-websites/SmoothScroll.js
+@@ -298,87 +298,93 @@ function scrollArray(elem, left, top) {
+  * EVENTS
+  ***********************************************/
+ 
++// @edited 11052020/1
++// function wheel(event) {
+ /**
+  * Mouse wheel handler.
+  * @param {Object} event
+  */
+-function wheel(event) {
+-
+-    if (!initDone) {
+-        init();
+-    }
+-    
+-    var target = event.target;
+-
+-    // leave early if default action is prevented   
+-    // or it's a zooming event with CTRL 
+-    if (event.defaultPrevented || event.ctrlKey) {
+-        return true;
+-    }
+-    
+-    // leave embedded content alone (flash & pdf)
+-    if (isNodeName(activeElement, 'embed') || 
+-       (isNodeName(target, 'embed') && /\.pdf/i.test(target.src)) ||
+-        isNodeName(activeElement, 'object') ||
+-        target.shadowRoot) {
+-        return true;
+-    }
+-
+-    var deltaX = -event.wheelDeltaX || event.deltaX || 0;
+-    var deltaY = -event.wheelDeltaY || event.deltaY || 0;
+-    
+-    if (isMac) {
+-        if (event.wheelDeltaX && isDivisible(event.wheelDeltaX, 120)) {
+-            deltaX = -120 * (event.wheelDeltaX / Math.abs(event.wheelDeltaX));
+-        }
+-        if (event.wheelDeltaY && isDivisible(event.wheelDeltaY, 120)) {
+-            deltaY = -120 * (event.wheelDeltaY / Math.abs(event.wheelDeltaY));
+-        }
+-    }
+-    
+-    // use wheelDelta if deltaX/Y is not available
+-    if (!deltaX && !deltaY) {
+-        deltaY = -event.wheelDelta || 0;
+-    }
+-
+-    // line based scrolling (Firefox mostly)
+-    if (event.deltaMode === 1) {
+-        deltaX *= 40;
+-        deltaY *= 40;
+-    }
+-
+-    var overflowing = overflowingAncestor(target);
+-
+-    // nothing to do if there's no element that's scrollable
+-    if (!overflowing) {
+-        // except Chrome iframes seem to eat wheel events, which we need to 
+-        // propagate up, if the iframe has nothing overflowing to scroll
+-        if (isFrame && isChrome)  {
+-            // change target to iframe element itself for the parent frame
+-            Object.defineProperty(event, "target", {value: window.frameElement});
+-            return parent.wheel(event);
+-        }
+-        return true;
+-    }
+-    
+-    // check if it's a touchpad scroll that should be ignored
+-    if (isTouchpad(deltaY)) {
+-        return true;
+-    }
+-
+-    // scale by step size
+-    // delta is 120 most of the time
+-    // synaptics seems to send 1 sometimes
+-    if (Math.abs(deltaX) > 1.2) {
+-        deltaX *= options.stepSize / 120;
+-    }
+-    if (Math.abs(deltaY) > 1.2) {
+-        deltaY *= options.stepSize / 120;
+-    }
+-    
+-    scrollArray(overflowing, deltaX, deltaY);
+-    event.preventDefault();
+-    scheduleClearCache();
++function wheel(event, overrideX, overrideY) {
++
++	if (!initDone) {
++		init();
++	}
++	
++	var target = event.target;
++
++	// leave early if default action is prevented   
++	// or it's a zooming event with CTRL 
++	if (event.defaultPrevented || event.ctrlKey) {
++		return true;
++	}
++	
++	// leave embedded content alone (flash & pdf)
++	if (isNodeName(activeElement, 'embed') || 
++		(isNodeName(target, 'embed') && /\.pdf/i.test(target.src)) ||
++		isNodeName(activeElement, 'object') ||
++		target.shadowRoot) {
++		return true;
++	}
++
++	// @edited 11052020/2
++	// var deltaX = -event.wheelDeltaX || event.deltaX || 0;
++	var deltaX = overrideX !== undefined ? overrideX : -event.wheelDeltaX || event.deltaX || 0;
++	// @edited 11052020/3
++	// var deltaY = -event.wheelDeltaY || event.deltaY || 0;
++	var deltaY = overrideY !== undefined ? overrideY : -event.wheelDeltaY || event.deltaY || 0;
++	
++	if (isMac) {
++		if (event.wheelDeltaX && isDivisible(event.wheelDeltaX, 120)) {
++			deltaX = -120 * (event.wheelDeltaX / Math.abs(event.wheelDeltaX));
++		}
++		if (event.wheelDeltaY && isDivisible(event.wheelDeltaY, 120)) {
++			deltaY = -120 * (event.wheelDeltaY / Math.abs(event.wheelDeltaY));
++		}
++	}
++	
++	// use wheelDelta if deltaX/Y is not available
++	if (!deltaX && !deltaY) {
++		deltaY = -event.wheelDelta || 0;
++	}
++
++	// line based scrolling (Firefox mostly)
++	if (event.deltaMode === 1) {
++		deltaX *= 40;
++		deltaY *= 40;
++	}
++
++	var overflowing = overflowingAncestor(target);
++
++	// nothing to do if there's no element that's scrollable
++	if (!overflowing) {
++		// except Chrome iframes seem to eat wheel events, which we need to 
++		// propagate up, if the iframe has nothing overflowing to scroll
++		if (isFrame && isChrome)  {
++			// change target to iframe element itself for the parent frame
++			Object.defineProperty(event, "target", {value: window.frameElement});
++			return parent.wheel(event);
++		}
++		return true;
++	}
++	
++	// check if it's a touchpad scroll that should be ignored
++	if (isTouchpad(deltaY)) {
++		return true;
++	}
++
++	// scale by step size
++	// delta is 120 most of the time
++	// synaptics seems to send 1 sometimes
++	if (Math.abs(deltaX) > 1.2) {
++		deltaX *= options.stepSize / 120;
++	}
++	if (Math.abs(deltaY) > 1.2) {
++		deltaY *= options.stepSize / 120;
++	}
++	
++	scrollArray(overflowing, deltaX, deltaY);
++	event.preventDefault();
++	scheduleClearCache();
+ }
+ 
+ /**
+@@ -562,8 +568,11 @@ function isContentOverflowing(el) {
+ 
+ // typically for <body> and <html>
+ function overflowNotHidden(el) {
+-    var overflow = getComputedStyle(el, '').getPropertyValue('overflow-y');
+-    return (overflow !== 'hidden');
++    // @edited 11052020/4
++    // var overflow = getComputedStyle(el, '').getPropertyValue('overflow-y');
++    // return (overflow !== 'hidden');
++
++    return true
+ }
+ 
+ // for all other elements
+@@ -774,6 +783,8 @@ function SmoothScroll(optionsToSet) {
+             options[key] = optionsToSet[key];
+ }
+ SmoothScroll.destroy = cleanup;
++SmoothScroll.wheel = wheel;
++SmoothScroll.wheelEvent = wheelEvent;
+ 
+ if (window.SmoothScrollOptions) // async API
+     SmoothScroll(window.SmoothScrollOptions);

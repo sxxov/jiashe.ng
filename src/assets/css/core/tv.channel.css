@@ -1,0 +1,76 @@
+.channel.container {
+	display: grid;
+
+	grid-template-columns: 1fr;
+	grid-template-rows: auto repeat(3, min-content) auto;
+	column-gap: 0;
+	row-gap: 0;
+	align-items: center;
+	justify-items: center;
+
+	overflow: hidden;
+
+	z-index: -2;
+}
+
+.channel.container > .splash {
+	position: absolute;
+
+	height: 110vmax;
+	width: 110vmax;
+
+	z-index: inherit;
+}
+
+.channel.container > .title {
+	grid-row: 2/3;
+	grid-column: 1/2;
+	
+	margin: 0 64px 32px 64px;
+
+	font-family: 'Space Mono', sans-serif;
+	font-size: 10vmax;
+	line-height: 10vmax;
+	letter-spacing: var(--titleLetterSpacing);
+	word-break: break-all;
+	text-align: center;
+	font-weight: 800;
+
+	-webkit-text-stroke: 1px white;
+	-webkit-text-fill-color: transparent;
+
+	-webkit-tap-highlight-color: transparent;
+
+	pointer-events: auto;
+	cursor: pointer;
+
+	mix-blend-mode: difference;
+
+	transition: transform 0.5s var(--easeFastSlow);
+}
+
+@media only screen and (max-width: 1024px) {
+	.channel.container > .title {
+		user-select: none;
+	}
+}
+
+.channel.container > .title:hover {
+	transform: scale(0.95);
+}
+
+.channel.container > .subtitle {
+	grid-row: 3/4;
+	grid-column: 1/2;
+
+	margin: 0 0 32px 0;
+
+	font-family: 'Dank Mono', sans-serif;
+	font-style: italic;
+	font-size: var(--descriptionFontSize);
+	text-align: center;
+	
+	margin: 0;
+
+	max-width: 50%;
+}
