@@ -1,0 +1,96 @@
+.header.containersWrapper {
+	position: fixed;
+	display: grid;
+	width: 100vw;
+
+	transition: 
+		width 1s var(--easeFastSlow), 
+		height 1s var(--easeFastSlow),
+		padding 1s var(--easeFastSlow);
+
+    grid-template-columns: 0px[preLeftCorner] 50px[leftCorner]  auto[preRightCorner] 50px[rightCorner];
+    grid-template-rows: 0px[preHeader] 50px[header] auto[preFooter] 50px[footer];
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+    justify-items: center;
+    align-items: center;
+
+	z-index: 10;
+
+	padding: var(--headerPadding);
+	box-sizing: border-box;
+
+	pointer-events: none;
+
+	color: white;
+}
+
+.header.containersWrapper > .scrollCounter {
+	grid-column-start: preLeftCorner;
+	grid-column-end: leftCorner;
+	grid-row-start: preFooter;
+	grid-row-end: footer;
+
+	justify-self: left;
+	align-self: flex-end;
+}
+
+.header.containersWrapper > .scrollCounter > h1 {
+	font-family: "Space Mono", "Dank Mono", sans-serif;
+	font-weight: 400;
+	font-size: 100%;
+	line-height: 100%;
+	
+	width: 100%;
+	margin: -2px 0px 0px 0px;
+}
+
+.header.containersWrapper > .scrollCounter > h2 {
+	font-family: "Space Mono", "Dank Mono", sans-serif;
+	font-weight: 400;
+	font-size: 100%;
+	line-height: 100%;
+	
+	width: 100%;
+	margin: 0px 0px 0px 0px;
+}
+
+.header.containersWrapper > .logo {
+	width: 75%;
+	height: calc(75% * 3 / 4);
+
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+
+	grid-column-start: preLeftCorner;
+	grid-column-end: leftCorner;
+	grid-row-start: preHeader;
+	grid-row-end: header;
+
+	justify-self: left;
+	align-self: flex-start;
+
+	pointer-events: visible;
+}
+
+.header.containersWrapper > .hamburger {
+	width: 75%;
+	height: calc(75% * 3 / 4);
+
+	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
+
+	grid-column-start: preRightCorner;
+	grid-column-end: rightCorner;
+	grid-row-start: preHeader;
+	grid-row-end: header;
+
+	justify-self: right;
+	align-self: flex-start;
+
+	pointer-events: visible;
+}
+
+.header.containersWrapper > .container {
+	pointer-events: auto;
+}
