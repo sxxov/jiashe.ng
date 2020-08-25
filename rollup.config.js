@@ -179,7 +179,10 @@ export default (commandLineArgs) => [{
 					dest: 'public/portfolio/assets',
 				},
 				{
-					src: 'src/fid',
+					src: [
+						'src/fid',
+						'.gitignore',
+					],
 					dest: 'public'
 				},
 				{
