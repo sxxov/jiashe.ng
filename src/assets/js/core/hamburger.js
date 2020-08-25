@@ -76,7 +76,7 @@ export class Hamburger {
         return this.lottiePlayDirection === 1;
     }
     async getLottieData() {
-        return $().getJSON('/assets/js/raw/lottie/hamburger.json');
+        return $().getJSON('assets/js/raw/lottie/hamburger.json');
     }
     onClick(event, options) {
         if (!options) {

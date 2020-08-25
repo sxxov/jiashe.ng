@@ -172,7 +172,7 @@ class Main {
         await mScrollAnimator.add({
             index: 0,
             type: 'lottie',
-            data: await $().getJSON('/assets/js/raw/lottie/blocks.json'),
+            data: await $().getJSON('assets/js/raw/lottie/blocks.json'),
             items: {
                 uid: 'blocks',
                 respectDevicePixelRatio: false,
@@ -183,7 +183,7 @@ class Main {
         await mScrollAnimator.add({
             index: 0,
             type: 'lottie',
-            data: await $().getJSON('/assets/js/raw/lottie/aux about me stuff.json'),
+            data: await $().getJSON('assets/js/raw/lottie/aux about me stuff.json'),
             items: {
                 uid: 'aux_about_me_stuff',
                 respectDevicePixelRatio: false,
@@ -195,7 +195,7 @@ class Main {
         await mScrollAnimator.add({
             index: 0,
             type: 'lottie',
-            data: await $().getJSON('/assets/js/raw/lottie/aux about me dots.json'),
+            data: await $().getJSON('assets/js/raw/lottie/aux about me dots.json'),
             items: {
                 uid: 'aux_about_me_dots',
                 respectDevicePixelRatio: false,
@@ -207,7 +207,7 @@ class Main {
         // await mScrollAnimator.add({
         // 	index: 0,
         // 	type: 'lottie',
-        // 	data: await $().getJSON('/assets/js/raw/lottie/hello.json'),
+        // 	data: await $().getJSON('assets/js/raw/lottie/hello.json'),
         // 	items: {
         // 		uid: 'hello',
         // 		invert: true,
@@ -244,7 +244,7 @@ class Main {
         await mScrollAnimator.add({
             index: 1,
             type: 'lottie',
-            data: await $().getJSON('/assets/js/raw/lottie/aux what now stuff.json'),
+            data: await $().getJSON('assets/js/raw/lottie/aux what now stuff.json'),
             items: {
                 uid: 'aux_what_now_stuff',
                 respectDevicePixelRatio: false,
@@ -256,7 +256,7 @@ class Main {
         await mScrollAnimator.add({
             index: 1,
             type: 'lottie',
-            data: await $().getJSON('/assets/js/raw/lottie/aux what now dots.json'),
+            data: await $().getJSON('assets/js/raw/lottie/aux what now dots.json'),
             items: {
                 uid: 'aux_what_now_dots',
                 respectDevicePixelRatio: false,
@@ -278,7 +278,7 @@ class Main {
         await mScrollAnimator.add({
             index: 2,
             type: 'lottie',
-            data: await $().getJSON('/assets/js/raw/lottie/aux contact me stuff.json'),
+            data: await $().getJSON('assets/js/raw/lottie/aux contact me stuff.json'),
             items: {
                 uid: 'aux_contact_me_stuff',
                 respectDevicePixelRatio: false,
@@ -290,7 +290,7 @@ class Main {
         await mScrollAnimator.add({
             index: 2,
             type: 'lottie',
-            data: await $().getJSON('/assets/js/raw/lottie/aux contact me dots.json'),
+            data: await $().getJSON('assets/js/raw/lottie/aux contact me dots.json'),
             items: {
                 uid: 'aux_contact_me_dots',
                 respectDevicePixelRatio: false,
@@ -303,7 +303,7 @@ class Main {
             index: 2,
             type: 'lottie',
             data: await $().getJSON(window.lottieButtonJsonUrl
-                ?? '/assets/js/raw/lottie/email.json'),
+                ?? 'assets/js/raw/lottie/email.json'),
             items: {
                 uid: 'lottieButton',
                 invert: true,
@@ -326,7 +326,7 @@ class Main {
         await mFrameAnimator.add({
             index: 0,
             type: 'lottie',
-            data: await $().getJSON('/assets/js/raw/lottie/scroll to continue.json'),
+            data: await $().getJSON('assets/js/raw/lottie/scroll to continue.json'),
             items: {
                 uid: 'scrollToContinue',
                 respectDevicePixelRatio: true,

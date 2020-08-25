@@ -122,7 +122,7 @@ export class Hamburger {
 	}
 
 	public async getLottieData(): Promise<Record<string | number, any>> {
-		return $().getJSON('/assets/js/raw/lottie/hamburger.json');
+		return $().getJSON('assets/js/raw/lottie/hamburger.json');
 	}
 
 	private onClick(event: Event, options?: {
