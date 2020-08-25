@@ -181,6 +181,7 @@ export default (commandLineArgs) => [{
 				{
 					src: [
 						'src/fid',
+						'src/CNAME',
 						'.gitignore',
 					],
 					dest: 'public'
