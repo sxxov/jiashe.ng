@@ -187,6 +187,7 @@ export default (commandLineArgs) => [{
 						'public/index.html',
 						'public/bundle.js',
 						'public/bundle.css',
+						'public/assets',
 					],
 					dest: 'public/fid/ccts'
 				},
@@ -195,6 +196,7 @@ export default (commandLineArgs) => [{
 						'public/index.html',
 						'public/bundle.js',
 						'public/bundle.css',
+						'public/assets',
 					],
 					dest: 'public/fid/photo'
 				},

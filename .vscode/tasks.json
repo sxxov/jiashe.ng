@@ -36,6 +36,16 @@
             },
             "group": "build",
 			"label": "rollup: build",
+        },
+        {
+            "type": "npm",
+            "script": "publish",
+			"problemMatcher": "$tsc-watch",
+            "presentation": {
+                "reveal": "never"
+            },
+            "group": "build",
+			"label": "publish",
         }
     ]
 }

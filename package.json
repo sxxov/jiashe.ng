@@ -5,6 +5,7 @@
   "main": "",
   "scripts": {
     "build": "rollup -c",
+    "publish": "git subtree push --prefix public origin gh-pages",
     "dev-web": "rollup -c -w --config-web",
     "serve-web": "sirv public --port 6969 --host",
     "postinstall": "patch-package"
