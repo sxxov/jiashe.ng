@@ -1,4 +1,4 @@
-import lottie from 'lottie-web';
+import lottie from 'lottie-web/build/player/lottie_canvas';
 import { LottieFactory, SolidFactory, AnimationFactory, } from '../animators.factories';
 import { WindowUtility } from '../utilities/window.utility';
 import { $ } from '../utilities/$.utility';
@@ -202,7 +202,6 @@ export class CoreAnimator {
         });
         // lottie.resize might throw reference error
         try {
-            // @ts-expect-error
             lottie.resize();
         }
         catch (err) {

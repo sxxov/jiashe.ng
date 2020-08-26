@@ -3,7 +3,7 @@
 		"esModuleInterop": true,
 		"isolatedModules": true,
 		"module": "es2020",
-	  	"target": "es2020",
+	  	"target": "esNext",
 		"sourceMap": true,
 		"lib": ["es6", "dom", "es2017", "ES2015", "ES2020", "ESNext"],
 		"typeRoots": ["src/assets/js/raw/typings"],

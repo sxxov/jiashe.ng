@@ -1,4 +1,4 @@
-import lottie from 'lottie-web';
+import lottie from 'lottie-web/build/player/lottie_canvas';
 import {
 	$,
 	WindowUtility,
@@ -106,7 +106,7 @@ export class Hamburger {
 	private addLottie(): void {
 		this.lottieAnimation = lottie.loadAnimation({
 			container: this.hamburgerIconDom,
-			renderer: 'svg',
+			renderer: 'canvas',
 			autoplay: false,
 			loop: false,
 			animationData: this.lottieAnimationData,

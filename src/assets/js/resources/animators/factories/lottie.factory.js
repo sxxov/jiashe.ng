@@ -1,4 +1,4 @@
-import lottie from 'lottie-web';
+import lottie from 'lottie-web/build/player/lottie_canvas';
 import { CoreAnimator } from '../../animators.js';
 import { $ } from '../../utilities/$.utility.js';
 export class LottieFactory {
@@ -14,7 +14,6 @@ export class LottieFactory {
             autoplay: true,
             animationData: animationObject.data,
             rendererSettings: {
-                // @ts-expect-error
                 dpr: animationObject.items.respectDevicePixelRatio === false
                     ? 1
                     : this.ctx.dpr * this.ctx.resolutionMultiplier,

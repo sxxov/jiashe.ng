@@ -11,6 +11,7 @@ import childProcess from 'child_process';
 import json from '@rollup/plugin-json';
 import babel from '@rollup/plugin-babel';
 import cssnano from 'cssnano';
+import analyze from 'rollup-plugin-analyzer';
 
 const production = !process.env.ROLLUP_WATCH;
 const onwarn = (message, warn) => {
@@ -64,6 +65,8 @@ const commonPlugins = [
 	// If we're building for production (npm run build
 	// instead of npm run dev), minify
 	production && terser(),
+
+	production && analyze(),
 ];
 const commonPostCSSPlugins = [
 	postcssImport(),
