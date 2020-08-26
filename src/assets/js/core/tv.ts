@@ -3,8 +3,7 @@ import { $, $$, WindowUtility } from '../resources/utilities';
 import { FrameAnimator } from '../resources/animators';
 // eslint-disable-next-line import/named
 import { $Object } from '../resources/utilities.types';
-// eslint-disable-next-line import/named
-import { QueryDocumentSnapshot } from './lighter';
+import { Document } from 'firebase-firestore-lite';
 
 export class TV {
 	private swiper: Swiper = null;
@@ -13,7 +12,6 @@ export class TV {
 	private clickFrameAnimator = new FrameAnimator();
 	private currentOnClickDom: $Object = null;
 	private mouseCatcherDom = $('.mouseCatcher');
-	private mWindowUtility = new WindowUtility();
 
 	private cachedMousePosition: {
 		clientX: number;
@@ -25,7 +23,7 @@ export class TV {
 
 	private splashDoms: $Object[] = [];
 
-	public async create(docs: firebase.firestore.QueryDocumentSnapshot[]): Promise<void> {
+	public async create(docs: Document[]): Promise<void> {
 		$(window).on('resize', () => this.onWindowResize.call(this));
 		this.onWindowResize();
 
@@ -75,20 +73,20 @@ export class TV {
 		$(document).on('mousemove', (event: MouseEvent) => this.onMouseMove.call(this, event));
 	}
 
-	private async createChannels(docs: QueryDocumentSnapshot[]): Promise<void> {
+	private async createChannels(docs: Document[]): Promise<void> {
 		if (docs.length === 0) {
 			$('.pace > .pace-activity').addClass('deactivated');
 
 			return;
 		}
 
-		await docs.forAwait(async (doc: QueryDocumentSnapshot, i) => {
+		await docs.forAwait(async (doc: Document, i) => {
 			const {
 				title,
 				subtitle,
 				splash,
 				markdown,
-			} = doc.data();
+			} = doc;
 
 			const wrapperDom = $('.swiper-wrapper');
 

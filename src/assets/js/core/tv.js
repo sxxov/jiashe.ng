@@ -9,7 +9,6 @@ export class TV {
         this.clickFrameAnimator = new FrameAnimator();
         this.currentOnClickDom = null;
         this.mouseCatcherDom = $('.mouseCatcher');
-        this.mWindowUtility = new WindowUtility();
         this.cachedMousePosition = null;
         this.mouseCatcherScaleResetTimeoutId = null;
         this.mouseCatcherOverrideScale = false;
@@ -59,7 +58,7 @@ export class TV {
             return;
         }
         await docs.forAwait(async (doc, i) => {
-            const { title, subtitle, splash, markdown, } = doc.data();
+            const { title, subtitle, splash, markdown, } = doc;
             const wrapperDom = $('.swiper-wrapper');
             const containerDom = $(document.createElement('div'));
             containerDom.addClass([
