@@ -49,25 +49,11 @@ class Main {
         });
         $('.header.container.logo').on('click', async (event) => {
             await this.onClick(event);
+            const origin = this.getSLD(location.href);
+            const referrerOrigin = this.getSLD(document.referrer);
             // if is on domain or access through an ip
-            if (!(document.referrer.includes('jiashe.ng')
-                || parseInt(document.referrer.substring(
-                // start from http://
-                document.referrer.indexOf('//') + 2, 
-                // end at first /
-                document.referrer.replace('//', '__').indexOf('/')), 10))) {
-                // temp solution for sub-domains
-                const indexOfAssets = this.uri.indexOf('assets');
-                let subdomain = '';
-                if (indexOfAssets > 1) {
-                    subdomain = this.uri
-                        .substr(0, indexOfAssets)
-                        .split('/')
-                        .filter((substring) => substring.length !== 0)
-                        .reverse()
-                        .join('.');
-                }
-                window.location.href = `https://${subdomain}${subdomain ? '.' : ''}jiashe.ng`;
+            if (referrerOrigin !== origin) {
+                window.location.href = '/';
                 return;
             }
             window.history.back();
@@ -76,6 +62,10 @@ class Main {
             this.onClick(event);
             this.darkMode.toggle();
         });
+    }
+    getSLD(string) {
+        const withoutProtocol = string.substr(string.indexOf('//') + 2);
+        return withoutProtocol.substr(0, withoutProtocol.indexOf('/'));
     }
     get uri() {
         let uri = String(window.location.href);
