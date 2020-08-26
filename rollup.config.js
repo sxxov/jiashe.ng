@@ -16,16 +16,19 @@ import analyze from 'rollup-plugin-analyzer';
 const production = !process.env.ROLLUP_WATCH;
 const onwarn = (message, warn) => {
 	const ignored = {
-		EVAL: ['lottie.js'],
-		CIRCULAR_DEPENDENCY: ['factory'],
+		EVAL: ['node_modules'],
+		CIRCULAR_DEPENDENCY: ['factory', 'node_modules'],
 	};
 	const ignoredKeys = Object.keys(ignored);
 	const ignoredValues = Object.values(ignored);
 
 	for (let i = 0, l = ignoredKeys.length; i < l; ++i) {
-		for (const ignoredValue of ignoredValues) {
-			if (!(message.code === ignoredKeys[i]
-				&& message.toString().includes(ignoredValue))) {
+		const ignoredKey = ignoredKeys[i];
+		const ignoredValue = ignoredValues[i];
+
+		for (const ignoredValuePart of ignoredValue) {
+			if (!(message.code === ignoredKey
+				&& message.toString().includes(ignoredValuePart))) {
 				continue;
 			}
 
