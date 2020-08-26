@@ -9,7 +9,7 @@ import postcss from 'rollup-plugin-postcss';
 import postcssImport from 'postcss-import';
 import childProcess from 'child_process';
 import json from '@rollup/plugin-json';
-import babel from '@rollup/plugin-babel';
+import { getBabelOutputPlugin } from '@rollup/plugin-babel';
 import cssnano from 'cssnano';
 import analyze from 'rollup-plugin-analyzer';
 
@@ -59,10 +59,9 @@ const commonPlugins = [
 
 	commonjs(),
 
-	production && babel({
-		extensions: ['.js', '.mjs', '.html'],
-		include: ['src/**'],
-		babelHelpers: 'bundled',
+	production && getBabelOutputPlugin({
+		configFile: path.resolve(__dirname, 'babel.config.js'),
+		allowAllFormats: true,
 	}),
 
 	// If we're building for production (npm run build
