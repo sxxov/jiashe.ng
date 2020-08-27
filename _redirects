@@ -1,8 +1,0 @@
-http://ccts.fid.jiashe.ng/* https://jiashe.ng/fid/ccts/:splat 200
-https://ccts.fid.jiashe.ng/* https://jiashe.ng/fid/ccts/:splat 200
-
-http://photo.fid.jiashe.ng/* https://jiashe.ng/fid/photo/:splat 200
-https://photo.fid.jiashe.ng/* https://jiashe.ng/fid/photo/:splat 200
-
-http://fid.jiashe.ng/* https://jiashe.ng/fid/:splat 200
-https://fid.jiashe.ng/* https://jiashe.ng/fid/:splat 200
