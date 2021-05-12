@@ -29,7 +29,7 @@
     "marked": "^1.1.1",
     "pace-js": "^1.0.2",
     "smoothscroll-for-websites": "^1.4.10",
-    "swiper": "^6.1.2"
+    "swiper": "^6.5.1"
   },
   "devDependencies": {
     "@babel/core": "^7.11.4",
